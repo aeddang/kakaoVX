@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">스마트홈트</string>
+    <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
+    <string name="browse_title"><![CDATA[Videos by Your Company]]></string>
+    <string name="related_movies">Related Videos</string>
+    <string name="grid_view">Grid View</string>
+    <string name="error_fragment">Error Fragment</string>
+    <string name="personal_settings">Personal Settings</string>
+    <string name="watch_trailer_1">Watch trailer</string>
+    <string name="watch_trailer_2">FREE</string>
+    <string name="rent_1">Rent By Day</string>
+    <string name="rent_2">From $1.99</string>
+    <string name="buy_1">Buy and Own</string>
+    <string name="buy_2">AT $9.99</string>
+    <string name="movie">Movie</string>
+
+    <string name="btn_action_retry">retrye</string>
+    <string name="btn_action_confirm">confirm</string>
+    <string name="btn_action_finish">finish</string>
+    <!-- Error messages -->
+    <string name="error_fragment_message">An error occurred</string>
+    <string name="dismiss_error">Dismiss</string>
+
+
+    <string name="error_sns_client">인터넷설정을 확인하시고 권한 승인을 해 주세요.</string>
+    <string name="error_sns_session">권한이 만료되었습니다, 다시 승인 해 주세요.</string>
+    <string name="error_sns_server">해당서버문제로 잠시후 다시 시도해 주세요.</string>
+    <string name="error_sns_network">인터넷설정을 확인하시고 다시 시도 해 주세요.</string>
+    <string name="error_api_no_data">결과값이 없습니다 다시 시도 해 주세요.</string>
+    <string name="error_sns_need_permission">SNS 권한이 승인되지않았습니다. 다시승인해주세요</string>
+    <string name="error_no_lgu">스마트홈트는 LGU+ 전용 서비스 입니다. 추후 발전 된 서비스를 더 많은 고객님께 제공 할 수 있도록 최선을 다하겠습니다.</string>
+    <string name="error_deny_device">접속하신 기기는 스마트홈트 서비스 이용이 불가한 기기입니다. 추후 발전 된 서비스를 더 많은 고객님께 제공 할 수 있도록 최선을 다하겠습니다.</string>
+    <string name="error_string">사용할 수 없는 단어가 포함되어 있습니다.</string>
+    <string name="error_check_service">이용에 불편을 드려 죄송합니다. 현재 서버 점검중 입니다. 보다 안정적인 서비스 환경을 만들기 위해 최선을 다하겠습니다.</string>
+    <string name="error_data_saver">데이터 절약 모드 사용으로 영상 스트리밍, 다운로드 시 품질문제가 발생할 수 있습니다. 스마트홈트 앱을 데이터 제한 없이 사용하도록 허용해야 이용할 수 있습니다.</string>
+    <string name="error_mcc_mnc">스마트홈트 앱은 로밍 중에 사용하실 수 없습니다.</string>
+    <string name="error_request_text">내용을 입력해 주세요.</string>
+    <string name="error_stop_program">선택하신 프로그램은 현재 판매 중단된 상태입니다.</string>
+    <string name="error_end_program">선택하신 프로그램의 모집이 마감되었습니다.</string>
+    <string name="error_unknown">알수없는 에러</string>
+    <string name="error_network_disable">현재 네트워크에 연결되어 있지 않습니다. 인터넷 연결 상태를 확인해주세요. </string>
+    <string name="error_network_not_connected">네트워크 오류입니다. 앱 종료 후 다시 접속해 주시기 바랍니다.</string>
+    <string name="error_network_client">네트워크 연결이 안정적이지 않습니다. 네트워크 확인 후 앱을 다시 실행해주세요. </string>
+    <string name="error_network_server">서버 접속이 원활하지 않습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
+    <string name="error_api">콘텐츠 로드하는 중에 오류가 발생했습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
+    <string name="error_play_back">영상 로드하는 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
+</resources>

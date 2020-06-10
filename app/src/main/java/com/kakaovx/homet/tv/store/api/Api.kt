@@ -42,8 +42,8 @@ object ApiPath {
     const val HOMET_API_PROGRAM_EXERCISE = "$VERSION_V1/$GROUP_PROGRAMS{${ApiField.PROGRAM_ID}}/exercise"
 }
 
-data class ApiEvent<T>(val type:T , val data:Any?)
-data class ApiError<T>(val type:T , val code:String, val msg:String?)
+data class ApiEvent<T>(val type:T , val data:Any?, val id: String? = null)
+data class ApiError<T>(val type:T , val code:String, val msg:String?, val id: String? = null)
 
 object ApiValue{
 

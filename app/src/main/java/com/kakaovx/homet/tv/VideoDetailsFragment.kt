@@ -35,7 +35,7 @@ import androidx.core.content.ContextCompat
 import androidx.leanback.app.DetailsSupportFragmentBackgroundController
 import com.skeleton.page.PageDetailsSupportFragment
 import com.kakaovx.homet.tv.page.MainActivity
-import com.kakaovx.homet.tv.page.home.component.CardPresenter
+import com.kakaovx.homet.tv.page.component.ProgramPresenter
 import com.lib.util.Log
 
 
@@ -173,7 +173,7 @@ class VideoDetailsFragment : PageDetailsSupportFragment() {
         val list = MovieList.list
 
         Collections.shuffle(list)
-        val listRowAdapter = ArrayObjectAdapter(CardPresenter())
+        val listRowAdapter = ArrayObjectAdapter(ProgramPresenter())
         for (j in 0 until NUM_COLS) {
             listRowAdapter.add(list[j % 5])
         }

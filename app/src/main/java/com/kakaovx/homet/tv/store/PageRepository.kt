@@ -26,7 +26,7 @@ class PageRepository (ctx: Context,
 ) : Repository(ctx, networkFactory, imageFactory){
 
     fun loadApi(owner: LifecycleOwner, type: HometApiType, params:Map<String, Any?>? = null)  = hometManager.loadApi(owner, type, params)
-
+    fun loadPrograms(owner: LifecycleOwner, filterPurpose: String = "", page:Int = 1)  = hometManager.loadPrograms(owner, filterPurpose, page)
 
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
         hometManager.setDefaultLifecycleOwner(owner)

@@ -16,6 +16,8 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
     protected var delegate: PageDelegate? = null
     override var lifecycleOwner: LifecycleOwner? = null
     override val pageFragment: Fragment get() = this
+
+
     override val hasBackPressAction: Boolean
         get(){
             when(headersState){

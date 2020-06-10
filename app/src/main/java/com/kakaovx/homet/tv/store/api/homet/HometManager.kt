@@ -12,6 +12,7 @@ import com.lib.page.PageCoroutineScope
 import com.lib.page.PageLifecycleUser
 import com.skeleton.module.network.HttpStatusCode
 import kotlinx.coroutines.*
+import retrofit2.http.Query
 import java.util.*
 
 
@@ -25,7 +26,7 @@ class HometManager(
 
     val event = MutableLiveData<ApiEvent<HometApiType>>()
     val error = MutableLiveData<ApiError<HometApiType>>()
-    private val scope = PageCoroutineScope()
+
     private var apiQ : ArrayList<HometApiData>  = ArrayList()
 
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
@@ -41,12 +42,11 @@ class HometManager(
                 else -> { }
             }
         })
-        scope.createJob()
+
     }
 
     override fun disposeDefaultLifecycleOwner(owner: LifecycleOwner) {
         accountManager.disposeLifecycleOwner(owner)
-        scope.destoryJob()
         apiQ.clear()
         owner.let { accountManager.disposeLifecycleOwner(it) }
     }
@@ -62,6 +62,14 @@ class HometManager(
             apiQ = newQ.toTypedArray() as ArrayList<HometApiData>
         }
     }
+
+    fun loadPrograms(owner:LifecycleOwner, filterPurpose: String = "", page:Int = 1){
+        val param = HashMap<String, String>()
+        param[ApiField.FILTER_PURPOSE] = filterPurpose
+        param[ApiField.PAGE] = page.toString()
+        loadApi(owner, HometApiType.PROGRAMS , param, filterPurpose)
+    }
+
 
     private fun getApi( type:HometApiType , params:Map<String, Any?>? = null)=  runBlocking { when ( type ){
         HometApiType.CATEGORY -> restApi.getCategory( accountManager.deviceKey )
@@ -94,26 +102,27 @@ class HometManager(
         }
     }}
 
-    fun loadApi(owner:LifecycleOwner, type:HometApiType , params:Map<String, Any?>? = null) = scope.launch {
+    fun loadApi(owner:LifecycleOwner, type:HometApiType , params:Map<String, Any?>? = null, respondId:String = ""){
         if( ! checkAccountManagerStatus(type) ) {
             apiQ.add(HometApiData(owner, type, params))
-            return@launch
+            return
         }
-        NetworkAdapter{
+        HomeTAdapter{
             getApi(type, params)
-        }.onSuccess(
-            {
-                val data = it?.data
+        }
+            .withRespondId(respondId)
+            .onSuccess(
+            { data, id ->
                 data ?: return@onSuccess  onError( type , HttpStatusCode.DATA)
-                onSuccess(type, data)
-            },{ _, code, msg ->
+                onSuccess(type, data, id)
+            },{ _, code, msg , id->
                 if(code == ApiCode.ERROR_JWT_REFRESH) {
                     apiQ.add(HometApiData(owner, type, params))
                     accountManager.reflashJWT()
                 }
-                else onError( type , code, msg )
-            }, { _, code ->
-                onError( type , code )
+                else onError( type , code, msg ,id)
+            }, { _, code, id ->
+                onError( type , code ,null ,id )
             }
         )
     }
@@ -131,12 +140,12 @@ class HometManager(
         return true
     }
 
-    private fun onSuccess(type:HometApiType , data:Any){
-        event.value = ApiEvent( type, data )
+    private fun onSuccess(type:HometApiType , data:Any, respondId:String? = null){
+        event.value = ApiEvent( type, data , respondId)
     }
 
-    private fun onError( type:HometApiType ,code:String, msg:String? = null){
-        error.value  = ApiError( type, code, msg )
+    private fun onError( type:HometApiType ,code:String, msg:String? = null, respondId:String? = null){
+        error.value  = ApiError( type, code, msg, respondId )
     }
 
 

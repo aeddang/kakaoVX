@@ -13,8 +13,10 @@
  */
 
 package com.kakaovx.homet.tv.page
+import android.Manifest
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.lgtv.OMAReceiver
 import com.kakaovx.homet.tv.lgtv.utils.LogUtil
@@ -24,6 +26,7 @@ import com.kakaovx.homet.tv.store.PageID
 import com.kakaovx.homet.tv.store.PageRepository
 import com.lib.page.PageActivity
 import com.lib.page.PagePresenter
+import com.lib.page.PageRequestPermission
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -51,7 +54,13 @@ class MainActivity : PageActivity() {
         OMAReceiver.sendAppVersionCheck(this, true)
         //finish()
         repository.setDefaultLifecycleOwner(this)
-        pageStart(pageProvider.getPageObject(PageID.HOME))
+
+        pagePresenter.requestPermission(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            object : PageRequestPermission {
+                override fun onRequestPermissionResult(resultAll: Boolean, permissions: List<Boolean>?) {
+                    pageStart(pageProvider.getPageObject(PageID.HOME))
+                }
+            })
     }
 
     override fun onDestroy() {

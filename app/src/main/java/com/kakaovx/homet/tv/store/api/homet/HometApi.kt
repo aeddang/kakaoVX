@@ -33,12 +33,12 @@ interface HometApi{
         @Query(ApiField.FILTER_PURPOSE) filterPurpose: String?,
         @Query(ApiField.PAGE) page: String?,
         @Query(ApiField.COUNT ) count: String?
-    ): HomeTResponse< List<ProgramData>? >?
+    ): HomeTResponse< ProgramList? >?
 
     @GET(ApiPath.HOMET_API_PROGRAMS_RECENT)
     suspend fun getProgramsRecent(
         @Query(ApiField.DEVICE_KEY) deviceKey: String?
-    ): HomeTResponse<ProgramList?>?
+    ): HomeTResponse<List<ProgramData>?>?
 
     @GET(ApiPath.HOMET_API_PROGRAM)
     suspend fun getProgram(

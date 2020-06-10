@@ -25,7 +25,6 @@ class AccountManager  (
     private val appTag = javaClass.simpleName
     var deviceKey: String = "" ; private set
     var tempJWT: String = "" ; private set
-    val scope = PageCoroutineScope()
 
     enum class AccountEvent{
         onActivity,onDeviceKey,onJWT, onError
@@ -41,10 +40,9 @@ class AccountManager  (
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
         status = AccountStatus.initiate
         event.postValue(AccountEvent.onActivity)
-        scope.createJob()
+
     }
     override fun disposeDefaultLifecycleOwner(owner: LifecycleOwner) {
-        scope.destoryJob()
     }
 
     override fun disposeLifecycleOwner(owner: LifecycleOwner){
@@ -68,37 +66,36 @@ class AccountManager  (
     private fun getJWTRefresh() = runBlocking { restApi.getJWTRefresh(deviceKey, tempJWT) }
 
 
-    fun loadJWT() = scope.launch {
+    fun loadJWT()  {
         if( deviceKey == "") {
             onError()
-            return@launch
+            return
         }
-
         status = AccountStatus.busy
-
-        NetworkAdapter {
+        HomeTAdapter{
             getJWT()
         }
-        .onSuccess(
-        { onLoadJWT(it) },
-        { _, _, _ -> onError() },
-        { _, _ -> onError() } )
+            .onSuccess(
+                { onLoadJWT(it) },
+                { _, _ -> onError() }
+            )
 
     }
 
-    fun reflashJWT() = scope.launch {
+    fun reflashJWT() {
         if( deviceKey == ""){
             onError()
-            return@launch
+            return
         }
         status = AccountStatus.busy
-        NetworkAdapter{
+        HomeTAdapter{
             getJWTRefresh()
         }
-        .onSuccess(
-        { onLoadJWT(it) },
-        { _, _, _ -> onError() },
-        { _, _ -> onError() } )
+            .onSuccess(
+                { onLoadJWT(it) },
+                { _, _ -> onError() }
+            )
+
     }
 
     private fun onLoadJWT(data:HomeTResponse<*>?) {

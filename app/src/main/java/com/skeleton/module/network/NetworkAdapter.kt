@@ -1,37 +1,50 @@
 package com.skeleton.module.network
 
+
 import com.lib.util.Log
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-/*
-abstract class NetworkAdapter<T>(val getData: () ->T?)  {
+
+abstract class NetworkAdapter<T>(var responseId:String?, val getData: () ->T?)  {
     companion object{
         const val TAG = "NetworkAdapter"
     }
     interface ApiInterface<T>{
-        fun onReceive(response: T?) {}
-        fun onFail(type: ErrorType, code:String) {}
-        fun onApiError(type: ErrorType, code:String, msg: String? = null) {}
-        fun onFinish(){}
+        fun onReceive(response: T?, id:String?) {}
+        fun onFail(type: ErrorType, code:String, id:String?) {}
+        fun onApiError(type: ErrorType, code:String, msg: String?, id:String?) {}
+        fun onFinish(id:String?){}
     }
     protected var apiInterface: ApiInterface<T>? = null
 
-
     fun onSuccess(
         success: (T?) -> Unit,
-        apiError: (type: ErrorType, code:String, msg: String?) -> Unit,
-        fail: (type: ErrorType, code:String) -> Unit,
-        finished: (() -> Unit?)? = null
+        error: (type: ErrorType, code:String) -> Unit
     ) {
         onStart(
             object : ApiInterface<T> {
-                override fun onReceive(response: T?) { success(response) }
-                override fun onFail(type: ErrorType, code:String) {  fail(type, code) }
-                override fun onApiError(type: ErrorType, code:String, msg: String?) {  apiError(type, code, msg) }
-                override fun onFinish() { if ( finished != null)  finished() }
+                override fun onReceive(response: T?, id:String?) { success(response) }
+                override fun onFail(type: ErrorType, code:String, id:String?) {  error(type, code) }
+                override fun onApiError(type: ErrorType, code:String, msg: String?, id:String?) {  error(type, code) }
+                override fun onFinish(id:String?) { }
+            })
+    }
+
+    fun onSuccess(
+        success: (T?, id:String?) -> Unit,
+        apiError: (type: ErrorType, code:String, msg: String?,id:String?) -> Unit,
+        fail: (type: ErrorType, code:String,id:String?) -> Unit,
+        finished: ((id:String?) -> Unit?)? = null
+    ) {
+        onStart(
+            object : ApiInterface<T> {
+                override fun onReceive(response: T?, id:String?) { success(response, id) }
+                override fun onFail(type: ErrorType, code:String, id:String?) {  fail(type, code, id) }
+                override fun onApiError(type: ErrorType, code:String, msg: String?, id:String?) {  apiError(type, code, msg, id) }
+                override fun onFinish(id:String?) { if ( finished != null)  finished(id) }
         })
     }
     private fun onStart(apiInterface: ApiInterface<T>?) {
@@ -39,56 +52,50 @@ abstract class NetworkAdapter<T>(val getData: () ->T?)  {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val result = getData.invoke()
-                withContext(Dispatchers.Main) { onReceive(result) }
+                result?.let {
+                    withContext(Dispatchers.Main) {
+                        onReceive(result)
+                    }
+                }
 
             } catch (e: CancellationException) {
-                Log.e(TAG, e)
-                withContext(Dispatchers.Main) {
-                    apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL)
-                    apiInterface?.onFinish()
-                }
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL, responseId)
+                apiInterface?.onFinish(responseId)
+
             } catch (e: HttpException) {
-                cancel()
-                Log.e(TAG, e)
-                withContext(Dispatchers.Main) {
-                    apiInterface?.onFail(ErrorType.HTTP, e.code().toString())
-                    apiInterface?.onFinish()
-                }
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.HTTP, e.code().toString(), responseId)
+                apiInterface?.onFinish(responseId)
+
             } catch (e: UnknownHostException) {
-                cancel()
-                Log.e(TAG, e)
-                withContext(Dispatchers.Main) {
-                    apiInterface?.onFail(ErrorType.HOST, HttpStatusCode.HOST)
-                    apiInterface?.onFinish()
-                }
-            } catch (e:SocketTimeoutException){
-                cancel()
-                Log.e(TAG, e)
-                withContext(Dispatchers.Main) {
-                    apiInterface?.onFail(ErrorType.TIME_OUT, HttpStatusCode.TIME_OUT)
-                    apiInterface?.onFinish()
-                }
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.HOST, HttpStatusCode.HOST, responseId)
+                apiInterface?.onFinish(responseId)
+
+            } catch (e: SocketTimeoutException){
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.TIME_OUT, HttpStatusCode.TIME_OUT, responseId)
+                apiInterface?.onFinish(responseId)
+
             } catch (e: Exception) {
-                cancel()
-                Log.e(TAG, e)
-                withContext(Dispatchers.Main) {
-                    apiInterface?.onFail(ErrorType.EXCEPTION, HttpStatusCode.EXCEPTION)
-                    apiInterface?.onFinish()
-                }
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.EXCEPTION, HttpStatusCode.EXCEPTION, responseId)
+                apiInterface?.onFinish(responseId)
             }
         }
     }
 
     protected open fun onReceive(response: T?)  {
-        apiInterface?.onReceive(response)
-        apiInterface?.onFinish()
+        apiInterface?.onReceive(response, responseId)
+        apiInterface?.onFinish(responseId)
     }
     protected fun onApiError(code:String, msg:String? = null)  {
-        apiInterface?.onApiError(ErrorType.API,code,msg)
-        apiInterface?.onFinish()
+        apiInterface?.onApiError(ErrorType.API,code,msg, responseId)
+        apiInterface?.onFinish(responseId)
     }
 
     protected fun retry() {
         onStart(apiInterface)
     }
-}*/
+}

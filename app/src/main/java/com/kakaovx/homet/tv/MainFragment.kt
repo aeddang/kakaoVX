@@ -40,7 +40,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.leanback.app.BrowseSupportFragment
-import com.kakaovx.homet.tv.page.home.component.CardPresenter
+import com.kakaovx.homet.tv.page.component.ProgramPresenter
 import com.kakaovx.homet.tv.store.PageID
 import com.lib.page.PageObject
 import com.lib.page.PagePresenter
@@ -110,7 +110,7 @@ class MainFragment : PageBrowseSupportFragment() {
 
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val cardPresenter =
-            CardPresenter()
+            ProgramPresenter()
 
         for (i in 0 until NUM_ROWS) {
             if (i != 0) {

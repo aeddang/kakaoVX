@@ -3,8 +3,8 @@ package com.dagger.module.app
 import android.app.Application
 import android.content.Context
 import com.kakaovx.homet.tv.BuildConfig
-import com.kakaovx.homet.tv.store.ActivityModel
-import com.kakaovx.homet.tv.store.FragmentProvider
+import com.kakaovx.homet.tv.page.viewmodel.ActivityModel
+import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
 import com.kakaovx.homet.tv.store.PageRepository
 import com.kakaovx.homet.tv.store.api.HomeTInterceptor
 import com.kakaovx.homet.tv.store.api.account.AccountApi
@@ -16,7 +16,6 @@ import com.kakaovx.homet.tv.store.preference.AccountPreference
 import com.kakaovx.homet.tv.store.preference.SettingPreference
 import com.lib.page.PageActivityPresenter
 import com.lib.page.PagePresenter
-import com.skeleton.module.ImageFactory
 import com.skeleton.module.network.NetworkFactory
 
 import dagger.Module
@@ -38,10 +37,6 @@ class StoreModule {
     @Provides
     @Singleton
     fun provideSettingPreference(application: Application): SettingPreference = SettingPreference(application)
-
-    @Provides
-    @Singleton
-    fun provideImageFactory(): ImageFactory = ImageFactory()
 
     @Provides
     @Singleton
@@ -96,8 +91,6 @@ class StoreModule {
     @Provides
     @Singleton
     fun providePageRepository(@Named("appContext") ctx: Context,
-                              networkFactory: NetworkFactory,
-                              imageFactory: ImageFactory,
                               settingPreference:SettingPreference,
                               dataBaseManager: DataBaseManager,
                               accountManager: AccountManager,
@@ -105,6 +98,6 @@ class StoreModule {
                               pageModel: ActivityModel,
                               pageProvider: FragmentProvider,
                               pagePresenter: PagePresenter
-    ): PageRepository = PageRepository(ctx, networkFactory, imageFactory, settingPreference, dataBaseManager,
+    ): PageRepository = PageRepository(ctx, settingPreference, dataBaseManager,
         accountManager, hometManager, pageModel, pageProvider, pagePresenter)
 }

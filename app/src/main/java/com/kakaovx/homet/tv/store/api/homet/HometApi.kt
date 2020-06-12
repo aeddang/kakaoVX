@@ -44,7 +44,7 @@ interface HometApi{
     suspend fun getProgram(
         @Path(ApiField.PROGRAM_ID) programId: String?,
         @Query(ApiField.DEVICE_KEY) deviceKey: String?
-    ): HomeTResponse<ProgramData?>?
+    ): HomeTResponse<ProgramDetailData?>?
 
     @GET(ApiPath.HOMET_API_PROGRAM_EXERCISE)
     suspend fun getProgramExercise(

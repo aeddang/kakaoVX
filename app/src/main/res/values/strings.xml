@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">스마트홈트</string>
     <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
-    <string name="browse_title"><![CDATA[Videos by Your Company]]></string>
+    <string name="page_home_title">스마트홈트</string>
+    <string name="page_program_btn_play">운동하기</string>
+    <string name="page_program_btn_play_start">시작하기</string>
+    <string name="list_exercise_title">운동</string>
+    <string name="list_recent_title">최근 본 프로그램</string>
+    <string name="list_recommend_title">추천프로그램</string>
+
+
     <string name="related_movies">Related Videos</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>
@@ -14,7 +21,7 @@
     <string name="buy_2">AT $9.99</string>
     <string name="movie">Movie</string>
 
-    <string name="btn_action_retry">retrye</string>
+    <string name="btn_action_retry">retry</string>
     <string name="btn_action_confirm">confirm</string>
     <string name="btn_action_finish">finish</string>
     <!-- Error messages -->

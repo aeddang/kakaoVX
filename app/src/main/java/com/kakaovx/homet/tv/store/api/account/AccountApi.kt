@@ -5,6 +5,11 @@ import com.kakaovx.homet.tv.store.api.ApiPath
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import retrofit2.http.*
 
+enum class AccountApiType{
+    JWT, JWT_REFRESH
+}
+
+
 interface AccountApi{
 
     @FormUrlEncoded

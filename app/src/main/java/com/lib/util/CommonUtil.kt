@@ -15,6 +15,7 @@ import android.util.Size
 import android.view.View
 import android.view.WindowManager
 import java.security.MessageDigest
+import kotlin.math.round
 
 
 object CommonUtil{
@@ -104,8 +105,13 @@ object CommonUtil{
         return str.toString()
     }
 
-
+    fun convertDpToPixel(context: Context, dp: Int): Int {
+        val density = context.applicationContext.resources.displayMetrics.density
+        return round(dp.toFloat() * density).toInt()
+    }
 }
+
+
 
 
 fun Size.getCropRatioSize(crop: Size):RectF{

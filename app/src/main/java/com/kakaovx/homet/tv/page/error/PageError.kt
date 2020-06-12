@@ -8,10 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
-import com.kakaovx.homet.tv.store.PageID
+import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.ApiCode
 import com.kakaovx.homet.tv.store.api.ApiError
-import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageErrorSupportFragment
 import dagger.android.support.AndroidSupportInjection
@@ -31,7 +30,9 @@ class PageError : PageErrorSupportFragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        apiError = null
+        redirectPage = null
+        buttonClickListener = null
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,18 +42,18 @@ class PageError : PageErrorSupportFragment(){
 
     override fun onPageParams(params: Map<String, Any?>) {
         super.onPageParams(params)
-        homeTApiError = params[API_ERROR] as? ApiError<HometApiType>
+        apiError = params[API_ERROR] as? ApiError<*>
         redirectPage = params[REDIRECT_PAGE] as? PageID
     }
 
-    private var homeTApiError:ApiError<HometApiType>? = null
-    private var redirectPage:PageID? = null
+    private var apiError:ApiError<*>? = null
+    private var redirectPage: PageID? = null
 
     private fun setErrorContent() {
         context ?: return
         var msg =  ""
         var actionType:ErrorActionType = ErrorActionType.Retry
-        homeTApiError?.let {
+        apiError?.let {
             val statusCode = it.code
             val msgData = getErrorMessage(statusCode, it.msg, context!!)
             msg = msgData.first
@@ -115,8 +116,9 @@ class PageError : PageErrorSupportFragment(){
                     return Pair(context.getString(R.string.error_stop_program), ErrorActionType.Finish)
                 }
                 else -> {
+                    val codeStr = if(code == null || code =="") ApiCode.ERROR_NONE else code
                     return Pair(
-                        msg ?: (context.getString(R.string.error_api) + "-" + ApiCode.ERROR_NONE),
+                        msg ?: (context.getString(R.string.error_api) + "-" + codeStr),
                         ErrorActionType.Confirm
                     )
                 }

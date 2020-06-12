@@ -1,0 +1,27 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <dimen name="font_heavy">40dp</dimen>
+    <dimen name="font_black">36dp</dimen>
+    <dimen name="font_extra_bold">32dp</dimen>
+    <dimen name="font_bold">24dp</dimen>
+    <dimen name="font_medium">18dp</dimen>
+    <dimen name="font_regular">16dp</dimen>
+    <dimen name="font_light">15dp</dimen>
+    <dimen name="font_extra_light">12dp</dimen>
+    <dimen name="font_thin">10dp</dimen>
+
+    <!-- margin -->
+    <dimen name="margin_heavy">32dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_regular">20dp</dimen>
+    <dimen name="margin_light">16dp</dimen>
+    <dimen name="margin_thin">10dp</dimen>
+    <dimen name="margin_extra_thin">5dp</dimen>
+
+
+    <!-- size -->
+    <dimen name="program_width">160dp</dimen>
+    <dimen name="program_height">90dp</dimen>
+
+</resources>

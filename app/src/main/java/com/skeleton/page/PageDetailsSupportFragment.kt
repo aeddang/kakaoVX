@@ -47,13 +47,14 @@ abstract class PageDetailsSupportFragment: DetailsSupportFragment(), PageViewFra
         view.viewTreeObserver?.addOnGlobalLayoutListener { onGlobalLayout() }
         if(pageObject?.isPopup == true ) delegate?.onAddedPage(pageObject!!)
         scope.createJob()
+        pageViewModel?.onCreateView(this, pageObject)
+        pageChileren?.forEach { it.lifecycleOwner = this }
         onCoroutineScope()
         scope.launch {
             delay(transactionTime)
             onTransactionCompleted()
         }
-        pageViewModel?.onCreateView(this, pageObject)
-        pageChileren?.forEach { it.lifecycleOwner = this }
+
     }
     @CallSuper
     override fun onGlobalLayout(){

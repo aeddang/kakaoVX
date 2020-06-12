@@ -1,6 +1,7 @@
 package com.skeleton.module.network
 
 
+import com.google.gson.JsonSyntaxException
 import com.lib.util.Log
 import kotlinx.coroutines.*
 import retrofit2.HttpException
@@ -19,16 +20,16 @@ abstract class NetworkAdapter<T>(var responseId:String?, val getData: () ->T?)  
         fun onFinish(id:String?){}
     }
     protected var apiInterface: ApiInterface<T>? = null
-
+    protected var job: Job? = null
     fun onSuccess(
         success: (T?) -> Unit,
-        error: (type: ErrorType, code:String) -> Unit
+        error: (type: ErrorType, code:String,  msg: String?) -> Unit
     ) {
         onStart(
             object : ApiInterface<T> {
                 override fun onReceive(response: T?, id:String?) { success(response) }
-                override fun onFail(type: ErrorType, code:String, id:String?) {  error(type, code) }
-                override fun onApiError(type: ErrorType, code:String, msg: String?, id:String?) {  error(type, code) }
+                override fun onFail(type: ErrorType, code:String, id:String?) {  error(type, code, null) }
+                override fun onApiError(type: ErrorType, code:String, msg: String?, id:String?) {  error(type, code, msg) }
                 override fun onFinish(id:String?) { }
             })
     }
@@ -49,7 +50,8 @@ abstract class NetworkAdapter<T>(var responseId:String?, val getData: () ->T?)  
     }
     private fun onStart(apiInterface: ApiInterface<T>?) {
         this.apiInterface = apiInterface
-        CoroutineScope(Dispatchers.IO).launch {
+
+        job = CoroutineScope(Dispatchers.IO).launch {
             try {
                 val result = getData.invoke()
                 result?.let {
@@ -59,40 +61,50 @@ abstract class NetworkAdapter<T>(var responseId:String?, val getData: () ->T?)  
                 }
 
             } catch (e: CancellationException) {
-                Log.e(NetworkAdapter.TAG, e)
-                apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL, responseId)
-                apiInterface?.onFinish(responseId)
+                //Log.d(TAG, e)
+                //apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL, responseId)
+                onCancel()
 
             } catch (e: HttpException) {
-                Log.e(NetworkAdapter.TAG, e)
+                Log.e(TAG, e)
                 apiInterface?.onFail(ErrorType.HTTP, e.code().toString(), responseId)
-                apiInterface?.onFinish(responseId)
+                onFinish()
 
             } catch (e: UnknownHostException) {
-                Log.e(NetworkAdapter.TAG, e)
+                Log.e(TAG, e)
                 apiInterface?.onFail(ErrorType.HOST, HttpStatusCode.HOST, responseId)
-                apiInterface?.onFinish(responseId)
+                onFinish()
 
             } catch (e: SocketTimeoutException){
-                Log.e(NetworkAdapter.TAG, e)
+                Log.e(TAG, e)
                 apiInterface?.onFail(ErrorType.TIME_OUT, HttpStatusCode.TIME_OUT, responseId)
-                apiInterface?.onFinish(responseId)
-
+                onFinish()
             } catch (e: Exception) {
-                Log.e(NetworkAdapter.TAG, e)
+                Log.d(TAG, e)
                 apiInterface?.onFail(ErrorType.EXCEPTION, HttpStatusCode.EXCEPTION, responseId)
-                apiInterface?.onFinish(responseId)
+                onFinish()
             }
         }
     }
 
     protected open fun onReceive(response: T?)  {
         apiInterface?.onReceive(response, responseId)
-        apiInterface?.onFinish(responseId)
+        onFinish()
+
     }
     protected fun onApiError(code:String, msg:String? = null)  {
         apiInterface?.onApiError(ErrorType.API,code,msg, responseId)
         apiInterface?.onFinish(responseId)
+    }
+    protected fun onFinish()  {
+        job?.cancel()
+        job = null
+        apiInterface?.onFinish(responseId)
+    }
+
+    protected fun onCancel()  {
+        job?.cancel()
+        job = null
     }
 
     protected fun retry() {

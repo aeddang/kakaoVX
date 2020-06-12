@@ -8,11 +8,9 @@ import androidx.lifecycle.Observer
 import com.kakaovx.homet.tv.store.api.*
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.preference.SettingPreference
-import com.lib.page.PageCoroutineScope
 import com.lib.page.PageLifecycleUser
 import com.skeleton.module.network.HttpStatusCode
 import kotlinx.coroutines.*
-import retrofit2.http.Query
 import java.util.*
 
 
@@ -24,8 +22,8 @@ class HometManager(
 ):  PageLifecycleUser {
 
 
-    val event = MutableLiveData<ApiEvent<HometApiType>>()
-    val error = MutableLiveData<ApiError<HometApiType>>()
+    val event = MutableLiveData<ApiEvent<HometApiType>?>()
+    val error = MutableLiveData<ApiError<HometApiType>?>()
 
     private var apiQ : ArrayList<HometApiData>  = ArrayList()
 
@@ -38,7 +36,7 @@ class HometManager(
                     }
                     apiQ.clear()
                 }
-                AccountManager.AccountEvent.onError -> { }
+                AccountManager.AccountEvent.onJwtError -> { }
                 else -> { }
             }
         })
@@ -70,6 +68,13 @@ class HometManager(
         loadApi(owner, HometApiType.PROGRAMS , param, filterPurpose)
     }
 
+    fun loadProgramDetail(owner:LifecycleOwner, programID:String){
+        val param = HashMap<String, String>()
+        param[ApiField.PROGRAM_ID] = programID
+        loadApi(owner, HometApiType.PROGRAM , param, programID)
+        loadApi(owner, HometApiType.PROGRAM_EXERCISE , param, programID)
+    }
+
 
     private fun getApi( type:HometApiType , params:Map<String, Any?>? = null)=  runBlocking { when ( type ){
         HometApiType.CATEGORY -> restApi.getCategory( accountManager.deviceKey )
@@ -98,7 +103,7 @@ class HometManager(
             params?.let {
                 programID  = it[ ApiField.PROGRAM_ID ] as? String? ?: programID
             }
-            restApi.getProgramExercise( accountManager.deviceKey , programID )
+            restApi.getProgramExercise( programID , accountManager.deviceKey )
         }
     }}
 
@@ -115,7 +120,7 @@ class HometManager(
             { data, id ->
                 data ?: return@onSuccess  onError( type , HttpStatusCode.DATA)
                 onSuccess(type, data, id)
-            },{ _, code, msg , id->
+            }, { _, code, msg , id->
                 if(code == ApiCode.ERROR_JWT_REFRESH) {
                     apiQ.add(HometApiData(owner, type, params))
                     accountManager.reflashJWT()
@@ -127,13 +132,18 @@ class HometManager(
         )
     }
 
+    fun clearEvent(){
+        error.value = null
+        event.value = null
+    }
+
     private fun checkAccountManagerStatus( type:HometApiType ) : Boolean{
+        if( accountManager.status  == AccountManager.AccountStatus.busy) return false
         if( accountManager.deviceKey == "") {
             accountManager.setupDeviceID()
             return false
         }
-
-        if( accountManager.status  == AccountManager.AccountStatus.busy || accountManager.status  == AccountManager.AccountStatus.error){
+        if( accountManager.status  == AccountManager.AccountStatus.error){
             accountManager.reflashJWT()
             return false
         }
@@ -145,7 +155,7 @@ class HometManager(
     }
 
     private fun onError( type:HometApiType ,code:String, msg:String? = null, respondId:String? = null){
-        error.value  = ApiError( type, code, msg, respondId )
+        error.postValue(ApiError( type, code, msg, respondId ))
     }
 
 

@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import com.kakaovx.homet.tv.store.api.*
 import com.kakaovx.homet.tv.store.preference.AccountPreference
 import com.kakaovx.homet.tv.store.preference.SettingPreference
-import com.lib.page.PageCoroutineScope
 import com.lib.page.PageLifecycleUser
+import com.skeleton.module.network.HttpStatusCode
 import kotlinx.coroutines.*
 
 
@@ -27,7 +27,7 @@ class AccountManager  (
     var tempJWT: String = "" ; private set
 
     enum class AccountEvent{
-        onActivity,onDeviceKey,onJWT, onError
+        onActivity,onDeviceKey,onJWT, onJwtError
     }
 
     enum class AccountStatus{
@@ -35,6 +35,7 @@ class AccountManager  (
     }
 
     var status:AccountStatus = AccountStatus.initiate ;private set
+    var error:ApiError<*>? = null
     val event = MutableLiveData<AccountEvent>()
 
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
@@ -68,7 +69,7 @@ class AccountManager  (
 
     fun loadJWT()  {
         if( deviceKey == "") {
-            onError()
+            onJwtError()
             return
         }
         status = AccountStatus.busy
@@ -77,14 +78,18 @@ class AccountManager  (
         }
             .onSuccess(
                 { onLoadJWT(it) },
-                { _, _ -> onError() }
+                { _, code , msg ->
+                    onJwtError( ApiError(AccountApiType.JWT, code , msg )) }
             )
-
     }
 
     fun reflashJWT() {
         if( deviceKey == ""){
-            onError()
+            onJwtError()
+            return
+        }
+        if(tempJWT == ""){
+            loadJWT()
             return
         }
         status = AccountStatus.busy
@@ -93,20 +98,21 @@ class AccountManager  (
         }
             .onSuccess(
                 { onLoadJWT(it) },
-                { _, _ -> onError() }
+                { _, code , msg ->
+                    onJwtError( ApiError(AccountApiType.JWT_REFRESH, code , msg )) }
             )
-
     }
 
     private fun onLoadJWT(data:HomeTResponse<*>?) {
         val jwtData = data?.data as JWTData?
-        jwtData ?: return onError()
-        jwtData.jwt ?: return onError()
+        jwtData ?: return onJwtError(ApiError(AccountApiType.JWT, HttpStatusCode.PARSE))
+        jwtData.jwt ?: return onJwtError(ApiError(AccountApiType.JWT, HttpStatusCode.PARSE))
         onReady(jwtData.jwt!!)
     }
-    private fun onError() {
+    private fun onJwtError(e:ApiError<*>? = null) {
+        error = e
         status = AccountStatus.error
-        event.postValue(AccountEvent.onError)
+        event.postValue(AccountEvent.onJwtError)
     }
 
     private fun onReady(jwt:String) {

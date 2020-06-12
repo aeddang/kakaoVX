@@ -1,11 +1,7 @@
 package com.kakaovx.homet.tv.page.home
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
@@ -13,12 +9,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.MovieList
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.page.component.items.ItemProgram
 import com.kakaovx.homet.tv.page.error.PageError
-import com.kakaovx.homet.tv.page.component.ProgramPresenter
-import com.kakaovx.homet.tv.store.PageID
+import com.kakaovx.homet.tv.page.program.PageProgram
+import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.CategoryData
 import com.kakaovx.homet.tv.store.api.homet.HometApiType
+import com.kakaovx.homet.tv.store.api.homet.ProgramData
 import com.kakaovx.homet.tv.store.api.homet.ProgramList
+import com.lib.util.Log
+import com.skeleton.component.item.ItemImageCardView
+import com.skeleton.component.item.ItemPresenter
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageBrowseSupportFragment
 import dagger.android.support.AndroidSupportInjection
@@ -31,9 +33,6 @@ class PageHome : PageBrowseSupportFragment(){
     protected lateinit var viewModel:PageHomeViewModel
     private val appTag = javaClass.simpleName
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -45,72 +44,112 @@ class PageHome : PageBrowseSupportFragment(){
         super.onDestroyView()
         viewModel.repo.disposeLifecycleOwner(this)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUIElements()
+    }
 
+    override fun onSuperBackPressAction() {
+        viewModel.repo.pagePresenter.superBackPressAction()
     }
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
         viewModel.repo.hometManager.event.observe(viewLifecycleOwner ,Observer { e ->
+            e ?: return@Observer
             val type = e.type as? HometApiType
+            val response = e.data as? HomeTResponse<*>
+            response ?: return@Observer
             type ?: return@Observer
             when(type){
                 HometApiType.CATEGORY -> {
-                    val cates = e.data as? List<CategoryData>
+                    val cates = response.data as? List<CategoryData>
                     cates ?: return@Observer
                     loadedCateGory(cates)
+                }
+                HometApiType.PROGRAMS -> {
+                    val programList = response.data as? ProgramList
+                    programList ?: return@Observer
+                    loadedProgramList(programList, e.id ?: "")
                 }
                 else -> {}
             }
         })
 
         viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
+            e ?: return@Observer
             val param = HashMap<String, Any>()
             param[PageError.API_ERROR] = e
-            viewModel.pageChange(PageID.ERROR, param)
+            viewModel.openPopup(PageID.ERROR, param)
         })
         viewModel.repo.loadApi(this, HometApiType.CATEGORY)
+
+        onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item, itemViewHolder) }
+        onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ -> onItemSelected(item) }
     }
+
+    private fun onItemClicked(item:Any?, itemViewHolder: Presenter.ViewHolder){
+        val program = item as? ProgramData
+        program ?: return
+        Log.i(appTag, program.toString())
+        val param = HashMap<String, Any>()
+        param[PageProgram.PROGRAM] = program
+        viewModel.pageChange(PageID.PROGRAM, param)
+        /*
+        viewModel.pageChange(PageID.PROGRAM, param,
+            (itemViewHolder.view as ImageCardView).mainImageView,
+            PageProgram.SHARE_IMAGE_NAME )
+        */
+    }
+    private fun onItemSelected(item:Any?){
+        val program = item as? ProgramData
+        program ?: return
+        Log.i(appTag, program.toString())
+        viewModel.repo.pageModel.backGroundImage.value = program.thumbnail
+    }
+
 
 
     private fun setupUIElements() {
-        title = getString(R.string.browse_title)
-        // over title
+        title = getString(R.string.page_home_title)
         headersState = BrowseSupportFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
-
-        activity ?: return
-        brandColor = ContextCompat.getColor(activity!!, R.color.fastlane_background)
-        searchAffordanceColor = ContextCompat.getColor(activity!!, R.color.search_opaque)
+        activity?.let {
+            brandColor = ContextCompat.getColor(it, R.color.colorAccent)
+            searchAffordanceColor = ContextCompat.getColor(it, R.color.color_white)
+        }
     }
 
+    private var categoryAdapters = HashMap<String, ArrayObjectAdapter>()
+    private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
     private fun loadedCateGory(cate: List<CategoryData>) {
         val list = MovieList.list
-        val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
+
         val cardPresenter = ProgramPresenter()
         cate.forEachIndexed { index, categoryData ->
             val listRowAdapter = ArrayObjectAdapter(cardPresenter)
             val header = HeaderItem(index.toLong(), categoryData.codeName)
             rowsAdapter.add(ListRow(header, listRowAdapter))
-            viewModel.repo.loadPrograms(this, categoryData.codeId ?: "", 1)
+            val key = categoryData.codeId
+            key?.let {
+                categoryAdapters[it] = listRowAdapter
+                viewModel.repo.loadPrograms(this, it , 1)
+            }
+        }
+    }
+
+    private fun loadedProgramList(programList: ProgramList, key:String) {
+        val list = programList.programs
+        list ?: return
+        list.forEach {
+            categoryAdapters[key]?.add(it)
         }
         adapter = rowsAdapter
     }
 
-    private fun loadedList(list: ProgramList, cate:String) {
-        val list = list.programs
-        list ?: return
-        val listNum = list.size
-        val rowsAdapter = adapter[0] as ListRow?
-        rowsAdapter ?: return
-        val listRowAdapter = rowsAdapter.adapter as ArrayObjectAdapter?
-        listRowAdapter ?: return
-        for (i in 0 until listNum) {
-            listRowAdapter.add(list[i])
-        }
-
+    inner class ProgramPresenter:ItemPresenter(){
+        override fun getItemView(): ItemImageCardView = ItemProgram(context!!)
     }
 
 

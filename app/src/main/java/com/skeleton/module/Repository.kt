@@ -6,7 +6,5 @@ import com.lib.page.PageLifecycleUser
 import com.skeleton.module.network.NetworkFactory
 
 abstract class Repository(
-    val ctx: Context,
-    val networkFactory: NetworkFactory,
-    val imageFactory: ImageFactory
+    val ctx: Context
 ): PageLifecycleUser

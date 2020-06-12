@@ -23,7 +23,7 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
             when(headersState){
                 HEADERS_ENABLED  ->{
                     if(isHeadersTransitionOnBackEnabled) {
-                        this.isHeadersTransitionOnBackEnabled = false
+                        onSuperBackPressAction()
                         return true
                     }
                 }
@@ -33,6 +33,8 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
             f ?: return false
             return true
         }
+
+    open fun onSuperBackPressAction(){}
 
     final override var pageObject: PageObject? = null
         set(value) {
@@ -57,13 +59,14 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
         view.viewTreeObserver?.addOnGlobalLayoutListener { onGlobalLayout() }
         if(pageObject?.isPopup == true ) delegate?.onAddedPage(pageObject!!)
         scope.createJob()
+        pageViewModel?.onCreateView(this, pageObject)
+        pageChileren?.forEach { it.lifecycleOwner = this }
         onCoroutineScope()
         scope.launch {
             delay(transactionTime)
             onTransactionCompleted()
         }
-        pageViewModel?.onCreateView(this, pageObject)
-        pageChileren?.forEach { it.lifecycleOwner = this }
+
     }
     @CallSuper
     override fun onGlobalLayout(){

@@ -45,6 +45,7 @@ interface PagePresenter {
     fun loading(isRock:Boolean = false): PagePresenter
     fun loaded(): PagePresenter
     fun finishApp()
+    fun superBackPressAction()
 }
 
 interface PageModel {

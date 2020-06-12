@@ -41,7 +41,16 @@ data class ProgramDetailData(
     @SerializedName("isMultiView") val isMultiView: Boolean? = null,
     @SerializedName("movieType") val movieType: String?,
     @SerializedName("movieTypeName") val movieTypeName: String?
-)
+){
+    val subtitle :String
+        get() {
+            return "$purposeName . $difficultyName"
+        }
+    val description :String
+        get() {
+            return "$exercisePlanCount / $averagePlayTime"
+        }
+}
 
 
 data class ExerciseData(

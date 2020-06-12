@@ -38,12 +38,12 @@ object ApiPath {
     const val HOMET_API_CATEGORY = "$VERSION_V1/$GROUP_PROGRAMS/category"
     const val HOMET_API_PROGRAMS = "$VERSION_V1/$GROUP_PROGRAMS"
     const val HOMET_API_PROGRAMS_RECENT = "$VERSION_V1/$GROUP_PROGRAMS/recent"
-    const val HOMET_API_PROGRAM = "$VERSION_V1/$GROUP_PROGRAMS{${ApiField.PROGRAM_ID}}"
-    const val HOMET_API_PROGRAM_EXERCISE = "$VERSION_V1/$GROUP_PROGRAMS{${ApiField.PROGRAM_ID}}/exercise"
+    const val HOMET_API_PROGRAM = "$VERSION_V1/$GROUP_PROGRAMS/{${ApiField.PROGRAM_ID}}"
+    const val HOMET_API_PROGRAM_EXERCISE = "$VERSION_V1/$GROUP_PROGRAMS/{${ApiField.PROGRAM_ID}}/exercise"
 }
 
 data class ApiEvent<T>(val type:T , val data:Any?, val id: String? = null)
-data class ApiError<T>(val type:T , val code:String, val msg:String?, val id: String? = null)
+data class ApiError<T>(val type:T , val code:String?, val msg:String? = null, val id: String? = null)
 
 object ApiValue{
 
@@ -99,7 +99,6 @@ object ApiCode{
     const val  ERROR_SERVER = "E999" //서버 오류가 있습니다.
     const val  ERROR_UNDEFINED = "E100" //알수 없는 오류가 발생하였습니다.
     const val  ERROR_NONE = "E1101" //서버에서 정의안된 오류.
-    const val  ERROR_PARSE = "E1102" //결과값 parse중 오류.
     const val  ERROR_MAINTAINANCE = "E898" //점검중
     const val  ERROR_NO_SERVICE = "E300" //서비스 제공이 잠시 중단된 프로그램 입니다.
 }

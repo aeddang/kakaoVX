@@ -84,4 +84,8 @@ open class PageActivityPresenter : PagePresenter{
         activity.finishApp()
     }
 
+    override fun superBackPressAction(){
+        activity.superBackPressAction()
+    }
+
 }

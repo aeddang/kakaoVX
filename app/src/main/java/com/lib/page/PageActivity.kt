@@ -147,9 +147,14 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
     open fun loading(isRock:Boolean = false){}
     open fun loaded(){}
 
+
+
     /*
     BackPressed
     */
+    fun superBackPressAction(){
+        super.onBackPressed()
+    }
     @CallSuper
     override fun onBackPressed() {
         if(popups.isNotEmpty()){

@@ -59,17 +59,6 @@ class NetworkFactory (val app: Application){
             .client(getHttpClient(interceptors))
             .build()
     }
-    /*
-    fun getRetrofitDownloader( address:String  ): Retrofit {
-        val eventBus = ProgressEventBus()
-        val downloadInterceptor = DownloadProgressInterceptor(eventBus)
-        val client = getHttpClient(listOf(downloadInterceptor))
-        return Retrofit.Builder()
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(address)
-            .client(client)
-            .build()
-    }*/
+
 }
 

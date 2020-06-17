@@ -30,6 +30,7 @@ import com.skeleton.component.item.ItemPresenter
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageDetailsSupportFragment
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.flow.flowOf
 import java.util.*
 import javax.inject.Inject
 
@@ -53,7 +54,6 @@ class PageProgram : PageDetailsSupportFragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.repo.disposeLifecycleOwner(this)
     }
 
     override fun onPageParams(params: Map<String, Any?>) {
@@ -69,24 +69,23 @@ class PageProgram : PageDetailsSupportFragment(){
         programData?.let{
             initializeBackground(it)
         }
+        adapter = programAdapter
     }
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
         val programID = programData?.programId
         programID ?: return
-        viewModel.event.observe(viewLifecycleOwner, Observer { e->
-            when(e){
-                PageViewModelEvent.DataLoaded ->{
-                    viewModel.programDetailData?.let { setupDetailsOverviewRow(it) }
-                    viewModel.exerciseList?.let {setupExerciseListRow(it) }
-                    viewModel.programList?.let {setupRecentProgramRow(it) }
-                    adapter = programAdapter
-                    onItemViewClickedListener = OnItemViewClickedListener { _, item, _, _ -> onItemSelected(item) }
-                }
-                else -> {}
-            }
-        })
+        viewModel.programDetailData.observe(viewLifecycleOwner, Observer {
+            it ?: return@Observer
+            setupDetailsOverviewRow(it) })
+        viewModel.exerciseList.observe(viewLifecycleOwner, Observer {
+            it ?: return@Observer
+            setupExerciseListRow(it) })
+        viewModel.programList.observe(viewLifecycleOwner, Observer {
+            it ?: return@Observer
+            setupRecentProgramRow(it)  })
+
         viewModel.loadData(programID)
     }
 

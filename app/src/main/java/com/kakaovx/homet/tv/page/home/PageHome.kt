@@ -7,7 +7,6 @@ import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.kakaovx.homet.tv.MovieList
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemProgram
 import com.kakaovx.homet.tv.page.error.PageError
@@ -42,7 +41,6 @@ class PageHome : PageBrowseSupportFragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.repo.disposeLifecycleOwner(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +54,7 @@ class PageHome : PageBrowseSupportFragment(){
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
-        viewModel.repo.hometManager.event.observe(viewLifecycleOwner ,Observer { e ->
+        viewModel.repo.hometManager.success.observe(viewLifecycleOwner ,Observer { e ->
             e ?: return@Observer
             val type = e.type as? HometApiType
             val response = e.data as? HomeTResponse<*>
@@ -83,6 +81,7 @@ class PageHome : PageBrowseSupportFragment(){
             param[PageError.API_ERROR] = e
             viewModel.openPopup(PageID.ERROR, param)
         })
+
         viewModel.repo.loadApi(this, HometApiType.CATEGORY)
 
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item, itemViewHolder) }
@@ -124,8 +123,6 @@ class PageHome : PageBrowseSupportFragment(){
     private var categoryAdapters = HashMap<String, ArrayObjectAdapter>()
     private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
     private fun loadedCateGory(cate: List<CategoryData>) {
-        val list = MovieList.list
-
         val cardPresenter = ProgramPresenter()
         cate.forEachIndexed { index, categoryData ->
             val listRowAdapter = ArrayObjectAdapter(cardPresenter)

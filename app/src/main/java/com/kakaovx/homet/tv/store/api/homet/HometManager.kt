@@ -22,7 +22,7 @@ class HometManager(
 ):  PageLifecycleUser {
 
 
-    val event = MutableLiveData<ApiEvent<HometApiType>?>()
+    val success = MutableLiveData<ApiSuccess<HometApiType>?>()
     val error = MutableLiveData<ApiError<HometApiType>?>()
 
     private var apiQ : ArrayList<HometApiData>  = ArrayList()
@@ -52,7 +52,7 @@ class HometManager(
 
     @Suppress("CAST_NEVER_SUCCEEDS")
     override fun disposeLifecycleOwner(owner: LifecycleOwner){
-        event.removeObservers( owner )
+        success.removeObservers( owner )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             apiQ.removeIf{ owner == it.owner }
         } else {
@@ -71,12 +71,17 @@ class HometManager(
     fun loadProgramDetail(owner:LifecycleOwner, programID:String){
         val param = HashMap<String, String>()
         param[ApiField.PROGRAM_ID] = programID
-        loadApi(owner, HometApiType.PROGRAM , param, programID)
-        loadApi(owner, HometApiType.PROGRAM_EXERCISE , param, programID)
+        val flows = arrayOf(
+            getApi(HometApiType.PROGRAM, param),
+            getApi(HometApiType.PROGRAM_EXERCISE,param))
+            //getApi(HometApiType.PROGRAMS_RECENT))
+        loadApis(owner, HometApiType.PROGRAM_DETAIL, flows)
+
     }
 
 
-    private fun getApi( type:HometApiType , params:Map<String, Any?>? = null)=  runBlocking { when ( type ){
+    private fun getApi( type:HometApiType , params:Map<String, Any?>? = null)=  runBlocking {
+        when ( type ){
         HometApiType.CATEGORY -> restApi.getCategory( accountManager.deviceKey )
         HometApiType.PROGRAMS -> {
             var filterPurpose = "01"
@@ -105,6 +110,7 @@ class HometManager(
             }
             restApi.getProgramExercise( programID , accountManager.deviceKey )
         }
+            else -> null
     }}
 
     fun loadApi(owner:LifecycleOwner, type:HometApiType , params:Map<String, Any?>? = null, respondId:String = ""){
@@ -132,9 +138,25 @@ class HometManager(
         )
     }
 
+    fun loadApis(owner:LifecycleOwner, type:HometApiType, flows: Array<HomeTResponse<out Any?>?>, respondId:String = ""){
+
+        HomeTFlow (
+            flows
+        )
+            .withRespondId(respondId)
+            .onSuccess(
+                { datas, id ->
+                    datas ?: return@onSuccess  onError( type , HttpStatusCode.DATA)
+                    onSuccess(type, datas, id)
+                }, { _, code, msg , id->
+                    onError( type , code, msg ,id)
+                }
+            )
+    }
+
     fun clearEvent(){
         error.value = null
-        event.value = null
+        success.value = null
     }
 
     private fun checkAccountManagerStatus( type:HometApiType ) : Boolean{
@@ -151,8 +173,9 @@ class HometManager(
     }
 
     private fun onSuccess(type:HometApiType , data:Any, respondId:String? = null){
-        event.value = ApiEvent( type, data , respondId)
+        success.value = ApiSuccess( type, data , respondId)
     }
+
 
     private fun onError( type:HometApiType ,code:String, msg:String? = null, respondId:String? = null){
         error.postValue(ApiError( type, code, msg, respondId ))

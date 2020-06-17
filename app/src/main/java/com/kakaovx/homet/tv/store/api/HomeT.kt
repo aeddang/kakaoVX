@@ -2,6 +2,7 @@ package com.kakaovx.homet.tv.store.api
 
 import com.google.gson.annotations.SerializedName
 import com.skeleton.module.network.NetworkAdapter
+import com.skeleton.module.network.NetworkFlow
 import okhttp3.Interceptor
 import java.io.IOException
 
@@ -44,5 +45,20 @@ class HomeTAdapter(getData: ()->HomeTResponse<*>? ) : NetworkAdapter<HomeTRespon
     }
 }
 
+class HomeTFlow(flow: Array<HomeTResponse<out Any?>?>) : NetworkFlow<HomeTResponse<*>>(null, flow) {
+
+    fun withRespondId(id:String): HomeTFlow{
+        responseId = id
+        return this
+    }
+
+    override fun onReceive(response: HomeTResponse<*>?) {
+        response ?: return super.onReceive(response)
+        when (response.code) {
+            ApiCode.SUCCESS -> super.onReceive(response)
+            else -> onApiError(response.code,response.message)
+        }
+    }
+}
 
 

@@ -16,7 +16,9 @@ data class HometApiData(val owner: LifecycleOwner,
 enum class HometApiType{
     CATEGORY,
     PROGRAMS,PROGRAMS_RECENT,PROGRAM,
-    PROGRAM_EXERCISE
+    PROGRAM_EXERCISE,
+
+    PROGRAM_DETAIL
 }
 
 

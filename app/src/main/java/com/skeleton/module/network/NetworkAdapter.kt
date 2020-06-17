@@ -1,7 +1,4 @@
 package com.skeleton.module.network
-
-
-import com.google.gson.JsonSyntaxException
 import com.lib.util.Log
 import kotlinx.coroutines.*
 import retrofit2.HttpException
@@ -61,8 +58,6 @@ abstract class NetworkAdapter<T>(var responseId:String?, val getData: () ->T?)  
                 }
 
             } catch (e: CancellationException) {
-                //Log.d(TAG, e)
-                //apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL, responseId)
                 onCancel()
 
             } catch (e: HttpException) {

@@ -6,8 +6,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kakaovx.homet.tv.store.PageRepository
-import com.kakaovx.homet.tv.store.api.ApiEvent
-import com.kakaovx.homet.tv.store.api.homet.HometApiType
 
 import com.lib.page.PageObject
 import com.lib.page.PageViewModel

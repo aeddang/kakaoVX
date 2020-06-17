@@ -3,8 +3,6 @@ package com.kakaovx.homet.tv.page.viewmodel
 import android.content.pm.ActivityInfo
 import androidx.lifecycle.MutableLiveData
 import com.kakaovx.homet.tv.R
-import com.kakaovx.homet.tv.store.api.ApiEvent
-import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.lib.page.PageModel
 import com.lib.page.PageObject
 

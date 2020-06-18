@@ -9,8 +9,14 @@ import com.kakaovx.homet.tv.store.api.*
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.preference.SettingPreference
 import com.lib.page.PageLifecycleUser
+import com.lib.util.Log
 import com.skeleton.module.network.HttpStatusCode
+import com.skeleton.module.network.NetworkAdapter
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import java.util.*
 
 
@@ -20,7 +26,6 @@ class HometManager(
     private val restApi: HometApi,
     private val accountManager: AccountManager
 ):  PageLifecycleUser {
-
 
     val success = MutableLiveData<ApiSuccess<HometApiType>?>()
     val error = MutableLiveData<ApiError<HometApiType>?>()
@@ -68,20 +73,31 @@ class HometManager(
         loadApi(owner, HometApiType.PROGRAMS , param, filterPurpose)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun loadProgramDetail(owner:LifecycleOwner, programID:String){
-        val param = HashMap<String, String>()
-        param[ApiField.PROGRAM_ID] = programID
-        val flows = arrayOf(
-            getApi(HometApiType.PROGRAM, param),
-            getApi(HometApiType.PROGRAM_EXERCISE,param))
-            //getApi(HometApiType.PROGRAMS_RECENT))
-        loadApis(owner, HometApiType.PROGRAM_DETAIL, flows)
+        val params = HashMap<String, String>()
+        params[ApiField.PROGRAM_ID] = programID
+        val types = arrayOf(HometApiType.PROGRAM, HometApiType.PROGRAM_EXERCISE, HometApiType.PROGRAMS_RECENT)
+        loadApiGroup(owner, types, types.map { params }.toTypedArray(), HometApiType.PROGRAM_DETAIL)
+    }
 
+    private val apiGroup = HashMap<String, ApiGroup<HometApiType> >()
+    fun loadApiGroup(owner:LifecycleOwner, types:Array<HometApiType> , params:Array<Map<String, Any?>?> = arrayOf(), groupType:HometApiType = HometApiType.GROUP ) : String {
+        val respondGroupId:String = UUID.randomUUID().toString()
+        val group = ArrayList<ApiSuccess<HometApiType>>()
+        apiGroup[respondGroupId] = ApiGroup(groupType, group, types.size)
+        types.zip( params ).forEach {
+            val type = it.first
+            val param = it.second
+            group.add( ApiSuccess( type, null  , null) )
+            loadApi(owner, type , param, respondGroupId)
+        }
+        return respondGroupId
     }
 
 
-    private fun getApi( type:HometApiType , params:Map<String, Any?>? = null)=  runBlocking {
-        when ( type ){
+    private fun getApi(type:HometApiType, params:Map<String, Any?>? = null)= runBlocking {
+    when ( type ){
         HometApiType.CATEGORY -> restApi.getCategory( accountManager.deviceKey )
         HometApiType.PROGRAMS -> {
             var filterPurpose = "01"
@@ -110,7 +126,7 @@ class HometManager(
             }
             restApi.getProgramExercise( programID , accountManager.deviceKey )
         }
-            else -> null
+        else -> null
     }}
 
     fun loadApi(owner:LifecycleOwner, type:HometApiType , params:Map<String, Any?>? = null, respondId:String = ""){
@@ -118,8 +134,8 @@ class HometManager(
             apiQ.add(HometApiData(owner, type, params))
             return
         }
-        HomeTAdapter{
-            getApi(type, params)
+        HomeTAdapter {
+             getApi(type, params)
         }
             .withRespondId(respondId)
             .onSuccess(
@@ -136,22 +152,6 @@ class HometManager(
                 onError( type , code ,null ,id )
             }
         )
-    }
-
-    fun loadApis(owner:LifecycleOwner, type:HometApiType, flows: Array<HomeTResponse<out Any?>?>, respondId:String = ""){
-
-        HomeTFlow (
-            flows
-        )
-            .withRespondId(respondId)
-            .onSuccess(
-                { datas, id ->
-                    datas ?: return@onSuccess  onError( type , HttpStatusCode.DATA)
-                    onSuccess(type, datas, id)
-                }, { _, code, msg , id->
-                    onError( type , code, msg ,id)
-                }
-            )
     }
 
     fun clearEvent(){
@@ -174,11 +174,20 @@ class HometManager(
 
     private fun onSuccess(type:HometApiType , data:Any, respondId:String? = null){
         success.value = ApiSuccess( type, data , respondId)
+        respondId?.let{ onGroupComplete(it, type, data) }
     }
-
 
     private fun onError( type:HometApiType ,code:String, msg:String? = null, respondId:String? = null){
         error.postValue(ApiError( type, code, msg, respondId ))
+        respondId?.let{ onGroupComplete(it, type) }
+    }
+
+    private fun onGroupComplete(respondId:String, type:HometApiType, data:Any? = null){
+        val groupSet = apiGroup[respondId]
+        groupSet?.let{ set->
+            set.group.find { it.type == type }?.data = data
+            if(set.finish()) success.postValue( ApiSuccess( set.type , set.group.map { it.data } , respondId) )
+        }
     }
 
 

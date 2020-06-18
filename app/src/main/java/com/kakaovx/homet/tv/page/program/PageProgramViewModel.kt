@@ -35,17 +35,18 @@ class PageProgramViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
         repo.hometManager.success.observe(owner, Observer { e ->
             e ?: return@Observer
             val type = e.type as? HometApiType
-            val responseAll = e.data as? ArrayList<HomeTResponse<*>>
-            responseAll ?: return@Observer
             type ?: return@Observer
             when (type) {
                 HometApiType.PROGRAM_DETAIL -> {
-                    responseAll.forEachIndexed{ idx, response ->
-                        when (idx) {
-                            0 -> programDetailData.value = response.data as? ProgramDetailData
-                            1 -> exerciseList.value = response.data as? List<ExerciseData>
-                            2 -> programList.value = response.data as? List<ProgramData>
-                            else -> {}
+                    val responseAll = e.data as? List<HomeTResponse<*>?>
+                    responseAll?.forEachIndexed{ idx, response ->
+                        response?.data?.let {
+                            when (idx) {
+                                0 -> programDetailData.value = it as? ProgramDetailData
+                                1 -> exerciseList.value = it  as? List<ExerciseData>
+                                2 -> programList.value = it  as? List<ProgramData>
+                                else -> {}
+                            }
                         }
                     }
                 }

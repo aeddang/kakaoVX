@@ -1,4 +1,5 @@
 package com.skeleton.module.network
+import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.lib.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -46,44 +47,45 @@ abstract class NetworkFlow<T>(var responseId:String?, val apis: Array<T?>)  {
                 override fun onFinish(responseAll:ArrayList<T?>?, id:String?) { if ( finished != null)  finished(responseAll, id) }
         })
     }
+
+
     private fun onStart(apiInterface: ApiInterface<T>?) {
         this.apiInterface = apiInterface
 
         job = CoroutineScope(Dispatchers.IO).launch {
-            flow {
-                apis.forEach {
-                    try {
-                       emit(it)
-
-                    } catch (e: CancellationException) {
-                        //Log.d(TAG, e)
-                        //apiInterface?.onFail(ErrorType.CANCEL, HttpStatusCode.CANCEL, responseId)
-                        onCancel()
-
-                    } catch (e: HttpException) {
-                        Log.e(NetworkAdapter.TAG, e)
-                        apiInterface?.onFail(ErrorType.HTTP, e.code().toString(), responseId)
-                        onFinish()
-
-                    } catch (e: UnknownHostException) {
-                        Log.e(NetworkAdapter.TAG, e)
-                        apiInterface?.onFail(ErrorType.HOST, HttpStatusCode.HOST, responseId)
-                        onFinish()
-
-                    } catch (e: SocketTimeoutException){
-                        Log.e(NetworkAdapter.TAG, e)
-                        apiInterface?.onFail(ErrorType.TIME_OUT, HttpStatusCode.TIME_OUT, responseId)
-                        onFinish()
-                    } catch (e: Exception) {
-                        Log.d(NetworkAdapter.TAG, e)
-                        apiInterface?.onFail(ErrorType.EXCEPTION, HttpStatusCode.EXCEPTION, responseId)
-                        onFinish()
-                    }
+            try {
+                flow {
+                    apis.forEach { emit(it) }
                 }
-            } .map {
-                onReceive(it)
-            }.flowOn(Dispatchers.Main)
-                .collectLatest { onFinish() }
+                .map { onReceive(it) }
+                .flowOn(Dispatchers.Main).collectLatest {
+                      onFinish()
+                }
+
+            } catch (e: CancellationException) {
+                Log.d(TAG, e)
+                onCancel()
+
+            } catch (e: HttpException) {
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.HTTP, e.code().toString(), responseId)
+                onFinish()
+
+            } catch (e: UnknownHostException) {
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.HOST, HttpStatusCode.HOST, responseId)
+                onFinish()
+
+            } catch (e: SocketTimeoutException){
+                Log.e(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.TIME_OUT, HttpStatusCode.TIME_OUT, responseId)
+                onFinish()
+            } catch (e: Exception) {
+                Log.d(NetworkAdapter.TAG, e)
+                apiInterface?.onFail(ErrorType.EXCEPTION, HttpStatusCode.EXCEPTION, responseId)
+                onFinish()
+            }
+
         }
     }
 
@@ -99,6 +101,7 @@ abstract class NetworkFlow<T>(var responseId:String?, val apis: Array<T?>)  {
         responseAll.add(null)
         apiInterface?.onApiError(ErrorType.API,code,msg, responseId)
     }
+
     protected fun onFinish()  {
         job?.cancel()
         job = null

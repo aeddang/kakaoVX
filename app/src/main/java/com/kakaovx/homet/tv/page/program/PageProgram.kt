@@ -87,9 +87,11 @@ class PageProgram : PageDetailsSupportFragment(){
             setupRecentProgramRow(it)  })
 
         viewModel.loadData(programID)
+
+        onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item) }
     }
 
-    private fun onItemSelected(item:Any?){
+    private fun onItemClicked(item:Any?){
         val program = item as? ProgramData
         program?.let {
             Log.i(appTag, program.toString())

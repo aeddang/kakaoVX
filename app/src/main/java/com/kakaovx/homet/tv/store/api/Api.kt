@@ -2,6 +2,8 @@ package com.kakaovx.homet.tv.store.api
 import android.content.Context
 import com.kakaovx.homet.tv.BuildConfig
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.store.api.homet.HometApiType
+import java.util.ArrayList
 
 object ApiPath {
     /**
@@ -42,8 +44,14 @@ object ApiPath {
     const val HOMET_API_PROGRAM_EXERCISE = "$VERSION_V1/$GROUP_PROGRAMS/{${ApiField.PROGRAM_ID}}/exercise"
 }
 
-data class ApiSuccess<T>(val type:T, val data:Any?, val id: String? = null)
+data class ApiSuccess<T>(val type:T, var data:Any?, val id: String? = null)
 data class ApiError<T>(val type:T , val code:String?, val msg:String? = null, val id: String? = null)
+data class ApiGroup<T>(val type:T, var group: ArrayList<ApiSuccess<T>>, var complete:Int){
+    fun finish():Boolean{
+        complete --
+        return complete <= 0
+    }
+}
 
 object ApiValue{
 

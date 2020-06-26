@@ -2,8 +2,9 @@
     <string name="app_name">스마트홈트</string>
     <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
     <string name="page_home_title">스마트홈트</string>
-    <string name="page_program_btn_play">운동하기</string>
-    <string name="page_program_btn_play_start">시작하기</string>
+    <string name="page_program_btn_play">체험하기</string>
+    <string name="page_exercise_btn_play">운동하기</string>
+
     <string name="list_exercise_title">운동</string>
     <string name="list_recent_title">최근 본 프로그램</string>
     <string name="list_recommend_title">추천프로그램</string>
@@ -50,5 +51,6 @@
     <string name="error_network_client">네트워크 연결이 안정적이지 않습니다. 네트워크 확인 후 앱을 다시 실행해주세요. </string>
     <string name="error_network_server">서버 접속이 원활하지 않습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
     <string name="error_api">콘텐츠 로드하는 중에 오류가 발생했습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
-    <string name="error_play_back">영상 로드하는 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="error_play_back">영상 재생 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="error_host">영상 로드하는 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
 </resources>

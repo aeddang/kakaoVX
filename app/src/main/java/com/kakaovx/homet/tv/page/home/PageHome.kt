@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemProgram
-import com.kakaovx.homet.tv.page.error.PageError
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.program.PageProgram
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.HomeTResponse
@@ -54,6 +54,7 @@ class PageHome : PageBrowseSupportFragment(){
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
+        viewModel.presenter.loading()
         viewModel.repo.hometManager.success.observe(viewLifecycleOwner ,Observer { e ->
             e ?: return@Observer
             val type = e.type as? HometApiType
@@ -77,15 +78,29 @@ class PageHome : PageBrowseSupportFragment(){
 
         viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
             e ?: return@Observer
+            if( e.type != HometApiType.CATEGORY ) return@Observer
             val param = HashMap<String, Any>()
-            param[PageError.API_ERROR] = e
-            viewModel.openPopup(PageID.ERROR, param)
+            param[PageErrorSurport.API_ERROR] = e
+            viewModel.openPopup(PageID.ERROR_SURPORT, param)
         })
 
-        viewModel.repo.loadApi(this, HometApiType.CATEGORY)
-
+        viewModel.observable.event.observe(this, Observer { evt->
+            if( evt?.id != PageID.ERROR_SURPORT.value) return@Observer
+            val type = evt.data as? PageErrorSurport.ErrorActionType?
+            type ?: return@Observer
+            when(type){
+                PageErrorSurport.ErrorActionType.Retry -> loadData()
+                PageErrorSurport.ErrorActionType.Confirm -> pageObject?.let{ viewModel.presenter.closePopup(it)}
+                else ->{}
+            }
+        })
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item, itemViewHolder) }
         onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ -> onItemSelected(item) }
+        loadData()
+    }
+
+    private fun loadData(){
+        viewModel.repo.loadApi(this, HometApiType.CATEGORY)
     }
 
     private fun onItemClicked(item:Any?, itemViewHolder: Presenter.ViewHolder){
@@ -137,6 +152,7 @@ class PageHome : PageBrowseSupportFragment(){
     }
 
     private fun loadedProgramList(programList: ProgramList, key:String) {
+        viewModel.presenter.loaded()
         val list = programList.programs
         list ?: return
         list.forEach {

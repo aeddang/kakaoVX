@@ -30,6 +30,7 @@ interface PagePresenter {
     val currentPage:PageObject?
     val lastPage:PageObject?
     val prevPage:PageObject?
+    val observable:PageAppViewModel
     fun getPageFragment(pageObject:PageObject?): PageView?
     fun goHome(idx:Int = 0): PagePresenter
     fun goBack(pageObject:PageObject?=null): PagePresenter
@@ -104,6 +105,8 @@ interface PageViewFragment : PageView{
 
 interface PageViewModel {
     val repository:Repository
+    val presenter:PagePresenter
+    val observable:PageAppViewModel
     fun onCreateView(owner: LifecycleOwner, pageObject:PageObject?){}
     fun onDestroyView(owner: LifecycleOwner, pageObject:PageObject?){}
 }
@@ -131,6 +134,7 @@ interface PageViewCoroutine {
 interface PageRequestPermission {
     fun onRequestPermissionResult(resultAll:Boolean ,  permissions: List<Boolean>?){}
 }
+
 
 
 

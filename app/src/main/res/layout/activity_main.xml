@@ -10,5 +10,12 @@
     <FrameLayout
         android:id="@+id/area"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+    <com.skeleton.component.progressbar.MultiStrokeSpinner
+        android:id="@+id/loadingSpinner"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"/>
 </FrameLayout>

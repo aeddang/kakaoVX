@@ -1,4 +1,4 @@
-package com.kakaovx.homet.tv.page.program
+package com.kakaovx.homet.tv.page.exercise
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -6,32 +6,25 @@ import androidx.lifecycle.Observer
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.store.PageRepository
 import com.kakaovx.homet.tv.store.api.HomeTResponse
-import com.kakaovx.homet.tv.store.api.homet.ExerciseData
-import com.kakaovx.homet.tv.store.api.homet.HometApiType
-import com.kakaovx.homet.tv.store.api.homet.ProgramData
-import com.kakaovx.homet.tv.store.api.homet.ProgramDetailData
+import com.kakaovx.homet.tv.store.api.homet.*
 import com.lib.page.PageObject
 
 
-
-class PageProgramViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
+class PageExerciseViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
     private val appTag = javaClass.simpleName
     override fun onCleared() {
         super.onCleared()
-        programDetailData.value = null
-        exerciseList.value = null
-        programList.value = null
+        exerciseDetailData.value = null
+        exerciseMotionsData.value = null
     }
 
     override fun onDestroyOwner(owner: LifecycleOwner, pageObject: PageObject?) {
-        programDetailData.removeObservers(owner)
-        exerciseList.removeObservers(owner)
-        programList.removeObservers(owner)
+        exerciseDetailData.removeObservers(owner)
+        exerciseMotionsData.removeObservers(owner)
     }
 
-    val programDetailData = MutableLiveData<ProgramDetailData?>()
-    val exerciseList = MutableLiveData<List<ExerciseData>?>()
-    val programList = MutableLiveData<List<ProgramData>?>()
+    val exerciseDetailData = MutableLiveData<ExerciseDetailData?>()
+    val exerciseMotionsData = MutableLiveData<ExerciseMotionsData?>()
 
     override fun onCreateView(owner: LifecycleOwner, pageObject: PageObject?) {
         super.onCreateView(owner, pageObject)
@@ -40,15 +33,14 @@ class PageProgramViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
             val type = e.type as? HometApiType
             type ?: return@Observer
             when (type) {
-                HometApiType.PROGRAM_DETAIL -> {
+                HometApiType.EXERCISE_DETAIL -> {
                     presenter.loaded()
                     val responseAll = e.data as? List<HomeTResponse<*>?>
                     responseAll?.forEachIndexed{ idx, response ->
                         response?.data?.let {
                             when (idx) {
-                                0 -> programDetailData.value = it as? ProgramDetailData
-                                1 -> exerciseList.value = it  as? List<ExerciseData>
-                                2 -> programList.value = it  as? List<ProgramData>
+                                0 -> exerciseDetailData.value = it as? ExerciseDetailData
+                                1 -> exerciseMotionsData.value = it as? ExerciseMotionsData?
                                 else -> {}
                             }
                         }
@@ -60,9 +52,9 @@ class PageProgramViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
 
     }
 
-    fun loadData(programID:String) {
+    fun loadData(programID:String, exerciseID:String, roundID:String) {
         presenter.loading()
-        owner?.let { repo.loadProgramDetail(it, programID) }
+        owner?.let { repo.loadExerciseDetail(it, programID, exerciseID, roundID) }
     }
 
 

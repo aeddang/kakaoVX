@@ -6,11 +6,14 @@ import com.kakaovx.homet.tv.BuildConfig
 import com.kakaovx.homet.tv.page.viewmodel.ActivityModel
 import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
 import com.kakaovx.homet.tv.store.PageRepository
+import com.kakaovx.homet.tv.store.api.ApiPath
 import com.kakaovx.homet.tv.store.api.HomeTInterceptor
 import com.kakaovx.homet.tv.store.api.account.AccountApi
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.api.homet.HometApi
 import com.kakaovx.homet.tv.store.api.homet.HometManager
+import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApi
+import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoManager
 import com.kakaovx.homet.tv.store.database.DataBaseManager
 import com.kakaovx.homet.tv.store.preference.AccountPreference
 import com.kakaovx.homet.tv.store.preference.SettingPreference
@@ -90,14 +93,22 @@ class StoreModule {
 
     @Provides
     @Singleton
+    fun provideWecandeoManager(@Named("appContext") ctx: Context,
+                            networkFactory: NetworkFactory
+    ): WecandeoManager = WecandeoManager(ctx,
+        networkFactory.getRetrofit(ApiPath.WECANDEO_ADDRESS).create(WecandeoApi::class.java))
+
+    @Provides
+    @Singleton
     fun providePageRepository(@Named("appContext") ctx: Context,
                               settingPreference:SettingPreference,
                               dataBaseManager: DataBaseManager,
                               accountManager: AccountManager,
                               hometManager: HometManager,
+                              wecandeoManager: WecandeoManager,
                               pageModel: ActivityModel,
                               pageProvider: FragmentProvider,
                               pagePresenter: PagePresenter
     ): PageRepository = PageRepository(ctx, settingPreference, dataBaseManager,
-        accountManager, hometManager, pageModel, pageProvider, pagePresenter)
+        accountManager, hometManager, wecandeoManager, pageModel, pageProvider, pagePresenter)
 }

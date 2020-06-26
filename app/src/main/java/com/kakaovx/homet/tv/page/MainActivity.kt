@@ -28,7 +28,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.lgtv.OMAReceiver
 import com.kakaovx.homet.tv.lgtv.utils.LogUtil
-import com.kakaovx.homet.tv.page.error.PageError
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.ActivityModel
 import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -40,6 +40,7 @@ import com.lib.page.PagePresenter
 import com.lib.page.PageRequestPermission
 import com.lib.util.Log
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,12 +79,11 @@ class MainActivity : PageActivity() {
                 AccountManager.AccountEvent.onJwtError ->{
                     repository.accountManager.error?.let { e->
                         val param = HashMap<String, Any>()
-                        param[PageError.API_ERROR] = e
-                        val po = pageProvider.getPageObject(PageID.ERROR)
+                        param[PageErrorSurport.API_ERROR] = e
+                        val po = pageProvider.getPageObject(PageID.ERROR_SURPORT)
                         po.params = param
-                        pageChange( po )
+                        openPopup(po, null, null)
                     }
-
                 }
                 else ->{}
             }
@@ -105,6 +105,16 @@ class MainActivity : PageActivity() {
         repository.disposeLifecycleOwner(this)
         backgroundManager.release()
 
+    }
+
+    override fun loading(isRock: Boolean) {
+        super.loading(isRock)
+        loadingSpinner.isLoading = true
+    }
+
+    override fun loaded() {
+        super.loaded()
+        loadingSpinner.isLoading = false
     }
 
 

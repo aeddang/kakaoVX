@@ -1,4 +1,4 @@
-package com.kakaovx.homet.tv.page.program
+package com.kakaovx.homet.tv.page.exercise
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -13,13 +13,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.*
-import com.kakaovx.homet.tv.page.component.items.ItemExercise
-import com.kakaovx.homet.tv.page.component.items.ItemProgram
-import com.kakaovx.homet.tv.page.exercise.PageExercise
+import com.kakaovx.homet.tv.page.component.items.ItemMotion
+import com.kakaovx.homet.tv.page.popups.PageVideo
 import com.kakaovx.homet.tv.page.viewmodel.PageID
-import com.kakaovx.homet.tv.store.api.homet.ExerciseData
-import com.kakaovx.homet.tv.store.api.homet.ProgramData
-import com.kakaovx.homet.tv.store.api.homet.ProgramDetailData
+import com.kakaovx.homet.tv.store.api.homet.*
+import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
 import com.lib.util.CommonUtil
 import com.lib.util.Log
 import com.skeleton.component.item.ItemImageCardView
@@ -27,85 +25,91 @@ import com.skeleton.component.item.ItemPresenter
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageDetailsSupportFragment
 import dagger.android.support.AndroidSupportInjection
-import java.util.*
+import java.util.HashMap
 import javax.inject.Inject
 
-class PageProgram : PageDetailsSupportFragment(){
+class PageExercise : PageDetailsSupportFragment(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    protected lateinit var viewModel: PageProgramViewModel
+    protected lateinit var viewModel: PageExerciseViewModel
     private val appTag = javaClass.simpleName
 
-    private var programData:ProgramData? = null
+    private var programID:String = ""
+    private var exerciseData:ExerciseData? = null
     private lateinit var detailsBackground: DetailsSupportFragmentBackgroundController
     private lateinit var presenterSelector: ClassPresenterSelector
-    private lateinit var programAdapter: ArrayObjectAdapter
+    private lateinit var exereciseAdapter: ArrayObjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(PageProgramViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(PageExerciseViewModel::class.java)
         pageViewModel = viewModel
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
     }
 
     override fun onPageParams(params: Map<String, Any?>) {
         super.onPageParams(params)
-        programData = params[PROGRAM] as ProgramData
+        programID = params[PROGRAM_ID] as? String ?: programID
+        exerciseData = params[EXERCISE] as ExerciseData
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         detailsBackground = DetailsSupportFragmentBackgroundController(this)
         presenterSelector = ClassPresenterSelector()
-        programAdapter = ArrayObjectAdapter(presenterSelector)
-        programData?.let{
+        exereciseAdapter = ArrayObjectAdapter(presenterSelector)
+        exerciseData?.let{
             initializeBackground(it)
         }
-        adapter = programAdapter
+        adapter = exereciseAdapter
     }
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
-        val programID = programData?.programId
-        programID ?: return
-        viewModel.programDetailData.observe(viewLifecycleOwner, Observer {
+        exerciseData ?: return
+        viewModel.exerciseDetailData.observe(viewLifecycleOwner, Observer {
             it ?: return@Observer
             setupDetailsOverviewRow(it) })
-        viewModel.exerciseList.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
-            setupExerciseListRow(it) })
-        viewModel.programList.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
-            setupRecentProgramRow(it)  })
+        viewModel.exerciseMotionsData.observe(viewLifecycleOwner, Observer { motionData->
+            motionData ?: return@Observer
+            motionData.motions?.let {
+                setupMotionListRow(it)
+            }
+        })
 
-        viewModel.loadData(programID)
+        viewModel.loadData(programID,
+            exerciseData?.exerciseId ?: "",
+            exerciseData?.roundId ?: "")
 
         onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item) }
     }
 
     private fun onItemClicked(item:Any?){
-        val program = item as? ProgramData
-        program?.let {
-            Log.i(appTag, program.toString())
+        val motionData = viewModel.exerciseMotionsData.value
+        motionData ?: return
+        val motion = item as? MotionData
+        motion?.let {
+            Log.i(appTag, motion.toString())
             val param = HashMap<String, Any>()
-            param[PageProgram.PROGRAM] = program
-            viewModel.pageChange(PageID.PROGRAM, param)
-        }
-        val exercise = item as? ExerciseData
-        exercise?.let {
-            Log.i(appTag, exercise.toString())
-            val param = HashMap<String, Any>()
-            param[PageExercise.PROGRAM_ID] = programData?.programId ?: ""
-            param[PageExercise.EXERCISE] = it
-            viewModel.pageChange(PageID.EXERCISE, param)
+            val videoData = PageVideo.VideoData("")
+            videoData.title = motion.title
+            videoData.subtitle = motion.subtitle
+            val playData = PlayData(it.movieUrl ?: "")
+            playData.mediaAccessApiUrl = motionData.mediaAccessApiUrl
+            playData.mediaAccessApiKey = motionData.mediaAccessApiKey
+            playData.mediaAccesskey = it.mediaAccesskey
+            param[PageVideo.PLAY_DATA] = playData
+            param[PageVideo.VIDEO] = videoData
+            viewModel.openPopup(PageID.VIDEO, param)
         }
     }
 
-    private fun initializeBackground(data:ProgramData) {
+    private fun initializeBackground(data:ExerciseData) {
         detailsBackground.enableParallax()
         context ?: return
         Glide.with(this).asBitmap()
@@ -114,14 +118,15 @@ class PageProgram : PageDetailsSupportFragment(){
             .into(object : CustomTarget<Bitmap>(){
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     detailsBackground.coverBitmap = resource
-                    programAdapter.notifyArrayItemRangeChanged(0, programAdapter.size())
+                    exereciseAdapter.notifyArrayItemRangeChanged(0, exereciseAdapter.size())
                 }
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
     }
 
-    private fun setupDetailsOverviewRow(data:ProgramDetailData) {
+    private fun setupDetailsOverviewRow(data:ExerciseDetailData) {
         context ?: return
+
         val row = DetailsOverviewRow(data)
         row.imageDrawable = ContextCompat.getDrawable(context!!, R.drawable.default_background)
         val width = CommonUtil.convertDpToPixel(context!!, DETAIL_THUMB_WIDTH)
@@ -132,33 +137,25 @@ class PageProgram : PageDetailsSupportFragment(){
             .into(object : CustomTarget<Bitmap>(width, height){
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     row.imageDrawable = BitmapDrawable(resources, resource)
-                    programAdapter.notifyArrayItemRangeChanged(0, programAdapter.size())
+                    exereciseAdapter.notifyArrayItemRangeChanged(0, exereciseAdapter.size())
                 }
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
+
 
         val actionAdapter = ArrayObjectAdapter()
         actionAdapter.add(
             Action(
                 ACTION_PLAY,
-                resources.getString(R.string.page_program_btn_play)
+                resources.getString(R.string.page_exercise_btn_play)
             )
         )
         row.actionsAdapter = actionAdapter
 
-        programAdapter.add(row)
+        exereciseAdapter.add(row)
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(DetailsDescriptionPresenter())
         activity?.let {  detailsPresenter.backgroundColor = ContextCompat.getColor(it, R.color.selected_background) }
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
-            viewModel.exerciseList.value?.let {
-                if(it.isEmpty()) return@let
-                val exercise = it.first()
-                Log.i(appTag, exercise.toString())
-                val param = HashMap<String, Any>()
-                param[PageExercise.PROGRAM_ID] = programData?.programId ?: ""
-                param[PageExercise.EXERCISE] = it.first()
-                viewModel.pageChange(PageID.EXERCISE, param)
-            }
 
         }
         presenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
@@ -167,46 +164,37 @@ class PageProgram : PageDetailsSupportFragment(){
 
 
 
-    private fun setupExerciseListRow(exerciseList:List<ExerciseData>) {
+    private fun setupMotionListRow(exerciseList:List<MotionData>) {
 
         val listRowAdapter = ArrayObjectAdapter(ExercisePresenter())
         exerciseList.forEach { listRowAdapter.add(it) }
         val header = HeaderItem(0, context!!.getString(R.string.list_exercise_title))
-        programAdapter.add(ListRow(header, listRowAdapter))
+        exereciseAdapter.add(ListRow(header, listRowAdapter))
         presenterSelector.addClassPresenter(ListRow::class.java, ListRowPresenter())
     }
 
-    private fun setupRecentProgramRow(exerciseList:List<ProgramData>) {
-        val listRowAdapter = ArrayObjectAdapter(ProgramPresenter())
-        exerciseList.forEach { listRowAdapter.add(it) }
-        val header = HeaderItem(0, context!!.getString(R.string.list_recent_title))
-        programAdapter.add(ListRow(header, listRowAdapter))
-        presenterSelector.addClassPresenter(ListRow::class.java, ListRowPresenter())
-    }
 
     inner class ExercisePresenter:ItemPresenter(){
-        override fun getItemView(): ItemImageCardView = ItemExercise(context!!)
+        override fun getItemView(): ItemImageCardView = ItemMotion(context!!)
     }
-    inner class ProgramPresenter:ItemPresenter(){
-        override fun getItemView(): ItemImageCardView = ItemProgram(context!!)
-    }
+
 
     inner class DetailsDescriptionPresenter: AbstractDetailsDescriptionPresenter() {
         override fun onBindDescription(viewHolder: ViewHolder,  item: Any) {
-            val program = item as ProgramDetailData
-            viewHolder.title.text = program.title
-            viewHolder.subtitle.text = program.subtitle
-            viewHolder.body.text = program.description
+            val exercise = item as ExerciseDetailData
+            viewHolder.title.text = exercise.title
+            viewHolder.subtitle.text = exercise.subtitle
+            viewHolder.body.text = exercise.description
         }
     }
 
     companion object {
-        const val PROGRAM = "program"
-        const val SHARE_IMAGE_NAME = "${PROGRAM}shareName"
+        const val PROGRAM_ID = "programID"
+        const val EXERCISE = "exercise"
+        const val SHARE_IMAGE_NAME = "${EXERCISE}shareName"
 
         private const val DETAIL_THUMB_WIDTH = 274
         private const val DETAIL_THUMB_HEIGHT = 274
-
         private const val ACTION_PLAY = 1L
 
 

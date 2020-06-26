@@ -1,5 +1,8 @@
 package com.lib.page
+import android.content.Context
 import android.content.pm.PackageManager
+import android.net.*
+import android.net.ConnectivityManager.*
 import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -29,7 +32,7 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
     protected val popups = ArrayList< PageObject >()
 
     private var currentRequestPermissions = HashMap< Int , PageRequestPermission >()
-
+    val pageAppViewModel = PageAppViewModel()
 
     val currentPage: PageObject?
         get(){
@@ -70,6 +73,37 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
         super.onCreate(savedInstanceState)
         setContentView( getLayoutResID() )
         onCreatedView()
+        val builder = NetworkRequest.Builder()
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerNetworkCallback(builder.build(),object: NetworkCallback(){
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+            }
+
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                super.onCapabilitiesChanged(network, networkCapabilities)
+                pageAppViewModel.networkStatus.postValue(PageNetworkStatus.AVAILABLE)
+            }
+
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                super.onLinkPropertiesChanged(network, linkProperties)
+            }
+
+            override fun onLosing(network: Network, maxMsToLive: Int) {
+                super.onLosing(network, maxMsToLive)
+                pageAppViewModel.networkStatus.postValue(PageNetworkStatus.LOST)
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                pageAppViewModel.networkStatus.postValue(PageNetworkStatus.LOST)
+            }
+        })
+        pageAppViewModel.networkStatus.value = if( connectivityManager.isDefaultNetworkActive ) PageNetworkStatus.AVAILABLE else PageNetworkStatus.LOST
+
     }
     @CallSuper
     protected open fun onCreatedView(){
@@ -146,8 +180,6 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
     open fun finishApp(){ super.finish() }
     open fun loading(isRock:Boolean = false){}
     open fun loaded(){}
-
-
 
     /*
     BackPressed
@@ -279,6 +311,8 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
                 if( activityModel.isHistoryPage(it) ) historys.push(it)
             }
         }
+        if(activityModel.currentPageObject == null) pageAppViewModel.event.value = PageEvent(PageEventType.INIT, pageObject.pageID, pageObject.params)
+        pageAppViewModel.event.value = PageEvent(PageEventType.CHANGE_PAGE, pageObject.pageID, pageObject.params)
         activityModel.currentPageObject = pageObject
     }
 
@@ -311,6 +345,8 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
             }
         } catch(e:IllegalStateException){ }
         popups.add(pageObject)
+        pageAppViewModel.event.value = PageEvent(PageEventType.ADD_POPUP, pageObject.pageID, pageObject.params)
+
     }
     private fun onCloseAllPopup(isAni:Boolean = false) {
         try {
@@ -321,6 +357,7 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
                     if (isAni) transaction.setCustomAnimations(getPopupIn(), getPopupOut())
                     transaction.remove(f.pageFragment)
                 }
+                pageAppViewModel.event.value = PageEvent(PageEventType.REMOVE_POPUP, p.pageID, p.params)
             }
             transaction.commitNow()
         }catch(e:IllegalStateException){ }
@@ -342,24 +379,31 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
 
         } catch(e:IllegalStateException){
             Log.i(appTag, "onClosePopup ${e.message}")
-
         }
+        pageAppViewModel.event.value = PageEvent(PageEventType.REMOVE_POPUP, pageObject.pageID, pageObject.params)
     }
 
     @CallSuper
     override fun onAddedPage(pageObject: PageObject){
+        pageAppViewModel.event.value =
+            if(pageObject.isPopup) PageEvent(PageEventType.ADDED_POPUP, pageObject.pageID, pageObject.params)
+            else PageEvent(PageEventType.CHANGED_PAGE, pageObject.pageID, pageObject.params)
         getPageFragment(activityModel.currentPageObject)?.onPageAdded(pageObject)
         popups.forEach { getPageFragment(it)?.onPageAdded( pageObject ) }
     }
 
     @CallSuper
     override fun onRemovedPage(pageObject: PageObject){
+        if(pageObject.isPopup) pageAppViewModel.event.value = PageEvent(PageEventType.REMOVED_POPUP, pageObject.pageID, pageObject.params)
         getPageFragment(activityModel.currentPageObject)?.onPageRemoved(pageObject)
         popups.forEach { getPageFragment(it)?.onPageRemoved(pageObject) }
     }
 
     @CallSuper
     override fun onEvent(pageObject: PageObject, type:String, data:Any?){
+        val eventType = PageEventType.EVENT
+        eventType.id = type
+        pageAppViewModel.event.value = PageEvent(PageEventType.EVENT, pageObject.pageID, pageObject.params)
         getPageFragment(activityModel.currentPageObject)?.onPageEvent(pageObject, type, data)
         popups.forEach { getPageFragment(it)?.onPageEvent(pageObject, type, data) }
     }

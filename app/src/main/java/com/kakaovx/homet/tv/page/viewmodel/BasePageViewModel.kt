@@ -3,25 +3,22 @@ package com.kakaovx.homet.tv.page.viewmodel
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kakaovx.homet.tv.store.PageRepository
+import com.lib.page.PageAppViewModel
 
 import com.lib.page.PageObject
+import com.lib.page.PagePresenter
 import com.lib.page.PageViewModel
 import com.skeleton.module.Repository
-
-enum class PageViewModelEvent{
-    DataLoad, DataLoaded, DataLoadError
-}
 
 
 open class BasePageViewModel(val repo: PageRepository) : ViewModel(), PageViewModel {
     override val repository: Repository get() = repo
+    override val observable: PageAppViewModel get() = repo.pagePresenter.observable
+    override val presenter:PagePresenter get() = repo.pagePresenter
     protected var owner: LifecycleOwner? = null
 
-
-    val event = MutableLiveData<PageViewModelEvent>()
 
     @CallSuper
     override fun onCreateView(owner: LifecycleOwner, pageObject: PageObject?) {
@@ -31,9 +28,13 @@ open class BasePageViewModel(val repo: PageRepository) : ViewModel(), PageViewMo
 
     @CallSuper
     override fun onDestroyView(owner: LifecycleOwner , pageObject: PageObject?) {
+        if(this.owner != owner) return
         repository.disposeLifecycleOwner(owner)
         this.owner = null
+        onDestroyOwner(owner, pageObject)
     }
+
+    protected open fun onDestroyOwner(owner: LifecycleOwner , pageObject: PageObject?) {}
 
     @CallSuper
     override fun onCleared() {
@@ -52,6 +53,11 @@ open class BasePageViewModel(val repo: PageRepository) : ViewModel(), PageViewMo
         val po = repo.pageProvider.getPageObject(pageID)
         po.params = params
         repo.pagePresenter.openPopup(po)
+    }
+
+    fun closePopup(pageID: PageID){
+        val po = repo.pageProvider.getPageObject(pageID)
+        repo.pagePresenter.closePopup(po)
     }
 
     fun goBack() = repo.pagePresenter.goBack()

@@ -15,6 +15,9 @@ open class PageActivityPresenter : PagePresenter{
     override val prevPage: PageObject?
         get() = activity.prevPage
 
+    override val observable: PageAppViewModel
+        get() = activity.pageAppViewModel
+
     override fun getPageFragment(pageObject: PageObject?) = activity.getPageFragment(pageObject)
     override fun goHome(idx: Int): PagePresenter {
         activity.goHome(idx)

@@ -1,4 +1,8 @@
 package com.skeleton.module.network
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.net.NetworkRequest
 import com.lib.util.Log
 import kotlinx.coroutines.*
 import retrofit2.HttpException

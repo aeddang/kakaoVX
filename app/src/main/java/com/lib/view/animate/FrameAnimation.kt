@@ -1,15 +1,14 @@
 package com.lib.view.animate
-
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import androidx.annotation.CallSuper
-import com.lib.util.Log
+import androidx.annotation.DrawableRes
 
 
-open class FrameAnimation@kotlin.jvm.JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    :  AnimatedDrawView(context, attrs, defStyleAttr) {
+open class FrameAnimation: AnimateDrawView {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet) : super(context,attrs)
+    private val appTag = javaClass.simpleName
     private var paint = Paint()
     private var low = 1
     private var column = 1
@@ -31,7 +30,7 @@ open class FrameAnimation@kotlin.jvm.JvmOverloads constructor(context: Context, 
         }
     private var bitmap:Bitmap? = null
 
-    fun initSet(resId:Int, column:Int, low:Int, isRefeat:Boolean = false, fps:Long = 1000/60, totalFrame:Int = -1) {
+    fun initSet(@DrawableRes resId:Int, column:Int, low:Int, isRefeat:Boolean = false, fps:Long = 1000/60, totalFrame:Int = -1) {
         this.fps = fps
         this.low = low
         this. column = column
@@ -60,7 +59,6 @@ open class FrameAnimation@kotlin.jvm.JvmOverloads constructor(context: Context, 
         if( width != 0 && height != 0) dest = Rect(0, 0, width, height)
     }
 
-    
     override fun onCompute(f: Int) {
         currentFrame += move
         if(isRefeat){
@@ -83,10 +81,5 @@ open class FrameAnimation@kotlin.jvm.JvmOverloads constructor(context: Context, 
         src = Rect(tx, ty, tx + frameWidth, ty + frameHeight)
         if(currentFrame == frame) onCompleted(f)
 
-    }
-
-    @CallSuper
-    override fun onCompleted(f: Int) {
-        stopAnimation()
     }
 }

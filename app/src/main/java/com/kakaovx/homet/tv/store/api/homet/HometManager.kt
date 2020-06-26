@@ -10,6 +10,7 @@ import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.preference.SettingPreference
 import com.lib.page.PageLifecycleUser
 import com.lib.util.Log
+import com.skeleton.module.network.ErrorType
 import com.skeleton.module.network.HttpStatusCode
 import com.skeleton.module.network.NetworkAdapter
 import kotlinx.coroutines.*
@@ -81,6 +82,18 @@ class HometManager(
         loadApiGroup(owner, types, types.map { params }.toTypedArray(), HometApiType.PROGRAM_DETAIL)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun loadExerciseDetail(owner:LifecycleOwner, programID:String, exerciseID:String, roundID:String){
+        val params = HashMap<String, String>()
+        params[ApiField.PROGRAM_ID] = programID
+        params[ApiField.EXERCISE_ID] = exerciseID
+        params[ApiField.ROUND_ID] = roundID
+        val types = arrayOf(HometApiType.EXERCISE, HometApiType.EXERCISE_MOTION)
+        loadApiGroup(owner, types, types.map { params }.toTypedArray(), HometApiType.EXERCISE_DETAIL)
+    }
+
+
+
     private val apiGroup = HashMap<String, ApiGroup<HometApiType> >()
     fun loadApiGroup(owner:LifecycleOwner, types:Array<HometApiType> , params:Array<Map<String, Any?>?> = arrayOf(), groupType:HometApiType = HometApiType.GROUP ) : String {
         val respondGroupId:String = UUID.randomUUID().toString()
@@ -126,12 +139,27 @@ class HometManager(
             }
             restApi.getProgramExercise( programID , accountManager.deviceKey )
         }
+        HometApiType.EXERCISE, HometApiType.EXERCISE_MOTION -> {
+            var programID = ""
+            var exerciseID = ""
+            var roundID = ""
+            params?.let {
+                programID  = it[ ApiField.PROGRAM_ID ] as? String? ?: programID
+                exerciseID  = it[ ApiField.EXERCISE_ID ] as? String? ?: exerciseID
+                roundID  = it[ ApiField.ROUND_ID ] as? String? ?: roundID
+            }
+            when(type){
+                HometApiType.EXERCISE_MOTION -> restApi.getExerciseMotion(exerciseID , accountManager.deviceKey, programID)
+                else -> restApi.getExercise( exerciseID , accountManager.deviceKey, programID, roundID)
+            }
+        }
         else -> null
     }}
 
     fun loadApi(owner:LifecycleOwner, type:HometApiType , params:Map<String, Any?>? = null, respondId:String = ""){
         if( ! checkAccountManagerStatus(type) ) {
-            apiQ.add(HometApiData(owner, type, params))
+            val f = apiQ.find { it.type == type }
+            if( f == null) apiQ.add(HometApiData(owner, type, params))
             return
         }
         HomeTAdapter {

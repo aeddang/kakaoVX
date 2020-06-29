@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.page.viewmodel.Video
+import com.kakaovx.homet.tv.page.viewmodel.VideoData
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApiType
 import com.lib.page.PageFragmentCoroutine
@@ -13,8 +15,6 @@ import com.lib.util.Log
 import com.skeleton.component.alert.CustomDialog
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.page_video_exo.*
-import kotlinx.android.synthetic.main.page_video_view.*
 import kotlinx.android.synthetic.main.page_video_view.btnTest0
 import kotlinx.android.synthetic.main.page_video_view.player
 import java.util.HashMap
@@ -28,7 +28,7 @@ class PageVideoView : PageFragmentCoroutine(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     protected lateinit var viewModel: BasePageViewModel
-    private var videoData:VideoData? = null
+    private var videoData: VideoData? = null
     private var playData: PlayData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

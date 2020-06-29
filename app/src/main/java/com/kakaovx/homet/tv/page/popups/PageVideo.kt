@@ -1,20 +1,12 @@
 package com.kakaovx.homet.tv.page.popups
 
-import android.media.MediaDataSource
-import android.media.browse.MediaBrowser
 import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
-import com.kakaovx.homet.tv.page.viewmodel.PageError
-import com.kakaovx.homet.tv.page.viewmodel.PageID
-import com.kakaovx.homet.tv.page.viewmodel.VideoError
-import com.kakaovx.homet.tv.store.api.wecandeo.MovieSignedData
+import com.kakaovx.homet.tv.page.viewmodel.*
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApiType
-import com.lib.page.PageNetworkStatus
-import com.lib.page.PageObject
 import com.lib.util.Log
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PagePlayBackFragment
@@ -30,7 +22,7 @@ class PageVideo : PagePlayBackFragment(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     protected lateinit var viewModel: BasePageViewModel
-    private var videoData:VideoData? = null
+    private var videoData: VideoData? = null
     private var playData:PlayData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

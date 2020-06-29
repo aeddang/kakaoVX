@@ -15,7 +15,6 @@ android {
         versionCode 2
         versionName "1.00.01"
         multiDexEnabled true
-
         buildConfigField "String", "OS_TYPE", "\"aos\""
     }
     dataBinding {
@@ -29,14 +28,17 @@ android {
     productFlavors {
         dev {
             buildConfigField "String", "APP_REST_ADDRESS", "\"https://tv.kakaovx.co.kr:443/\""
+            buildConfigField "String", "APP_STORAGE_ADDRESS", "\"http://nplutotest.nowcdn.co.kr/homet/\""
         }
 
         stage {
             buildConfigField "String", "APP_REST_ADDRESS", "\"https://tv.kakaovx.co.kr:443/\""
+            buildConfigField "String", "APP_STORAGE_ADDRESS", "\"http://htimg.kakaovx.com/homet_stage/\""
         }
 
         live {
             buildConfigField "String", "APP_REST_ADDRESS", "\"https://tv.kakaovx.co.kr:443/\""
+            buildConfigField "String", "APP_STORAGE_ADDRESS", "\"http://htimg.kakaovx.com/homet/\""
         }
     }
 

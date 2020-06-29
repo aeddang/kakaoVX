@@ -14,8 +14,8 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.*
 import com.kakaovx.homet.tv.page.component.items.ItemMotion
-import com.kakaovx.homet.tv.page.popups.Video
-import com.kakaovx.homet.tv.page.popups.VideoData
+import com.kakaovx.homet.tv.page.viewmodel.Video
+import com.kakaovx.homet.tv.page.viewmodel.VideoData
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.homet.*
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData

@@ -173,7 +173,7 @@ data class MovieUrlData(
 
 data class ExerciseFlagData(
     @SerializedName("type") val type: String?,
-    @SerializedName("breakTime") val breakTime: BreakTimeData?,
+    @SerializedName("breakTime") val breakTime: ExerciseBreakTimeData?,
     @SerializedName("motion") val motion: ExerciseMotionData?
 )
 
@@ -191,6 +191,10 @@ data class ExerciseMotionData(
     @SerializedName("exerciseType") val exerciseType: String?,
     @SerializedName("motionParts") val motionParts: String?,
     @SerializedName("motionDifficulty") val motionDifficulty: String?
+)
+
+data class ExerciseBreakTimeData(
+    @SerializedName("time") val time: String?
 )
 
 data class ExerciseStartData(

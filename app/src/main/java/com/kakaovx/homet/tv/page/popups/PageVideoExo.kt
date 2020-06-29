@@ -1,17 +1,16 @@
 package com.kakaovx.homet.tv.page.popups
 
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.page.viewmodel.Video
+import com.kakaovx.homet.tv.page.viewmodel.VideoData
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApiType
 import com.lib.page.PageFragmentCoroutine
-import com.lib.page.PageObject
 import com.lib.util.Log
 import com.skeleton.component.alert.CustomDialog
 import com.skeleton.module.ViewModelFactory
@@ -28,7 +27,7 @@ class PageVideoExo : PageFragmentCoroutine(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     protected lateinit var viewModel: BasePageViewModel
-    private var videoData:VideoData? = null
+    private var videoData: VideoData? = null
     private var playData: PlayData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

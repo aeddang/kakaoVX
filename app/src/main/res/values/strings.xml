@@ -10,6 +10,22 @@
     <string name="list_recommend_title">추천프로그램</string>
 
 
+    <string name="total_exercise_time">총 운동 시간</string>
+    <string name="unit_exercise_time">시간\n(분)</string>
+    <string name="unit_exercise_hour">시간\n(시)</string>
+    <string name="unit_kcal">kcal</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_count">회</string>
+    <string name="unit_min">분</string>
+    <string name="unit_hour">시간</string>
+    <string name="unit_day">일</string>
+    <string name="unit_num">개</string>
+    <string name="unit_user">님</string>
+
+    <string name="page_player_first">첫번째 동작입니다.</string>
+    <string name="page_player_last">마지막 동작입니다.</string>
+
+
     <string name="related_movies">Related Videos</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>

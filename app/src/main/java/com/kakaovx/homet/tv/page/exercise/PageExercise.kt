@@ -14,7 +14,8 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.*
 import com.kakaovx.homet.tv.page.component.items.ItemMotion
-import com.kakaovx.homet.tv.page.popups.PageVideo
+import com.kakaovx.homet.tv.page.popups.Video
+import com.kakaovx.homet.tv.page.popups.VideoData
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.homet.*
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
@@ -96,16 +97,16 @@ class PageExercise : PageDetailsSupportFragment(){
         motion?.let {
             Log.i(appTag, motion.toString())
             val param = HashMap<String, Any>()
-            val videoData = PageVideo.VideoData("")
+            val videoData = VideoData("")
             videoData.title = motion.title
             videoData.subtitle = motion.subtitle
             val playData = PlayData(it.movieUrl ?: "")
             playData.mediaAccessApiUrl = motionData.mediaAccessApiUrl
             playData.mediaAccessApiKey = motionData.mediaAccessApiKey
             playData.mediaAccesskey = it.mediaAccesskey
-            param[PageVideo.PLAY_DATA] = playData
-            param[PageVideo.VIDEO] = videoData
-            viewModel.openPopup(PageID.VIDEO, param)
+            param[Video.PLAY_DATA] = playData
+            param[Video.VIDEO] = videoData
+            viewModel.pageChange(PageID.VIDEO_EXO, param)
         }
     }
 

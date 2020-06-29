@@ -29,7 +29,7 @@ data class PlayData (val playUrl:String){
     var mediaAccesskey:String? = null
     var mediaAccessApiUrl:String? = null
     var mediaAccessApiKey:String? = null
-    var expire:Int = 10
+    var expire:Int = 120
 }
 
 

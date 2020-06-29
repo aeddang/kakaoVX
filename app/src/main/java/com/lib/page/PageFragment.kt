@@ -42,6 +42,12 @@ abstract class PageFragment: Fragment(), Page, PageViewFragment,  ViewTreeObserv
     }
 
     @CallSuper
+    override fun onDestroy() {
+        super.onDestroy()
+        pageViewModel = null
+    }
+
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.viewTreeObserver?.addOnGlobalLayoutListener { onGlobalLayout() }
@@ -65,8 +71,9 @@ abstract class PageFragment: Fragment(), Page, PageViewFragment,  ViewTreeObserv
         if( pageObject?.isPopup == true ) delegate?.onRemovedPage(pageObject!!)
         delegate = null
         pageObject = null
-        pageViewModel = null
+
     }
+
 
 
     @CallSuper

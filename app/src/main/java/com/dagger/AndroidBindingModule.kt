@@ -9,6 +9,8 @@ import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.exercise.PageExercise
 import com.kakaovx.homet.tv.page.home.PageHome
 import com.kakaovx.homet.tv.page.popups.PageVideo
+import com.kakaovx.homet.tv.page.popups.PageVideoExo
+import com.kakaovx.homet.tv.page.popups.PageVideoView
 import com.kakaovx.homet.tv.page.program.PageProgram
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -41,5 +43,13 @@ internal abstract class AndroidBindingModule {
     @PageScope
     @ContributesAndroidInjector(modules = [FragmentModule::class])
     internal abstract fun bindPageVideo(): PageVideo
+
+    @PageScope
+    @ContributesAndroidInjector(modules = [FragmentModule::class])
+    internal abstract fun bindPageVideoView(): PageVideoView
+
+    @PageScope
+    @ContributesAndroidInjector(modules = [FragmentModule::class])
+    internal abstract fun bindPageVideoExo(): PageVideoExo
 
 }

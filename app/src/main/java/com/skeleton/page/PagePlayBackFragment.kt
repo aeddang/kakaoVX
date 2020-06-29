@@ -79,7 +79,7 @@ abstract class PagePlayBackFragment: VideoSupportFragment() , PageViewFragment,
         playerAdapter?.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_NONE)
         transportControlGlue = PlaybackTransportControlGlue(activity, playerAdapter!!)
         transportControlGlue.host = glueHost
-        transportControlGlue.playWhenPrepared()
+
         transportControlGlue.addPlayerCallback( object : PlaybackGlue.PlayerCallback(){
             override fun onPreparedStateChanged(glue: PlaybackGlue?) {onPagePreparedStateChanged(glue)}
             override fun onPlayStateChanged(glue: PlaybackGlue?) {onPagePlayStateChanged(glue)}

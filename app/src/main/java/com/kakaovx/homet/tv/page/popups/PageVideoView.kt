@@ -1,37 +1,35 @@
 package com.kakaovx.homet.tv.page.popups
 
-import android.media.MediaDataSource
-import android.media.browse.MediaBrowser
-import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
-import com.kakaovx.homet.tv.page.viewmodel.PageError
 import com.kakaovx.homet.tv.page.viewmodel.PageID
-import com.kakaovx.homet.tv.page.viewmodel.VideoError
-import com.kakaovx.homet.tv.store.api.wecandeo.MovieSignedData
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApiType
-import com.lib.page.PageNetworkStatus
-import com.lib.page.PageObject
+import com.lib.page.PageFragmentCoroutine
 import com.lib.util.Log
+import com.skeleton.component.alert.CustomDialog
 import com.skeleton.module.ViewModelFactory
-import com.skeleton.page.PagePlayBackFragment
 import dagger.android.support.AndroidSupportInjection
-import java.util.*
+import kotlinx.android.synthetic.main.page_video_exo.*
+import kotlinx.android.synthetic.main.page_video_view.*
+import kotlinx.android.synthetic.main.page_video_view.btnTest0
+import kotlinx.android.synthetic.main.page_video_view.player
+import java.util.HashMap
 import javax.inject.Inject
 
-class PageVideo : PagePlayBackFragment(){
+class PageVideoView : PageFragmentCoroutine(){
+    override fun getLayoutResID(): Int = R.layout.page_video_view
+
     private val appTag = javaClass.simpleName
-
-
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     protected lateinit var viewModel: BasePageViewModel
     private var videoData:VideoData? = null
-    private var playData:PlayData? = null
+    private var playData: PlayData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -47,7 +45,7 @@ class PageVideo : PagePlayBackFragment(){
 
     override fun onPause() {
         super.onPause()
-        transportControlGlue.pause()
+        player.pause()
     }
 
     override fun onPageParams(params: Map<String, Any?>) {
@@ -84,14 +82,18 @@ class PageVideo : PagePlayBackFragment(){
                 else ->{}
             }
         })
+
+        btnTest0.setOnClickListener {
+            CustomDialog.makeDialog(context!!,"${it.tag}","test" ).show()
+        }
     }
 
     override fun onTransactionCompleted() {
         super.onTransactionCompleted()
         videoData ?: return
-        transportControlGlue.title = videoData?.title
-        transportControlGlue.subtitle = videoData?.subtitle
-        transportControlGlue.playWhenPrepared()
+        //transportControlGlue.title = videoData?.title
+        //transportControlGlue.subtitle = videoData?.subtitle
+        //transportControlGlue.playWhenPrepared()
         loadData()
     }
 
@@ -101,18 +103,8 @@ class PageVideo : PagePlayBackFragment(){
     }
 
     private fun loadVideo(){
-        playerAdapter?.setDataSource(Uri.parse(videoData?.path))
-        transportControlGlue.playWhenPrepared()
+        player.load(videoData?.path ?: "")
     }
-
-    override fun onPageVideoError(errorCode: Int, errorMessage: CharSequence?) {
-        val error = PageError<VideoError>(VideoError.PLAY_BACK, errorCode.toString(), errorMessage.toString())
-        val param = HashMap<String, Any>()
-        param[PageErrorSurport.PAGE_ERROR] = error
-        viewModel.openPopup(PageID.ERROR_SURPORT, param)
-    }
-
-
 
 
 }

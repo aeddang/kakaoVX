@@ -92,9 +92,9 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
     }
 
     protected  var sharedModel:ExoPlayerViewModel = getViewmodel()
-    protected  lateinit var castSession:CastPlayer
+    //protected  lateinit var castSession:CastPlayer
     private  var exoPlayer: SimpleExoPlayer? = null
-    private  var castPlayer: CastPlayer? = null
+    //private  var castPlayer: CastPlayer? = null
     protected  var currentPlayer:Player? = null
     var mediaType = MediaType.Player; private set
     private var playerView:PlayerView? = null
@@ -108,15 +108,16 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         initImage = getInitImageView()
-        castSession = CastPlayer( CastContext.getSharedInstance(context) )
-        castSession.setSessionAvailabilityListener(this)
+        //castSession = CastPlayer( CastContext.getSharedInstance(context) )
+        //castSession.setSessionAvailabilityListener(this)
+        initPlayer()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         releasePlayer()
-        castSession.setSessionAvailabilityListener(null)
-        castSession.release()
+        //castSession.setSessionAvailabilityListener(null)
+        //castSession.release()
         sharedModel.reset()
         stopTimeSearch()
         delegate = null
@@ -141,7 +142,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
         .setUsage(C.USAGE_MEDIA)
         .setContentType(C.CONTENT_TYPE_MOVIE)
         .build()
-
+        /*
         if(castSession.isCastSessionAvailable){
             mediaType = MediaType.Cast
             castPlayer = castSession
@@ -149,6 +150,8 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
             castPlayer?.addListener( this )
 
         }else{
+
+         */
             mediaType = MediaType.Player
             playerView = getPlayerView()
             exoPlayer = ExoPlayerFactory.newSimpleInstance(context)
@@ -159,7 +162,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
             exoPlayer?.setAudioAttributes(audioAttributes, true)
             playerView?.player = exoPlayer
 
-        }
+        //}
         prepare()
         setVolume(sharedModel.currentVolume)
 
@@ -180,7 +183,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
             playerView = null
 
         }
-
+        /*
         castPlayer?.let {
             sharedModel.playbackPosition = it.currentPosition
             sharedModel.currentWindow = it.currentWindowIndex
@@ -189,6 +192,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
             it.stop()
             castPlayer = null
         }
+        */
 
         stopTimeSearch()
         currentPlayer = null
@@ -251,7 +255,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
                 currentPlayer?.seekTo(sharedModel.currentWindow, sharedModel.playbackPosition)
             }
             MediaType.Cast -> {
-                castPlayer?.loadItem(buildMediaQueueItem(Uri.parse(sharedModel.videoPath)), sharedModel.playbackPosition)
+                //castPlayer?.loadItem(buildMediaQueueItem(Uri.parse(sharedModel.videoPath)), sharedModel.playbackPosition)
                 //castPlayer?.addItems(buildMediaQueueItem(Uri.parse(sharedModel.videoPath)))
             }
         }
@@ -329,6 +333,7 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
     @CallSuper
     override fun onError(e:Any?){
         pause()
+        Log.d(appTag, "onError $e")
         delegate?.onError(this, e ?: -1)
     }
     @CallSuper

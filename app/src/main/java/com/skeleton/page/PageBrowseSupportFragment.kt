@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.lifecycle.LifecycleOwner
 import com.lib.page.*
+import com.lib.util.Log
 import kotlinx.coroutines.*
 
 abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragment ,
@@ -22,7 +23,7 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
         get(){
             when(headersState){
                 HEADERS_ENABLED  ->{
-                    if(isHeadersTransitionOnBackEnabled) {
+                    if(isHeadersTransitionOnBackEnabled && !isShowingHeaders) {
                         onSuperBackPressAction()
                         return true
                     }
@@ -56,7 +57,7 @@ abstract class PageBrowseSupportFragment: BrowseSupportFragment(), PageViewFragm
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.viewTreeObserver?.addOnGlobalLayoutListener { onGlobalLayout() }
+        view.viewTreeObserver?.addOnGlobalLayoutListener (this)
         if(pageObject?.isPopup == true ) delegate?.onAddedPage(pageObject!!)
         scope.createJob()
         pageViewModel?.onCreateView(this, pageObject)

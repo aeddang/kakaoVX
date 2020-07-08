@@ -169,7 +169,9 @@ data class MovieUrlData(
     @SerializedName("imgUrl") val imgUrl: String?,
     @SerializedName("motionJsonUrl") val motionJsonUrl: String?,
     @SerializedName("mediaAccesskey") val mediaAccesskey: String?
-)
+){
+    var idx:Int = 0
+}
 
 data class ExerciseFlagData(
     @SerializedName("type") val type: String?,

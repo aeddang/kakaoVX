@@ -10,6 +10,7 @@ import kotlin.collections.ArrayList
 object ExerciseParser{
     val appTag = javaClass.simpleName
     val MIN_STEP_TIME = 1000L
+
     private var prevFlag:Flag? = null
     private var progressTime:Long = 0L
     private var breakTimeOffset:Long = 0L

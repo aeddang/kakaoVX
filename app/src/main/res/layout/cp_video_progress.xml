@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+    <SeekBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/page_player_progress_height"
+        android:layout_gravity="bottom"
+        android:thumb="@drawable/selecter_thumb"
+        android:thumbOffset="@dimen/margin_light"
+        android:progressDrawable="@drawable/shape_player_progress" />
+    <TextView
+        android:id="@+id/textStep"
+        style="@style/font_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:textColor="@color/color_white"
+        android:layout_marginTop="@dimen/margin_light"
+        tools:text = "@string/tool_sub_title"
+        android:text=""
+        android:textSize="@dimen/font_regular" />
+    <TextView
+        android:id="@+id/textTitle"
+        style="@style/font_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:textColor="@color/color_white"
+        tools:text ="@string/tool_title"
+        android:text=""
+        android:textSize="@dimen/font_extra_bold" />
+</LinearLayout>

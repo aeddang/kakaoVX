@@ -14,6 +14,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.*
 import com.kakaovx.homet.tv.page.component.items.ItemMotion
+import com.kakaovx.homet.tv.page.player.PagePlayer
 import com.kakaovx.homet.tv.page.viewmodel.Video
 import com.kakaovx.homet.tv.page.viewmodel.VideoData
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -157,13 +158,15 @@ class PageExercise : PageDetailsSupportFragment(){
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(DetailsDescriptionPresenter())
         activity?.let {  detailsPresenter.backgroundColor = ContextCompat.getColor(it, R.color.selected_background) }
         detailsPresenter.onActionClickedListener = OnActionClickedListener { action ->
-
+            exerciseData?.let {
+                val param = HashMap<String, Any>()
+                param[PagePlayer.PROGRAM_ID] = programID
+                param[PagePlayer.EXERCISE] = it
+                viewModel.pageChange(PageID.PLAYER, param)
+            }
         }
         presenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
-
     }
-
-
 
     private fun setupMotionListRow(exerciseList:List<MotionData>) {
 
@@ -176,6 +179,10 @@ class PageExercise : PageDetailsSupportFragment(){
 
 
     inner class ExercisePresenter:ItemPresenter(){
+        init {
+            cardWidth = context?.resources?.getDimension(R.dimen.program_list_width)?.toInt() ?: cardWidth
+            cardHeight = context?.resources?.getDimension(R.dimen.program_list_height)?.toInt() ?: cardHeight
+        }
         override fun getItemView(): ItemImageCardView = ItemMotion(context!!)
     }
 

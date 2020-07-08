@@ -34,11 +34,9 @@ import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.PageRepository
 import com.kakaovx.homet.tv.store.api.account.AccountManager
-import com.lib.page.PageActivity
-import com.lib.page.PageCoroutineScope
-import com.lib.page.PagePresenter
-import com.lib.page.PageRequestPermission
+import com.lib.page.*
 import com.lib.util.Log
+import com.skeleton.component.tab.Tab
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Job
@@ -59,7 +57,7 @@ class MainActivity : PageActivity() {
     override fun getPageAreaId() = R.id.area
     override fun getLayoutResID() = R.layout.activity_main
     private val appTag = javaClass.simpleName
-    val scope = PageCoroutineScope()
+    private val scope = PageCoroutineScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -72,7 +70,9 @@ class MainActivity : PageActivity() {
         prepareBackgroundManager()
         LogUtil.d(LogUtil.DEBUG_LEVEL_3, "enter")
         OMAReceiver.sendAppVersionCheck(this, true)
-        //finish()
+
+        pageModel.leftTab = leftTab
+
         repository.setDefaultLifecycleOwner(this)
         repository.accountManager.event.observe(this, Observer{
             when(it){
@@ -92,9 +92,23 @@ class MainActivity : PageActivity() {
         pagePresenter.requestPermission(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
             object : PageRequestPermission {
                 override fun onRequestPermissionResult(resultAll: Boolean, permissions: List<Boolean>?) {
-                    pageStart(pageProvider.getPageObject(PageID.HOME))
+                    pageStart(pageProvider.getPageObject(PageID.PROGRAM_LIST))
                 }
             })
+
+        leftTab.setOnSelectListener( object :Tab.SelectListener<PageID>{
+            override fun onSelected(view: Tab<PageID>, id: PageID, idx: Int) {
+                pageChange(pageProvider.getPageObject(id))
+            }
+        })
+    }
+
+    override fun onWillChangePage(prevPage: PageObject?, nextPage: PageObject?) {
+        super.onWillChangePage(prevPage, nextPage)
+        val isView = pageModel.isTabView(nextPage?.pageID ?: "")
+
+        if(isView) leftTab.viewTab() else leftTab.hideTab()
+
     }
 
     override fun onDestroy() {
@@ -151,6 +165,13 @@ class MainActivity : PageActivity() {
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
     }
+
+
+    override fun getPageIn(isBack: Boolean): Int = if (isBack) R.anim.slide_in_left else R.anim.slide_in_right
+    override fun getPageOut(isBack: Boolean): Int = if (isBack) R.anim.slide_out_right else R.anim.slide_out_left
+    override fun getPopupIn(): Int  = R.anim.slide_in_down
+    override fun getPopupOut(): Int = R.anim.slide_out_down
+
 
 
 

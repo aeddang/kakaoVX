@@ -6,6 +6,7 @@ interface PlayBack{
     fun pause()
     fun resume()
     fun seek(t:Long)
+    fun seekMove(t:Long)
     fun onPause()
     fun onResume()
     fun setVolume(v:Float)
@@ -32,7 +33,7 @@ interface PlayBackDelegate{
 }
 
 interface PlayBackTimeDelegate{
-    fun onTimeChanged(player: PlayBack, t:Long ){}
+    fun onTimeChanged(player: PlayBack, t:Long )
 }
 
 enum class MediaType{

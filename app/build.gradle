@@ -15,7 +15,7 @@ android {
         versionCode 2
         versionName "1.00.01"
         multiDexEnabled true
-        buildConfigField "String", "OS_TYPE", "\"aos\""
+        buildConfigField "String", "OS_TYPE", "\"tv\""
     }
     dataBinding {
         enabled = false

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_gray_deep">
+    <ImageView
+        android:id="@+id/imageBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    <com.skeleton.component.graph.GraphRing
+        android:id="@+id/graphCount"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/textCount"
+        style="@style/font_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_regular"
+        android:textColor="@color/color_white"
+        android:gravity="center"
+        android:layout_gravity="center"
+        tools:text= "@string/tool_number"
+        android:text=""
+        android:textSize="@dimen/font_extra_bold" />
+    <TextView
+        android:id="@+id/textTitle"
+        style="@style/font_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_regular"
+        android:textColor="@color/color_white"
+        android:gravity="center"
+        tools:text= "@string/tool_title"
+        android:text=""
+        android:textSize="@dimen/font_extra_bold" />
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:layout_gravity="bottom|left"/>
+
+    <TextView
+        android:id="@+id/textNext"
+        style="@style/font_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_white"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="120dp"
+        tools:text= "@string/tool_sub_title"
+        android:text=""
+        android:textSize="@dimen/font_extra_bold" />
+
+    <Button
+        android:id="@+id/btnSkip"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:text="SKIP"
+        android:nextFocusForward="@id/btnHidden"
+        android:nextFocusUp="@id/btnSkip"
+        android:nextFocusDown="@id/btnSkip"
+        android:nextFocusLeft="@id/btnSkip"
+        android:nextFocusRight="@id/btnSkip"/>
+</FrameLayout>

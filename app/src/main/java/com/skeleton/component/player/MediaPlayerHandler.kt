@@ -133,6 +133,12 @@ open class MediaPlayerHandler(surfaceHolder:SurfaceHolder) : PlayBack,
     }
 
     @CallSuper
+    override fun seekMove(t: Long) {
+        val target = player.currentPosition + t
+        player.seekTo(target.toInt())
+    }
+
+    @CallSuper
     override fun setVolume(v: Float) {
         currentVolume = v
         player.setVolume(v, v)

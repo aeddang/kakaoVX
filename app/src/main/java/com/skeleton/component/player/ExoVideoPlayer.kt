@@ -32,6 +32,11 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
 import com.lib.page.PageComponentCoroutine
 import com.lib.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 
 
 abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
@@ -53,12 +58,9 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
         currentPlayer?: return false
         return currentPlayer!!.playWhenReady
     }
-
     protected var delegate: PlayBackDelegate? = null
     final override fun setOnPlayerListener( _delegate:PlayBackDelegate? ){ delegate = _delegate }
     protected open fun hasPlayerPermission():Boolean = true
-
-
 
     protected var timeDelegate: PlayBackTimeDelegate? = null
     final override fun setOnPlayTimeListener( _delegate:PlayBackTimeDelegate? ){
@@ -69,26 +71,27 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
         }
         if( sharedModel.playWhenReady )  startTimeSearch()
     }
+
+    private var isSearch = false
     private fun startTimeSearch() {
-        /*
-        timeDisposable?.dispose()
-        timeDisposable = Observable.interval(10, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+        if(isSearch) return
+        isSearch = true
+        Log.d(appTag, "startTimeSearch")
+        scope.launch(){
+            while (isSearch){
+                //Log.d(appTag, "on startTimeSearch")
                 currentPlayer?.let {
+                    //Log.d(appTag, "on currentPlayerTimeSearch")
                     onTimeChange(it.currentPosition)
-
                 }
+                delay(10)
             }
-
-         */
+        }
     }
     private fun stopTimeSearch() {
-        /*
-        timeDisposable?.dispose()
-        timeDisposable = null
-        */
+        if(!isSearch) return
+        isSearch = false
+        Log.d(appTag, "stopTimeSearch")
     }
 
     protected  var sharedModel:ExoPlayerViewModel = getViewmodel()
@@ -313,6 +316,16 @@ abstract class ExoVideoPlayer :  PageComponentCoroutine, PlayBack,
         Log.d(appTag, "seek $t")
         stopTimeSearch()
         currentPlayer?.seekTo(sharedModel.currentWindow, t)
+    }
+
+    @CallSuper
+    override fun seekMove(t:Long){
+        Log.d(appTag, "seek $t")
+        stopTimeSearch()
+        currentPlayer?.let {
+            val target = it.contentPosition + t
+            it.seekTo(sharedModel.currentWindow, target)
+        }
     }
 
     @CallSuper

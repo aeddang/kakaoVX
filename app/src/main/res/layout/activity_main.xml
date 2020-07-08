@@ -7,12 +7,21 @@
     tools:context=".page.MainActivity"
     tools:deviceIds="tv"
     tools:ignore="MergeRootFrame">
-    <FrameLayout
-        android:id="@+id/area"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <com.kakaovx.homet.tv.page.component.tab.LeftTab
+            android:id="@+id/leftTab"
+            android:layout_width="@dimen/left_tab_width"
+            android:layout_height="match_parent"/>
+        <FrameLayout
+            android:id="@+id/area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+    </LinearLayout>
 
-    </FrameLayout>
     <com.skeleton.component.progressbar.MultiStrokeSpinner
         android:id="@+id/loadingSpinner"
         android:layout_width="100dp"

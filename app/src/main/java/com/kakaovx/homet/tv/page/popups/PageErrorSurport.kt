@@ -51,8 +51,11 @@ class PageErrorSurport : PageErrorSupportFragment(){
         apiError = params[API_ERROR] as? ApiError<*>
         pageError = params[PAGE_ERROR] as? PageError<*>
         redirectPage = params[REDIRECT_PAGE] as? PageID
+        eventID = params[PAGE_EVENT_ID] as? String ?: eventID
+
     }
 
+    private var eventID:String = ""
     private var apiError:ApiError<*>? = null
     private var pageError:PageError<*>? = null
     private var redirectPage: PageID? = null
@@ -75,13 +78,17 @@ class PageErrorSurport : PageErrorSupportFragment(){
             when(actionType){
                 ErrorActionType.Retry -> {
                     viewModel.goBack()
-                    viewModel.observable.event.value = PageEvent(PageEventType.EVENT, PageID.ERROR_SURPORT.value, ErrorActionType.Retry )
+                    pageObject?.let {
+                        delegate?.onEvent(it, eventID, ErrorActionType.Retry )
+                    }
                 }
                 ErrorActionType.Confirm -> {
                     if( redirectPage != null) viewModel.pageChange( redirectPage!! )
                     else {
                         viewModel.goBack()
-                        viewModel.observable.event.value = PageEvent(PageEventType.EVENT, PageID.ERROR_SURPORT.value, ErrorActionType.Confirm)
+                        pageObject?.let {
+                            delegate?.onEvent(it, eventID, ErrorActionType.Confirm )
+                        }
                     }
                 }
                 ErrorActionType.Finish -> viewModel.repo.pagePresenter.finishApp()
@@ -99,6 +106,7 @@ class PageErrorSurport : PageErrorSupportFragment(){
     companion object {
         const val API_ERROR = "apiError"
         const val PAGE_ERROR = "pageError"
+        const val PAGE_EVENT_ID = "pageEventID"
         const val REDIRECT_PAGE = "redirectPage"
 
         fun getErrorMessage(

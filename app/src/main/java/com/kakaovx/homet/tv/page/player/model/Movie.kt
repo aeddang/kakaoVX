@@ -1,7 +1,10 @@
 package com.kakaovx.homet.tv.page.player.model
 
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import com.kakaovx.homet.tv.store.api.homet.ExerciseMovieData
 import com.kakaovx.homet.tv.store.api.homet.MovieUrlData
+import com.kakaovx.homet.tv.util.secToLong
 import io.reactivex.subjects.PublishSubject
 import kotlin.math.roundToLong
 
@@ -10,16 +13,12 @@ data class Movie( val type:String, val id:String){
     var idx = 0; internal set
     var duration:Long = 0 ; private set
     var thumbImg = ""; private set
-    var currentTime:Long = 0
-        internal set(value){
-            field = value
-            currentTimeObservable.onNext(field)
-        }
-    val currentTimeObservable = PublishSubject.create<Long>()
+
+
     var screenPath = thumbImg; private set
         get() {
             motionMovieUrls ?: return thumbImg
-            return motionMovieUrls!![multiViewIndex].movieUrl ?: ""
+            return motionMovieUrls!![multiViewIndex.value ?: 0].movieUrl ?: ""
         }
     fun getScreenPath(idx:Int):String{
         return motionMovieUrls!![idx].movieUrl ?: ""
@@ -28,19 +27,16 @@ data class Movie( val type:String, val id:String){
     var mediaAccesskey = ""; private set
         get() {
             motionMovieUrls ?: return ""
-            return motionMovieUrls!![multiViewIndex].mediaAccesskey ?: ""
+            return motionMovieUrls!![multiViewIndex.value ?: 0].mediaAccesskey ?: ""
         }
     fun getMediaAccesskey (idx:Int):String{
         return motionMovieUrls!![idx].mediaAccesskey ?: ""
     }
 
+    var lifecycleOwner:LifecycleOwner? = null
+    val currentTime = MutableLiveData<Long>()
     var motionMovieUrls:ArrayList<MovieUrlData>? = null; private set
-    var multiViewIndex = 4
-        set(value) {
-            field = value
-            multiViewObservable.onNext(field)
-        }
-    val multiViewObservable = PublishSubject.create<Int>()
+    val multiViewIndex = MutableLiveData<Int>()
 
 
     var movieTitle = ""; private set
@@ -51,11 +47,20 @@ data class Movie( val type:String, val id:String){
         motionMovieUrls = data.motionMovieUrls
         motionMovieUrls?.let {
             thumbImg = it[0].imgUrl ?: ""
-            if(it.size > 1) multiViewIndex = 4
-            else multiViewIndex = 0
+            if(it.size > 1) multiViewIndex.value = 4
+            else multiViewIndex.value = 0
         }
+        duration = data.playTime?.secToLong() ?: 300000 // 5분
+    }
 
-        duration = data.playTime?.toDoubleOrNull()?.roundToLong() ?: 300000 // 5분
+
+    fun disposeLifecycleOwner(owner:LifecycleOwner){
+        multiViewIndex.removeObservers(owner)
+        currentTime.removeObservers(owner)
+        lifecycleOwner?.let{
+            multiViewIndex.removeObservers(owner)
+            currentTime.removeObservers(owner)
+        }
     }
 
 }
@@ -72,7 +77,6 @@ data class MovieInfo(val idx:Int){
         motionMovieRoundId = data.motionMovieRoundId ?: ""
         id = data.motionMovieId
         title = data.title ?: ""
-
         difficulty = data.difficulty ?: ""
         exerciseTools = data.exerciseTools ?: ""
     }

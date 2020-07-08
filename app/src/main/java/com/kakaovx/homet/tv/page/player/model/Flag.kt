@@ -1,6 +1,11 @@
 package com.kakaovx.homet.tv.page.player.model
 
 import android.content.Context
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.factory.StaticResource
 import com.kakaovx.homet.tv.store.api.homet.ExerciseMotionData
@@ -56,11 +61,9 @@ data class Flag(val type:FlagType, val parseType:ExerciseParser.Type) {
     var partLists:Array<String>? = null ; internal set
     var actionFlag:Flag? =  null
     var hasMotion = false
-    var isActive = false
-        set(value) {
-            field = value
-            activeObservable.onNext(field)
-        }
+
+
+
     val isStep:Boolean
         get() {
             return type == FlagType.Motion || (type == FlagType.Action && !hasMotion)
@@ -81,7 +84,7 @@ data class Flag(val type:FlagType, val parseType:ExerciseParser.Type) {
             return type != FlagType.Action
         }
     var isMovieChange:Boolean = false; internal set
-    val activeObservable = PublishSubject.create<Boolean>()
+
     var isMute = false
     internal var result:ExerciseResult? = null
 
@@ -135,6 +138,13 @@ data class Flag(val type:FlagType, val parseType:ExerciseParser.Type) {
         return if( step == 0) 1 else step
     }
 
+    fun getFlagStepSpan(totalStep:Int):SpannableString{
+        val progress = "${getFlagStep()}"
+        val text =  SpannableString("$progress/${totalStep}")
+        text.setSpan(StyleSpan(Typeface.BOLD), 0, progress.length, 0)
+        return text
+    }
+
     internal fun setData(data: ExerciseMotionData){
         id = data.motionId ?: ""
         movieStartTime = data.timerStart?.secToLong() ?: 0L
@@ -149,5 +159,12 @@ data class Flag(val type:FlagType, val parseType:ExerciseParser.Type) {
             rangeStart = data.rangeStart?.secToLong() ?: 0L
             rangeEnd = data.rangeEnd?.secToLong() ?: 0L
         }
+    }
+
+    var lifecycleOwner:LifecycleOwner? = null
+    var isActive = MutableLiveData<Boolean>()
+    fun disposeLifecycleOwner(owner: LifecycleOwner){
+        isActive.removeObservers(owner)
+        lifecycleOwner?.let{isActive.removeObservers(owner)}
     }
 }

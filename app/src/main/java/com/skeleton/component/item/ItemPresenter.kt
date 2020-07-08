@@ -8,18 +8,14 @@ import com.kakaovx.homet.tv.store.api.homet.ProgramData
 
 
 abstract class ItemPresenter : Presenter() {
-    companion object {
-        private val TAG = "ItemPresenter "
-        private var CARD_WIDTH = 313
-        private var CARD_HEIGHT = 176
-    }
 
+    protected var cardWidth = 313
+    protected var cardHeight = 176
 
     abstract fun getItemView():ItemImageCardView
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
-        Log.d(TAG, "onCreateViewHolder")
         val cardView = getItemView()
-        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
+        cardView.setMainImageDimensions(cardWidth,cardHeight)
         cardView.isFocusable = true
         cardView.isFocusableInTouchMode = true
         updateCardBackgroundColor(cardView, false)

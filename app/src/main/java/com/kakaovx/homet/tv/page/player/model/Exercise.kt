@@ -2,6 +2,8 @@ package com.kakaovx.homet.tv.page.player.model
 
 import android.content.Context
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.factory.StaticResource
 import com.kakaovx.homet.tv.store.api.homet.ExercisePlayData
@@ -11,15 +13,12 @@ import com.kakaovx.homet.tv.util.secToLong
 import com.kakaovx.homet.tv.util.toSafeInt
 import com.lib.util.Log
 import com.skeleton.component.alert.CustomToast
-
-import io.reactivex.subjects.PublishSubject
 import kotlin.math.abs
 
 data class Exercise(val id:String, var context: Context?){
     companion object{
         const val MIN_EXERCISE_TIME:Long = 5000
     }
-
     val appTag = javaClass.simpleName
     val movies = ArrayList<Movie>()
     private val flags = ArrayList<Flag>()
@@ -27,15 +26,16 @@ data class Exercise(val id:String, var context: Context?){
     private val flagSets = HashMap<String, FlagSet>()
 
     var duration:Long = 0; private set
-    var playTime:Long = 0; private set
     var totalStep:Int = 0; private set
     private var relayPlayPoint = 0
     var isComplete = false ; private set
     lateinit var info:ExerciseInfo
+
     var result:ExerciseResult? = null; private set
 
     fun initSet(data: ExercisePlayData){
-        exerciseTime = data.totalPlayExerciseTime?.secToLong() ?: 0
+        exerciseTime.value = data.totalPlayExerciseTime?.secToLong() ?: 0
+        progressTime.value = 0
         relayPlayPoint  = data.relayPlayPoint?.toSafeInt() ?: 0
         info = ExerciseInfo(data.planId ?: "")
         info.isRelayPlay = relayPlayPoint != 0
@@ -107,8 +107,6 @@ data class Exercise(val id:String, var context: Context?){
 
         finalMotion?.let {prev-> prev.speech = StaticResource.LAST }
         totalStep = mCount
-
-
     }
 
 
@@ -132,34 +130,20 @@ data class Exercise(val id:String, var context: Context?){
         return flags.filter { it.isStep }.map { it }
     }
 
-
     fun getListFrags():List<Flag>{
         return flags.filter {  it.isStep }.map { it }
     }
 
-
-
     var videoTime:Long = 0; private set
-    var progressTime:Long = 0
-        private set(value){
-            field = value
-            progressTimeObservable.onNext(field)
-        }
-    val progressTimeObservable = PublishSubject.create<Long>()
-
-    var exerciseTime:Long = 0
-        private set(value){
-            field = value
-            exerciseTimeObservable.onNext(field)
-        }
-    val exerciseTimeObservable = PublishSubject.create<Long>()
+    val progressTime = MutableLiveData<Long>()
+    val exerciseTime = MutableLiveData<Long>()
 
     var currentFlagGroup = -1
         private set(value) {
             if(field == value) return
-            if(field != -1) flagGroup[field].forEach { it.isActive = false }
+            if(field != -1) flagGroup[field].forEach { it.isActive.postValue(false) }
             field = value
-            if(field != -1) flagGroup[field].forEach { it.isActive = true }
+            if(field != -1) flagGroup[field].forEach { it.isActive.postValue(true) }
         }
 
     var isFlagSkipAble =true
@@ -173,28 +157,18 @@ data class Exercise(val id:String, var context: Context?){
             currentFlag = flags[field]
         }
 
-    var currentResult:ExerciseResult? = null
-        private set(value) {
+    private var currentResult:ExerciseResult? = null
+        set(value) {
             if(field == value) return
             field = value
             field?.let {
                 it.reset()
-                currentResultObservable.onNext(it)
+                currentResultObservable.value = it
             }
         }
-    val currentResultObservable = PublishSubject.create<ExerciseResult>()
+    val currentResultObservable = MutableLiveData<ExerciseResult>()
 
-    fun isInitSet(flag:Flag):Boolean{
-        val set = flagSets[flag.setId]
-        set ?: return false
-        val isInit =   set.isInit ?: false
-        set.isInit = false
-        flagSets.keys.filter { it != flag.setId }.forEach { flagSets[it]?.isInit = true }
-        //if(flag.parseType != ExerciseParser.Type.All) return true
-        if( set.setNum == 0) return false
-        return isInit
-    }
-
+    private var isSynchronizedFlag = true
     var currentFlag:Flag? = null
         private set(value) {
             if(field === value) return
@@ -202,18 +176,19 @@ data class Exercise(val id:String, var context: Context?){
                 if(it.type != FlagType.Break){
                     if (movieIndex != it.movieIndex || movieIndex == -1) {
                         movieIndex = it.movieIndex
+                        isSynchronizedFlag = false
                         nextFlag = null
                         Log.d(appTag, "currentFlag movie change ${it.movieIndex }" )
                         return
                     }
                 }
             }
+            changeFlagObservable.value = value
             field = value
             isFlagSkipAble = true
             field ?: return
             field?.let{flag->
                 currentFlagGroup = flag.motionIndex
-                //currentMovie?.motionIndex = flag.motionIndex
                 val nextIdx = flagIndex + 1
                 nextFlag = if( nextIdx >= flags.size) null
                 else flags[nextIdx]
@@ -224,20 +199,20 @@ data class Exercise(val id:String, var context: Context?){
                         currentResult = cresult
                         Log.d(appTag, "currentResult changed ${flag.getInfo()}" )
                     }
-                }
-                changeFlagObservable.onNext(flag)
-                Log.d(appTag, "currentFlag changed ${flag.getInfo()}" )
+                }else sendMotionResult()
 
-                changedFlagObservable.onNext(flag)
+                Log.d(appTag, "currentFlag changed ${flag.getInfo()}" )
+                changedFlagObservable.value = flag
             }
         }
-    val resultObservable = PublishSubject.create<ExerciseResult>()
-    val changeFlagObservable = PublishSubject.create<Flag>()
-    val changedFlagObservable = PublishSubject.create<Flag>()
+    val resultObservable =  MutableLiveData<ExerciseResult>()
+    val changeFlagObservable =  MutableLiveData<Flag>()
+    val changedFlagObservable = MutableLiveData<Flag>()
     var nextFlag:Flag? = null; private set
     fun synchronizedFlag(){
         val flag = flags[flagIndex]
         currentFlag = flag
+        isSynchronizedFlag = true
         Log.d(appTag, "synchronizedFlag $flagIndex  $movieIndex" )
     }
 
@@ -247,18 +222,18 @@ data class Exercise(val id:String, var context: Context?){
             field = value
             currentMovie = movies[ movieIndex ]
         }
-    var currentMovie:Movie? = null
-        private set(value) {
+    private var currentMovie:Movie? = null
+        set(value) {
             if(field === value) return
             field = value
             field?.let {
-                it.currentTime = flags[flagIndex].movieStartTime
+                it.currentTime.value = flags[flagIndex].movieStartTime
                 Log.d(appTag, "currentMovie $movieIndex ${it.currentTime}")
-                movieObservable.onNext(it)
+                movieObservable.value = it
             }
         }
-    val movieObservable = PublishSubject.create<Movie>()
 
+    val movieObservable = MutableLiveData<Movie>()
     var isSkipMode = false
         set(value) {
             if(field == value) return
@@ -301,23 +276,23 @@ data class Exercise(val id:String, var context: Context?){
         result = ExerciseResult(info.exerciseType, true)
         result?.endTime = duration
         result?.duration = duration
+        resultObservable.value = null
 
     }
 
     fun sendMotionResult(){
         currentResult?.let {
-            resultObservable.onNext(it)
-            it.reset()
+            resultObservable.value = it
             currentResult = null
         }
     }
 
 
-    val completedObservable = PublishSubject.create<Exercise>()
+    val completedObservable = MutableLiveData<Exercise>()
     fun onComplete(isEnd: Boolean = false){
         if(isComplete) return
         if(isEnd) isComplete = true
-        completedObservable.onNext(this)
+        completedObservable.value = this
     }
 
 
@@ -351,6 +326,7 @@ data class Exercise(val id:String, var context: Context?){
     }
     fun next(isSkip: Boolean? = null){
         val max = flags.size - 1
+
         if(flagIndex >= max){
             if(currentFlag?.type != FlagType.Action) onComplete(true)
             else context?.let { CustomToast.makeToast(it,R.string.page_player_last, Toast.LENGTH_SHORT ).show() }
@@ -379,7 +355,7 @@ data class Exercise(val id:String, var context: Context?){
     }
 
     fun needSeek(flagTime:Long):Boolean{
-        val need = abs(progressTime - flagTime) > 100L
+        val need = abs(progressTime.value!! - flagTime) > 100L
         Log.d(appTag, "progressTime $progressTime flagTime $flagTime")
         Log.d(appTag, "needSeek $need")
         return need
@@ -403,8 +379,9 @@ data class Exercise(val id:String, var context: Context?){
     }
 
     fun changeVideoTime(changeTime:Long){
+        if(!isSynchronizedFlag) return
         currentFlag?.let{
-            progressTime = it.movieProgressTime + it.breakTimeOffset + changeTime
+            progressTime.postValue(it.movieProgressTime + it.breakTimeOffset + changeTime )
             val delta = changeTime - videoTime
             changeExerciseTime( delta )
         }
@@ -415,12 +392,11 @@ data class Exercise(val id:String, var context: Context?){
 
     private fun changeBreakTime(changeTime:Long){}
 
-
     private fun changeMovieTime(changeTime:Long){
         currentMovie?.let {movie->
-            movie.currentTime = changeTime
+            movie.currentTime.value = changeTime
             //Log.d(appTag, "progress $progressTime  movie ${changeTime} ")
-            currentFlag?.let { if(progressTime >= it.progressEndTime) {
+            currentFlag?.let { if(progressTime.value!! >= it.progressEndTime) {
                 Log.d(appTag, "next progress $progressTime  ${it.type.value} ${it.progressEndTime} ${changeTime} ")
                 //if(isSkipMode && currentFlag?.type == FlagType.Motion) return@let
                 if(nextFlag != null) next() else onComplete(true)
@@ -431,9 +407,9 @@ data class Exercise(val id:String, var context: Context?){
 
     private fun changeExerciseTime( delta:Long){
         if(delta in 0..150) {
-            exerciseTime += delta
+            exerciseTime.value =  exerciseTime.value?.plus(delta)
             result?.let{
-                it.progress = progressTime
+                it.progress = progressTime.value ?: 0
                 it.exerciseTime += delta
             }
             currentResult?.let{
@@ -443,6 +419,22 @@ data class Exercise(val id:String, var context: Context?){
         }
     }
 
+    fun disposeLifecycleOwner(owner:LifecycleOwner){
+        progressTime.removeObservers(owner)
+        exerciseTime.removeObservers(owner)
+        resultObservable.removeObservers(owner)
+        changeFlagObservable.removeObservers(owner)
+        changedFlagObservable.removeObservers(owner)
+        currentResultObservable.removeObservers(owner)
+        movieObservable.removeObservers(owner)
+        completedObservable.removeObservers(owner)
+        currentMovie?.disposeLifecycleOwner(owner)
+        currentFlag?.disposeLifecycleOwner(owner)
+        flags.zip(movies).forEach {
+            it.first.disposeLifecycleOwner(owner)
+            it.second.disposeLifecycleOwner(owner)
+        }
+    }
 
 
 }

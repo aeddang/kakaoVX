@@ -57,7 +57,7 @@ fun ViewGroup.setLayoutX(targetValue:Int, isReverse:Boolean = false):Int {
 
 fun ViewGroup.animateX(targetValue:Int, isReverse:Boolean = false, duration:Long = AnimationDuration.DEFAULT):TranslateAnimation {
     val layout = layoutParams as ViewGroup.MarginLayoutParams
-    var delta:Int = setLayoutX(targetValue, isReverse)
+    val delta:Int = setLayoutX(targetValue, isReverse)
     val ani = TranslateAnimation(delta.toFloat(), 0f, 0f , 0f)
     ani.duration = duration
     return ani
@@ -66,7 +66,7 @@ fun ViewGroup.animateX(targetValue:Int, isReverse:Boolean = false, duration:Long
 
 fun ViewGroup.setLayoutY(targetValue:Int, isReverse:Boolean = false):Int {
     val layout = layoutParams as ViewGroup.MarginLayoutParams
-    var delta:Int
+    val delta:Int
     if( isReverse) {
         delta = targetValue - layout.bottomMargin
         layout.bottomMargin = targetValue

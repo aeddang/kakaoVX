@@ -33,6 +33,9 @@ class PageRepository (ctx: Context,
     fun loadPrograms(owner: LifecycleOwner, filterPurpose: String = "", page:Int = 1)  = hometManager.loadPrograms(owner, filterPurpose, page)
     fun loadProgramDetail(owner:LifecycleOwner, programID:String) = hometManager.loadProgramDetail(owner, programID)
     fun loadExerciseDetail(owner:LifecycleOwner, programID:String, exerciseID:String, roundID:String) = hometManager.loadExerciseDetail(owner, programID, exerciseID, roundID)
+    fun loadExercisePlayer(owner:LifecycleOwner, programID:String, exerciseID:String, roundID:String, movieType:String)
+            = hometManager.loadExercisePlayer(owner, programID, exerciseID, roundID, movieType)
+
 
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
         hometManager.setDefaultLifecycleOwner(owner)

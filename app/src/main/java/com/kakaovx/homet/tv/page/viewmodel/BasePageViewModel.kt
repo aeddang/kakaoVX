@@ -62,5 +62,16 @@ open class BasePageViewModel(val repo: PageRepository) : ViewModel(), PageViewMo
 
     fun goBack() = repo.pagePresenter.goBack()
 
+    fun getLeftFocusTab(id:PageID):View?{
+        return repo.pageModel.leftTab?.getFocusTab(id)
+    }
+
+    fun loading(){
+        presenter.loading()
+    }
+    fun loaded(){
+        presenter.loaded()
+    }
+
 
 }

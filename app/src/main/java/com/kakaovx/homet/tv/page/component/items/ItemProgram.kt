@@ -11,7 +11,9 @@ import com.skeleton.component.item.ItemImageCardView
 class ItemProgram : ItemImageCardView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
+    init {
+        //cardType = CARD_TYPE_FLAG_TITLE
+    }
 
     override fun onBind(data: Any?) {
         val program = data as ProgramData

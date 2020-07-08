@@ -118,12 +118,17 @@ class PageCoroutineScope : CoroutineScope {
         job = SupervisorJob()
     }
     fun destoryJob(){
-        job.cancel()
+        cancelJob()
         cancel()
+    }
+    fun cancelJob(){
+        job.cancel()
     }
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
+    val coroutineContextIO: CoroutineContext
+        get() = job + Dispatchers.IO
 }
 
 

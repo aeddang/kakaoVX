@@ -403,7 +403,7 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
     override fun onEvent(pageObject: PageObject, type:String, data:Any?){
         val eventType = PageEventType.EVENT
         eventType.id = type
-        pageAppViewModel.event.value = PageEvent(PageEventType.EVENT, pageObject.pageID, pageObject.params)
+        pageAppViewModel.event.value = PageEvent(eventType, pageObject.pageID, data)
         getPageFragment(activityModel.currentPageObject)?.onPageEvent(pageObject, type, data)
         popups.forEach { getPageFragment(it)?.onPageEvent(pageObject, type, data) }
     }
@@ -412,8 +412,8 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
     Animation
      */
     @AnimRes protected open fun getPageStart(): Int { return android.R.anim.fade_in }
-    @AnimRes protected open fun getPageIn(isBack:Boolean): Int { return if(isBack) android.R.anim.fade_in else android.R.anim.slide_in_left}
-    @AnimRes protected open fun getPageOut(isBack:Boolean): Int { return if(isBack) android.R.anim.fade_out else android.R.anim.slide_out_right}
+    @AnimRes protected open fun getPageIn(isBack:Boolean): Int { return if(isBack) android.R.anim.fade_in else android.R.anim.fade_out}
+    @AnimRes protected open fun getPageOut(isBack:Boolean): Int { return if(isBack) android.R.anim.fade_out else android.R.anim.fade_in }
     @AnimRes protected open fun getPopupIn(): Int { return android.R.anim.fade_in }
     @AnimRes protected open fun getPopupOut(): Int { return android.R.anim.fade_in }
 

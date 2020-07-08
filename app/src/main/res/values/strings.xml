@@ -2,8 +2,30 @@
     <string name="app_name">스마트홈트</string>
     <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
     <string name="page_home_title">스마트홈트</string>
+    <string name="page_home_sub_title">AI코치의 트레이닝으로 홈트를 더욱더 스마트하게!\n모바일 스마트홈트로 똑똑하게 홈트 하세요!</string>
+    <string name="page_home_btn_guide">자세히보기</string>
+
+    <string name="page_program_title">프로그램</string>
     <string name="page_program_btn_play">체험하기</string>
     <string name="page_exercise_btn_play">운동하기</string>
+
+
+    <string name="page_player_relay_confirm">오늘의  운동 기록이 있습니다.\n이어서 진행 하시겠습니까?</string>
+    <string name="page_player_first">첫번째 동작입니다.</string>
+    <string name="page_player_last">마지막 동작입니다.</string>
+    <string name="page_player_list">운동목록</string>
+    <string name="page_player_multiview_list">멀티뷰</string>
+    <string name="page_player_exercise_result_complete">결과데이터를 전송합니다.</string>
+    <string name="page_player_exercise_result_error">결과데이터를 전송하지못했습니다.</string>
+    <string name="page_player_exit">운동이 완료되지 않았습니다. 정말 중단하시겠습니까?</string>
+    <string name="page_player_completed">운동이 완료되었습니다.</string>
+    <string name="page_player_btn_exit">나가기</string>
+    <string name="page_player_btn_replay">다시하기</string>
+    <string name="page_player_btn_reset">처음부터하기</string>
+    <string name="page_player_btn_relay">이어서하기</string>
+    <string name="page_player_btn_suspend">중단하기</string>
+    <string name="page_player_btn_continue">계속하기</string>
+
 
     <string name="list_exercise_title">운동</string>
     <string name="list_recent_title">최근 본 프로그램</string>
@@ -22,21 +44,7 @@
     <string name="unit_num">개</string>
     <string name="unit_user">님</string>
 
-    <string name="page_player_first">첫번째 동작입니다.</string>
-    <string name="page_player_last">마지막 동작입니다.</string>
 
-
-    <string name="related_movies">Related Videos</string>
-    <string name="grid_view">Grid View</string>
-    <string name="error_fragment">Error Fragment</string>
-    <string name="personal_settings">Personal Settings</string>
-    <string name="watch_trailer_1">Watch trailer</string>
-    <string name="watch_trailer_2">FREE</string>
-    <string name="rent_1">Rent By Day</string>
-    <string name="rent_2">From $1.99</string>
-    <string name="buy_1">Buy and Own</string>
-    <string name="buy_2">AT $9.99</string>
-    <string name="movie">Movie</string>
 
     <string name="btn_action_retry">retry</string>
     <string name="btn_action_confirm">confirm</string>
@@ -69,4 +77,10 @@
     <string name="error_api">콘텐츠 로드하는 중에 오류가 발생했습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
     <string name="error_play_back">영상 재생 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
     <string name="error_host">영상 로드하는 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
+
+
+    <string name="tool_title">TITLE</string>
+    <string name="tool_sub_title">SUB TITLE</string>
+    <string name="tool_number">00</string>
+    <string name="tool_date">0000-00-00</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.kakaovx.homet.tv.store.api
 import android.content.Context
+import androidx.lifecycle.LifecycleOwner
 import com.kakaovx.homet.tv.BuildConfig
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.store.api.homet.HometApiType
@@ -56,12 +57,15 @@ object ApiPath {
 
 data class ApiSuccess<T>(val type:T, var data:Any?, val id: String? = null)
 data class ApiError<T>(val type:T , val code:String?, val msg:String? = null, val id: String? = null)
-data class ApiGroup<T>(val type:T, var group: ArrayList<ApiSuccess<T>>, var complete:Int){
-    fun finish():Boolean{
-        complete --
-        return complete <= 0
+data class ApiGroup<T>(val type:T, var group: ArrayList<ApiSuccess<T>>, var complete:Int, var params:ArrayList<Map<String, Any?>?>? = null,
+                       val isSerial:Boolean = false, val owner: LifecycleOwner? = null){
+        var process:Int = 0 ;private set
+        fun finish():Boolean{
+            complete --
+            process ++
+            return complete <= 0
+        }
     }
-}
 
 object ApiValue{
 

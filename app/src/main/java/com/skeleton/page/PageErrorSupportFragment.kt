@@ -44,7 +44,7 @@ abstract class PageErrorSupportFragment: ErrorSupportFragment(), PageViewFragmen
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.viewTreeObserver?.addOnGlobalLayoutListener { onGlobalLayout() }
+        view.viewTreeObserver?.addOnGlobalLayoutListener (this)
         if(pageObject?.isPopup == true ) delegate?.onAddedPage(pageObject!!)
         scope.createJob()
         pageViewModel?.onCreateView(this, pageObject)

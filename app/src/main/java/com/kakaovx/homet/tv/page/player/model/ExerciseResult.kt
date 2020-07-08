@@ -55,28 +55,7 @@ data class ExerciseResult (val exerciseType: String, val isExercise:Boolean = fa
     var checkAvg: Double = 0.0; private set
     var finalAvg: Double = 0.0; private set
     var progress: Long = 0
-        internal set(value) {
-            field = value
-            //Log.d(appTag, "currentResult checkTime $checkTime  $field" )
-            if(checkTime <= field && checkAvg == -1.0) {
-                checkAvg = allMotionAvg
-                checkTimeObservable.onNext(checkAvg )
-            }
-            if(lastFiveTime <= field && lastFiveTime != -1L){
-                lastFiveTime = -1L
-                lastFiveTimeObservable.onNext(field)
-            }
 
-            if(finalTime <= field && finalAvg == -1.0){
-                finalAvg = allMotionAvg
-                completedTimeObservable.onNext(finalAvg)
-            }
-
-
-        }
-    val checkTimeObservable = PublishSubject.create<Double>()
-    val lastFiveTimeObservable = PublishSubject.create<Long>()
-    val completedTimeObservable = PublishSubject.create<Double>()
 
     val isEffectiveExercise:Boolean
         get() {

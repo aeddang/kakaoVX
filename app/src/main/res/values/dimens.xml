@@ -19,9 +19,27 @@
     <dimen name="margin_thin">10dp</dimen>
     <dimen name="margin_extra_thin">5dp</dimen>
 
+    <dimen name="icon_heavy">32dp</dimen>
+    <dimen name="icon_regular">24dp</dimen>
+    <dimen name="icon_light">16dp</dimen>
+
+
 
     <!-- size -->
-    <dimen name="program_width">160dp</dimen>
-    <dimen name="program_height">90dp</dimen>
+    <dimen name="left_tab_width">50dp</dimen>
+    <dimen name="left_tab_height">60dp</dimen>
 
+    <dimen name="program_list_width">160dp</dimen>
+    <dimen name="program_list_height">90dp</dimen>
+
+    <dimen name="flag_list_width">80dp</dimen>
+    <dimen name="flag_list_height">45dp</dimen>
+
+    <dimen name="page_player_list_start">-1024dp</dimen>
+    <dimen name="page_player_exercise_progress_height">10dp</dimen>
+    <dimen name="page_player_progress_height">30dp</dimen>
+
+    <!-- lb size -->
+    <dimen name="lb_browse_headers_width">210dp</dimen><!--  Original: 270  -->
+    <dimen name="lb_browse_rows_margin_start">178dp</dimen><!--  Original: 238  -->
 </resources>

@@ -16,8 +16,10 @@ import com.kakaovx.homet.tv.*
 import com.kakaovx.homet.tv.page.component.items.ItemExercise
 import com.kakaovx.homet.tv.page.component.items.ItemProgram
 import com.kakaovx.homet.tv.page.exercise.PageExercise
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.homet.ExerciseData
+import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.kakaovx.homet.tv.store.api.homet.ProgramData
 import com.kakaovx.homet.tv.store.api.homet.ProgramDetailData
 import com.lib.util.CommonUtil
@@ -46,6 +48,7 @@ class PageProgram : PageDetailsSupportFragment(){
         AndroidSupportInjection.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory).get(PageProgramViewModel::class.java)
         pageViewModel = viewModel
+        detailsBackground = DetailsSupportFragmentBackgroundController(this)
     }
 
     override fun onDestroyView() {
@@ -59,7 +62,7 @@ class PageProgram : PageDetailsSupportFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detailsBackground = DetailsSupportFragmentBackgroundController(this)
+
         presenterSelector = ClassPresenterSelector()
         programAdapter = ArrayObjectAdapter(presenterSelector)
         programData?.let{
@@ -84,7 +87,7 @@ class PageProgram : PageDetailsSupportFragment(){
 
         viewModel.loadData(programID)
 
-        onItemViewClickedListener = OnItemViewClickedListener { itemViewHolder , item, _, _ -> onItemClicked(item) }
+        onItemViewClickedListener = OnItemViewClickedListener { _ , item, _, _ -> onItemClicked(item) }
     }
 
     private fun onItemClicked(item:Any?){
@@ -159,7 +162,6 @@ class PageProgram : PageDetailsSupportFragment(){
                 param[PageExercise.EXERCISE] = it.first()
                 viewModel.pageChange(PageID.EXERCISE, param)
             }
-
         }
         presenterSelector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
 
@@ -188,6 +190,10 @@ class PageProgram : PageDetailsSupportFragment(){
         override fun getItemView(): ItemImageCardView = ItemExercise(context!!)
     }
     inner class ProgramPresenter:ItemPresenter(){
+        init {
+            cardWidth = context?.resources?.getDimension(R.dimen.program_list_width)?.toInt() ?: cardWidth
+            cardHeight = context?.resources?.getDimension(R.dimen.program_list_height)?.toInt() ?: cardHeight
+        }
         override fun getItemView(): ItemImageCardView = ItemProgram(context!!)
     }
 

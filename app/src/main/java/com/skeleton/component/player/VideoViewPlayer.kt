@@ -131,6 +131,13 @@ abstract class VideoViewPlayer : PageComponentCoroutine, PlayBack, OnErrorListen
         player.seekTo(t.toInt())
     }
 
+    @CallSuper
+    override fun seekMove(t: Long) {
+        onBuffering()
+        val target = player.currentPosition + t
+        player.seekTo(target.toInt())
+    }
+
     override fun setVolume(v: Float) {
         currentVolume = v
         try { mediaPlayer?.setVolume(v,v) }

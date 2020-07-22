@@ -16,7 +16,7 @@ enum class HometApiType{
     PROGRAM_DETAIL,
     EXERCISE,EXERCISE_MOTION,
     EXERCISE_DETAIL,
-    EXERCISE_PLAYER,EXERCISE_PLAY,EXERCISE_START,EXERCISE_RECORD, EXERCISE_MOTION_END , EXERCISE_END,
+    EXERCISE_PLAYER,EXERCISE_PLAY,EXERCISE_START,EXERCISE_RECORD,
     BREAT_TIME,
     GROUP
 }
@@ -40,7 +40,7 @@ interface HometApi{
     @GET(ApiPath.HOMET_API_PROGRAMS_RECENT)
     suspend fun getProgramsRecent(
         @Query(ApiField.DEVICE_KEY) deviceKey: String?
-    ): HomeTResponse<List<ProgramData>?>?
+    ): HomeTResponse<ProgramList?>?
 
     @GET(ApiPath.HOMET_API_PROGRAM)
     suspend fun getProgram(

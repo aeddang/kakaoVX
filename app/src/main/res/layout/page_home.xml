@@ -1,33 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <FrameLayout
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_home">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:background="@color/color_gray">
+            android:layout_height="@dimen/page_home_top_height"
+            android:layout_margin="@dimen/margin_heavy">
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_setting"
-                android:layout_margin="@dimen/margin_regular"
-                android:layout_gravity="end|bottom"/>
-            <Button
-                android:id="@+id/btnGuide"
+                android:id="@+id/logo"
+                android:layout_width="110dp"
+                android:layout_height="26dp"
+                android:src="@drawable/logo"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <ImageView
+                android:id="@+id/qr"
+                android:layout_width="@dimen/icon_heavy"
+                android:layout_height="@dimen/icon_heavy"
+                android:src="@drawable/qr"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@id/btnGuide"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ImageView
+                android:id="@+id/google"
+                android:layout_width="@dimen/icon_light"
+                android:layout_height="@dimen/icon_light"
+                android:src="@drawable/google"
+                android:scaleType="fitCenter"
+                android:layout_marginTop="@dimen/margin_thin"
+                android:layout_marginStart="@dimen/margin_extra_thin"
+                app:layout_constraintTop_toBottomOf="@id/btnGuide"
+                app:layout_constraintStart_toStartOf="@id/qr" />
+            <TextView
+                style="@style/font_light"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/icon_light"
+                android:gravity="center"
+                android:text="@string/page_home_download"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/font_thin"
+                android:layout_marginStart="@dimen/margin_extra_thin"
+                app:layout_constraintStart_toEndOf="@id/google"
+                app:layout_constraintTop_toTopOf="@id/google" />
+            <TextView
+                android:id="@+id/title1"
+                style="@style/font_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_thin"
+                android:gravity="left"
+                android:text="@string/page_home_sub_title1"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/font_bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo" />
+
+            <TextView
+                android:id="@+id/title2"
+                style="@style/font_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_extra_thin"
+                android:gravity="left"
+                android:text="@string/page_home_sub_title2"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/font_bold"
+                app:layout_constraintStart_toEndOf="@+id/title1"
+                app:layout_constraintTop_toTopOf="@id/title1" />
+            <TextView
+                android:id="@+id/title3"
+                style="@style/font_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textColor="@color/color_white"
+                android:text="@string/page_home_sub_title3"
+                android:textSize="@dimen/font_light"
+                android:layout_marginTop="@dimen/margin_thin"
+                app:layout_constraintTop_toBottomOf="@id/title1"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <Button
+                android:id="@+id/btnGuide"
+                style="@style/font_light"
+                android:layout_width="119dp"
+                android:layout_height="43dp"
+                android:textSize="@dimen/font_regular"
+                android:textColor="@color/color_white"
                 android:text="@string/page_home_btn_guide"
                 android:layout_gravity="center_horizontal|bottom"
-                />
-        </FrameLayout>
+                android:background="@drawable/focus_rect_black_white_border"
+                android:layout_marginTop="@dimen/margin_medium"
+                app:layout_constraintTop_toBottomOf="@id/title3"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <FrameLayout
             android:id="@+id/listArea"
+            android:layout_marginTop="@dimen/page_home_list_top"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
         </FrameLayout>
-    </LinearLayout>
+
 </FrameLayout>

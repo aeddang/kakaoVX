@@ -20,7 +20,7 @@ class ItemMotion : ItemImageCardView {
         Glide.with(context)
             .load(motion.thumbnail)
             .centerCrop()
-            .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+            .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
             .into(mainImageView)
 
     }
@@ -31,7 +31,7 @@ class ItemMotion : ItemImageCardView {
     }
 
     override fun updateBackgroundColor(isSelected: Boolean) {
-        //setBackgroundColor(color)
-        //setInfoAreaBackgroundColor(color)
+        setBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
     }
 }

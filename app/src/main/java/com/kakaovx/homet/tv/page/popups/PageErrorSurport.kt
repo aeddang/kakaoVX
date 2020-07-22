@@ -1,7 +1,10 @@
 package com.kakaovx.homet.tv.page.popups
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
@@ -15,17 +18,20 @@ import com.kakaovx.homet.tv.store.api.ApiCode
 import com.kakaovx.homet.tv.store.api.ApiError
 import com.lib.page.PageEvent
 import com.lib.page.PageEventType
+import com.lib.page.PageFragmentCoroutine
 import com.lib.page.PageNetworkStatus
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageErrorSupportFragment
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.page_error.*
 import javax.inject.Inject
 
-class PageErrorSurport : PageErrorSupportFragment(){
+class PageErrorSurport : PageFragmentCoroutine(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     protected lateinit var viewModel: BasePageViewModel
 
+    override fun getLayoutResID(): Int = R.layout.page_error
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -37,13 +43,32 @@ class PageErrorSurport : PageErrorSupportFragment(){
         super.onDestroyView()
         apiError = null
         redirectPage = null
-        buttonClickListener = null
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        title = resources.getString(R.string.app_name)
         viewModel.presenter.loaded()
         setErrorContent()
+
+        btnConfirm.setOnClickListener{
+            if( redirectPage != null) viewModel.pageChange( redirectPage!! )
+            else {
+                viewModel.goBack()
+                pageObject?.let {
+                    delegate?.onEvent(it, eventID, ErrorActionType.Confirm )
+                }
+            }
+        }
+        btnRetry.setOnClickListener{
+            if( redirectPage != null) viewModel.pageChange( redirectPage!! )
+            else {
+                viewModel.goBack()
+                pageObject?.let {
+                    delegate?.onEvent(it, eventID, ErrorActionType.Retry )
+                }
+            }
+        }
+        btnFinish.setOnClickListener {
+            viewModel.repo.pagePresenter.finishApp()
+        }
     }
 
     override fun onPageParams(params: Map<String, Any?>) {
@@ -69,29 +94,21 @@ class PageErrorSurport : PageErrorSupportFragment(){
         pageError?.let { msgData = getErrorMessage(it.type , it.code, it.msg, context!!, viewModel.observable.networkStatus.value) }
         msg = msgData?.first ?: ""
         actionType = msgData?.second ?: ErrorActionType.Confirm
+        title.text = msg
 
-        imageDrawable = ContextCompat.getDrawable(context!!, R.drawable.lb_ic_sad_cloud)
-        message = msg
-        setDefaultBackground(true)
-        buttonText = resources.getString(actionType.msg)
-        buttonClickListener = View.OnClickListener {
-            when(actionType){
-                ErrorActionType.Retry -> {
-                    viewModel.goBack()
-                    pageObject?.let {
-                        delegate?.onEvent(it, eventID, ErrorActionType.Retry )
-                    }
-                }
-                ErrorActionType.Confirm -> {
-                    if( redirectPage != null) viewModel.pageChange( redirectPage!! )
-                    else {
-                        viewModel.goBack()
-                        pageObject?.let {
-                            delegate?.onEvent(it, eventID, ErrorActionType.Confirm )
-                        }
-                    }
-                }
-                ErrorActionType.Finish -> viewModel.repo.pagePresenter.finishApp()
+        btnConfirm.visibility = View.GONE
+        btnRetry.visibility = View.GONE
+        btnFinish.visibility = View.GONE
+
+        when(actionType){
+            ErrorActionType.Retry -> {
+                btnRetry.visibility = View.VISIBLE
+            }
+            ErrorActionType.Confirm -> {
+                btnConfirm.visibility = View.VISIBLE
+            }
+            ErrorActionType.Finish -> {
+                btnFinish.visibility = View.VISIBLE
             }
         }
     }

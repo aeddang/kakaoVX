@@ -1,33 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.kakaovx.homet.tv.page.component.player.ExoPlayer
+    <com.kakaovx.homet.tv.page.component.player.ExoPlayerUI
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:use_controller="true"
         />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <Button
-        android:id="@+id/btnTest0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test0"
-        />
-    <Button
-        android:id="@+id/btnTest1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test1"
-        />
-    <Button
-        android:id="@+id/btnTest2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test2"
-        />
-    </LinearLayout>
+
 </FrameLayout>

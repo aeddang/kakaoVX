@@ -286,7 +286,8 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
             } else {
                 if (sharedElement == null) {
                     val currentPos = activityModel.currentPageObject?.pageIDX ?: 9999
-                    val isReverse = if(currentPos <= pageObject.pageIDX) isBack else !isBack
+                    var isReverse = currentPos > pageObject.pageIDX
+                   // if(isBack) isReverse = !isReverse
                     transaction.setCustomAnimations(getPageIn(isReverse), getPageOut(isReverse))
                 } else {
                     transaction.setReorderingAllowed(true)

@@ -62,12 +62,12 @@ data class Exercise(val id:String, var context: Context?){
             if( flag.isStep) {
                 finalMotion?.let {prev->
                     prev.speech = StaticResource.NEXT
-                    prev.actionFlag?.speech = StaticResource.NEXT
+                    //prev.actionFlag?.speech = StaticResource.NEXT
                 }
                 when(mCount){
                     0 -> {
                         flag.speech = StaticResource.FIRST
-                        flag.actionFlag?.speech = StaticResource.FIRST
+                        //flag.actionFlag?.speech = StaticResource.FIRST
                     }
                     else -> finalMotion = flag
                 }

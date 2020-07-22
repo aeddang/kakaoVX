@@ -16,11 +16,11 @@ class ItemExercise : ItemImageCardView {
     override fun onBind(data: Any?) {
         val exercise = data as ExerciseData
         titleText = exercise.title
-        contentText = exercise.programClassName
+        contentText = exercise.getSubTitle(context)
         Glide.with(context)
             .load(exercise.thumbnail)
             .centerCrop()
-            .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+            .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
             .into(mainImageView)
 
     }
@@ -31,7 +31,7 @@ class ItemExercise : ItemImageCardView {
     }
 
     override fun updateBackgroundColor(isSelected: Boolean) {
-        //setBackgroundColor(color)
-        //setInfoAreaBackgroundColor(color)
+        setBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
     }
 }

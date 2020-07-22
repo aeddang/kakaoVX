@@ -2,19 +2,48 @@
     <string name="app_name">스마트홈트</string>
     <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
     <string name="page_home_title">스마트홈트</string>
-    <string name="page_home_sub_title">AI코치의 트레이닝으로 홈트를 더욱더 스마트하게!\n모바일 스마트홈트로 똑똑하게 홈트 하세요!</string>
-    <string name="page_home_btn_guide">자세히보기</string>
+    <string name="page_home_sub_title1">AI코치의 트레이닝으로 </string>
+    <string name="page_home_sub_title2">홈트를 더욱더 스마트하게!</string>
+    <string name="page_home_sub_title3">모바일 스마트홈트로 똑똑하게 홈트 하세요!</string>
+    <string name="page_home_download">APP 다운로드</string>
+    <string name="page_home_btn_guide">서비스안내</string>
 
-    <string name="page_program_title">프로그램</string>
-    <string name="page_program_btn_play">체험하기</string>
+    <string name="page_program_title">스마트홈트</string>
+    <string name="page_program_sub_title1">운동 목적</string>
+    <string name="page_program_sub_title2">운동 유형</string>
+    <string name="page_program_sub_title3">권장 횟수</string>
+    <string name="page_program_sub_title4">평균 운동 시간</string>
+    <string name="page_program_list_title">운동 구성</string>
+    <string name="page_program_info_title">프로그램 소개</string>
+
     <string name="page_exercise_btn_play">운동하기</string>
+    <string name="page_exercise_sub_title1">운동 부위</string>
+    <string name="page_exercise_sub_title2">운동 시간</string>
+    <string name="page_exercise_sub_title3">소모 칼로리</string>
+    <string name="page_exercise_sub_title4">준비 도구</string>
+    <string name="page_exercise_motion_title">%s개 동작</string>
 
+    <string name="page_guide_title">스마트홈트</string>
+    <string name="page_guide_sub_title">AI코치의 트레이닝으로 홈트를 더욱더 스마트하게!\n모바일 스마트홈트로 똑똑하게 홈트 하세요!</string>
+    <string name="page_guide_reference">* 휴대폰 모델에 따라 서비스 지원 가능 여부가 다릅니다. QR코드를 스캔해 이용 가능 기기인지 확인해 보세요!</string>
+
+
+    <string name="page_setup_sub_title">스마트홈트 TV APP</string>
+    <string name="page_setup_version_title">버전</string>
+    <string name="page_setup_version">V %s</string>
+    <string name="page_setup_btn_update">업데이트</string>
+    <string name="page_setup_copyright">Copyright ⓒ Kakao VX Corp. All right reserved.</string>
+    <string name="page_setup_guide1">스마트홈트 Mobile APP 이용 안내</string>
+    <string name="page_setup_guide2">모바일 스마트홈트로 AI코치와 함께</string>
+    <string name="page_setup_guide3">더욱 스마트한 홈트를 경험하세요!</string>
+    <string name="page_setup_guide4">서비스 이용문의</string>
+    <string name="page_setup_guide5">ht.help@kakakoht.com</string>
 
     <string name="page_player_relay_confirm">오늘의  운동 기록이 있습니다.\n이어서 진행 하시겠습니까?</string>
     <string name="page_player_first">첫번째 동작입니다.</string>
     <string name="page_player_last">마지막 동작입니다.</string>
     <string name="page_player_list">운동목록</string>
-    <string name="page_player_multiview_list">멀티뷰</string>
+    <string name="page_player_multiview_list">화면 전환</string>
     <string name="page_player_exercise_result_complete">결과데이터를 전송합니다.</string>
     <string name="page_player_exercise_result_error">결과데이터를 전송하지못했습니다.</string>
     <string name="page_player_exit">운동이 완료되지 않았습니다. 정말 중단하시겠습니까?</string>
@@ -25,6 +54,16 @@
     <string name="page_player_btn_relay">이어서하기</string>
     <string name="page_player_btn_suspend">중단하기</string>
     <string name="page_player_btn_continue">계속하기</string>
+    <string name="page_player_btn_skip">SKIP</string>
+    <string name="page_player_breaktime_info">휴식시간입니다.</string>
+    <string name="page_player_breaktime_end_info">곧 운동이 시작됩니다.</string>
+
+    <string name="page_error_title">스마트홈트</string>
+
+    <string name="left_tab_home">홈</string>
+    <string name="left_tab_program">프로그램</string>
+    <string name="left_tab_guide">서비스 안내</string>
+    <string name="left_tab_setup">설정</string>
 
 
     <string name="list_exercise_title">운동</string>
@@ -46,9 +85,9 @@
 
 
 
-    <string name="btn_action_retry">retry</string>
-    <string name="btn_action_confirm">confirm</string>
-    <string name="btn_action_finish">finish</string>
+    <string name="btn_action_retry">다시시도</string>
+    <string name="btn_action_confirm">확인</string>
+    <string name="btn_action_finish">종료</string>
     <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>

@@ -12,6 +12,8 @@ import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.PageRepository
+import com.kakaovx.homet.tv.store.api.ApiField
+import com.kakaovx.homet.tv.store.api.ApiValue
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.*
 import com.lib.page.PageObject
@@ -113,6 +115,17 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
         )
     }
 
+    fun putExerciseRecord() {
+        val exerciseData = exercise.value
+        exerciseData ?: return
+        val params = HashMap<String, String>()
+        params[ApiField.PROGRAM_ID] = programID
+        params[ApiField.EXERCISE_ID] = exerciseID
+        params[ApiField.ROUND_ID] = roundID
+        params[ApiField.PLAY_ID] = exerciseData.info.playId
+        owner?.let { repo.hometManager.loadApi(it, HometApiType.EXERCISE_RECORD, params, "") }
+    }
+
     fun putExerciseCompleted(result:ExerciseResult? = null){
         presenter.loading()
         val exerciseData = exercise.value
@@ -162,13 +175,10 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
     private fun exerciseCompleted() {
         presenter.loaded()
         CustomDialog.makeDialog(presenter.activity, null, R.string.page_player_completed)
-            .setNegativeButton(R.string.page_player_btn_exit)
+            .setNegativeButton(R.string.btn_action_confirm)
             {  _,_ ->
                 pageChange(PageID.PROGRAM_LIST)
             }
-            .setPositiveButton(R.string.page_player_btn_replay)
-            { _,_ ->
-
-            }.show()
+            .show()
     }
 }

@@ -1,17 +1,18 @@
 package com.kakaovx.homet.tv.page.program
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
-
 import androidx.leanback.widget.BrowseFrameLayout.OnFocusSearchListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemProgram
-import com.kakaovx.homet.tv.page.component.tab.LeftTab
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -29,7 +30,6 @@ import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
-
 class PageProgramList : PageBrowseSupportFragment(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -39,6 +39,7 @@ class PageProgramList : PageBrowseSupportFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        setupUIElements()
         viewModel = ViewModelProvider(this, viewModelFactory).get(BasePageViewModel::class.java)
         pageViewModel = viewModel
     }
@@ -49,7 +50,9 @@ class PageProgramList : PageBrowseSupportFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUIElements()
+        context?.let{
+            view.setBackgroundColor(it.resources.getColor(R.color.transparent_black80))
+        }
         workaroundFocus(view)
     }
 
@@ -60,8 +63,7 @@ class PageProgramList : PageBrowseSupportFragment(){
         browseFrameLayout.onFocusSearchListener =
             OnFocusSearchListener { focused: View?, direction: Int ->
                 if (direction == View.FOCUS_LEFT ) {
-                    val item = focused as? RowHeaderView
-                        ?: return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
+                   // val item = focused as? RowHeaderView ?: return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
                     return@OnFocusSearchListener viewModel.getLeftFocusTab(PageID.PROGRAM_LIST)
                 } else {
                     return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
@@ -133,11 +135,7 @@ class PageProgramList : PageBrowseSupportFragment(){
         val param = HashMap<String, Any>()
         param[PageProgram.PROGRAM] = program
         viewModel.pageChange(PageID.PROGRAM, param)
-        /*
-        viewModel.pageChange(PageID.PROGRAM, param,
-            (itemViewHolder.view as ImageCardView).mainImageView,
-            PageProgram.SHARE_IMAGE_NAME )
-        */
+
     }
     private fun onItemSelected(item:Any?){
         val program = item as? ProgramData
@@ -149,14 +147,18 @@ class PageProgramList : PageBrowseSupportFragment(){
 
 
     private fun setupUIElements() {
-        title = getString(R.string.page_program_title)
-        headersState = BrowseSupportFragment.HEADERS_ENABLED
-        isHeadersTransitionOnBackEnabled = true
+        val text =  SpannableString(getString(R.string.page_program_title))
+        val size =  text.length
+        text.setSpan(StyleSpan(Typeface.BOLD), size-2, size, 0)
+        title = text
+        headersState = BrowseSupportFragment.HEADERS_DISABLED
+        isHeadersTransitionOnBackEnabled = false
         activity?.let {
             brandColor = ContextCompat.getColor(it, R.color.colorAccent)
             searchAffordanceColor = ContextCompat.getColor(it, R.color.color_white)
         }
     }
+
 
     private var categoryAdapters = HashMap<String, ArrayObjectAdapter>()
     private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())

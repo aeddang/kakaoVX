@@ -82,14 +82,7 @@ class PageVideoExo : PageFragmentCoroutine(){
             }
         })
 
-        btnTest0.setOnClickListener {
-            CustomDialog.makeDialog(context!!,"${it.tag}","test" ).show()
-        }
-        btnTest0.requestFocus()
-        this.view?.setOnKeyListener { v, keyCode, event ->
-            CustomDialog.makeDialog(context!!,"event","keyCode ${keyCode}" ).show()
-            true
-        }
+
     }
 
     override fun onTransactionCompleted() {

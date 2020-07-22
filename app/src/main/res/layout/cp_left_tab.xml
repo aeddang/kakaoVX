@@ -1,122 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_orange"
+    android:background="@color/color_black_deep"
     android:orientation="vertical">
-    <FrameLayout
-        android:id="@+id/tab0"
+    <LinearLayout
+        android:id="@+id/body"
+        android:layout_marginTop="@dimen/left_tab_item_height"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/left_tab_height"
-        android:nextFocusDown="@id/tab1"
-        android:orientation="vertical"
-        android:focusable="true"
-        android:clickable="true"
-        android:layout_marginTop="@dimen/margin_regular"
-        android:background="@drawable/effect_rect_grey_ripple">
-        <ImageView
-            android:layout_width="@dimen/icon_regular"
-            android:layout_height="@dimen/icon_regular"
-            android:src="@drawable/ic_setting"
-            android:scaleType="fitXY"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/margin_light"
-            />
-        <TextView
-            style="@style/font_bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="test"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/tab1"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/left_tab_height"
-        android:orientation="vertical"
-        android:nextFocusDown="@id/tab2"
-        android:focusable="true"
-        android:clickable="true"
-        android:layout_marginTop="@dimen/margin_regular"
-        android:background="@drawable/effect_rect_grey_ripple">
-        <ImageView
-            android:layout_width="@dimen/icon_regular"
-            android:layout_height="@dimen/icon_regular"
-            android:src="@drawable/ic_setting"
-            android:scaleType="fitXY"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/margin_light"
-            />
-        <TextView
-            style="@style/font_bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="test"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/tab2"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/left_tab_height"
-        android:orientation="vertical"
-        android:nextFocusDown="@id/tab3"
-        android:focusable="true"
-        android:clickable="true"
-        android:layout_marginTop="@dimen/margin_regular"
-        android:background="@drawable/effect_rect_grey_ripple">
-        <ImageView
-            android:layout_width="@dimen/icon_regular"
-            android:layout_height="@dimen/icon_regular"
-            android:src="@drawable/ic_setting"
-            android:scaleType="fitXY"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/margin_light"
-            />
-        <TextView
-            style="@style/font_bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="test"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/tab3"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/left_tab_height"
-        android:orientation="vertical"
-        android:nextFocusDown="@id/tab0"
-        android:focusable="true"
-        android:clickable="true"
-        android:layout_marginTop="@dimen/margin_regular"
-        android:background="@drawable/effect_rect_grey_ripple">
-        <ImageView
-            android:layout_width="@dimen/icon_regular"
-            android:layout_height="@dimen/icon_regular"
-            android:src="@drawable/ic_setting"
-            android:scaleType="fitXY"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/margin_light"
-            />
-        <TextView
-            style="@style/font_bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="test"
-            android:gravity="center"
-            android:layout_gravity="bottom"
-            />
-    </FrameLayout>
-
-
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+</FrameLayout>

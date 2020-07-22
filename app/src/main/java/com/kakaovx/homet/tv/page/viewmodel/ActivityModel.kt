@@ -29,11 +29,8 @@ class ActivityModel : PageModel{
         return f == -1
     }
 
-
     val backGroundImage = MutableLiveData<String>()
-
-
-    private val tabViewPages = arrayOf(PageID.HOME,PageID.HOME_LIST, PageID.PROGRAM_LIST, PageID.SETTING, PageID.GUIDE).map { it.value }
+    private val tabViewPages = arrayOf(PageID.HOME,PageID.HOME_LIST, PageID.PROGRAM_LIST, PageID.SETUP, PageID.GUIDE).map { it.value }
     fun isTabView(id: String): Boolean {
         return tabViewPages.indexOf(id) != -1
     }

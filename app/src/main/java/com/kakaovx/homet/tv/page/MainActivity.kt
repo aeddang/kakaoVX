@@ -27,7 +27,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.lgtv.OMAReceiver
-import com.kakaovx.homet.tv.lgtv.utils.LogUtil
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.ActivityModel
 import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
@@ -68,7 +67,6 @@ class MainActivity : PageActivity() {
         super.onCreatedView()
         scope.createJob()
         prepareBackgroundManager()
-        LogUtil.d(LogUtil.DEBUG_LEVEL_3, "enter")
         OMAReceiver.sendAppVersionCheck(this, true)
 
         pageModel.leftTab = leftTab
@@ -92,7 +90,7 @@ class MainActivity : PageActivity() {
         pagePresenter.requestPermission(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
             object : PageRequestPermission {
                 override fun onRequestPermissionResult(resultAll: Boolean, permissions: List<Boolean>?) {
-                    pageStart(pageProvider.getPageObject(PageID.PROGRAM_LIST))
+                    pageStart(pageProvider.getPageObject(PageID.HOME))
                 }
             })
 

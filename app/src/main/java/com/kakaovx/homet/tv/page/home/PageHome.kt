@@ -1,10 +1,15 @@
 package com.kakaovx.homet.tv.page.home
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.store.api.HomeTResponse
+import com.kakaovx.homet.tv.store.api.homet.HometApiType
+import com.kakaovx.homet.tv.store.api.homet.ProgramList
 import com.lib.page.PageFragmentCoroutine
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -18,7 +23,6 @@ class PageHome : PageFragmentCoroutine(){
     protected lateinit var viewModel: BasePageViewModel
     private val appTag = javaClass.simpleName
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -27,7 +31,7 @@ class PageHome : PageFragmentCoroutine(){
     }
 
     override fun getLayoutResID(): Int = R.layout.page_home
-    private var pageListID:String? = null
+    private var pageList: PageHomeList? = null
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -35,27 +39,54 @@ class PageHome : PageFragmentCoroutine(){
 
     override fun onDestroy() {
         super.onDestroy()
-        pageListID = null
+        pageList = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if( pageListID != null) return
-        try {
-            val supportFragmentManager = childFragmentManager
-            val transaction = supportFragmentManager.beginTransaction()
-            val page = viewModel.repo.pageProvider.getPageObject(PageID.HOME_LIST)
-            val fragment = viewModel.repo.pageProvider.getPageView(page)
-            pageListID = page.fragmentID
-            transaction.add(R.id.listArea, fragment.pageFragment, pageListID )
-            transaction.commit()
-        }catch(e:IllegalStateException){
+        if( pageList == null){
+            try {
+                val supportFragmentManager = childFragmentManager
+                val transaction = supportFragmentManager.beginTransaction()
+                val page = viewModel.repo.pageProvider.getPageObject(PageID.HOME_LIST)
+                val fragment = viewModel.repo.pageProvider.getPageView(page)
+                pageList = fragment as PageHomeList
+                transaction.add(R.id.listArea, fragment.pageFragment)
+                transaction.commit()
 
+            }catch(e:IllegalStateException){
+
+            }
         }
-        btnGuide.addFocusables(arrayListOf(viewModel.getLeftFocusTab(PageID.HOME)), View.FOCUS_LEFT)
+
+        super.onViewCreated(view, savedInstanceState)
+        pageList?.exitFocusView = btnGuide
     }
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
+        btnGuide.setOnClickListener{
+            viewModel.pageChange(PageID.GUIDE)
+        }
+
+        viewModel.repo.hometManager.success.observe(this,Observer { e ->
+            e ?: return@Observer
+            val type = e.type as? HometApiType
+            val response = e.data as? HomeTResponse<*>
+            response ?: return@Observer
+            type ?: return@Observer
+            when(type){
+                HometApiType.PROGRAMS_RECENT -> btnGuide.requestFocus()
+                else -> {}
+            }
+        })
+    }
+
+    override fun onTransactionCompleted() {
+        super.onTransactionCompleted()
+        viewModel.getLeftFocusTab(PageID.HOME)?.let{
+            btnGuide.nextFocusLeftId = it.id
+            btnGuide.nextFocusForwardId = it.id
+            btnGuide.nextFocusRightId = it.id
+        }
     }
 }

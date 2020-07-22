@@ -1,11 +1,8 @@
 package com.kakaovx.homet.tv.page.player
-
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
-
 import androidx.leanback.widget.BrowseFrameLayout.OnFocusSearchListener
 import androidx.lifecycle.Observer
 import com.kakaovx.homet.tv.R
@@ -21,7 +18,6 @@ import com.skeleton.component.item.ItemImageCardView
 import com.skeleton.component.item.ItemPresenter
 import com.skeleton.page.PageBrowseSupportFragment
 
-
 class PagePlayerList : PageBrowseSupportFragment(){
 
     private val appTag = javaClass.simpleName
@@ -29,6 +25,7 @@ class PagePlayerList : PageBrowseSupportFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupUIElements()
     }
 
     override fun onDestroy() {
@@ -55,7 +52,6 @@ class PagePlayerList : PageBrowseSupportFragment(){
 
     fun onPlayerViewModel(playerViewModel:PagePlayerViewModel){
         viewModel = playerViewModel
-        setupUIElements()
         playerViewModel.player.uiEvent.observe(this, Observer {evt->
 
         })
@@ -87,10 +83,6 @@ class PagePlayerList : PageBrowseSupportFragment(){
     private fun setupUIElements() {
         headersState = BrowseSupportFragment.HEADERS_DISABLED
         isHeadersTransitionOnBackEnabled = false
-        activity?.let {
-            brandColor = ContextCompat.getColor(it, R.color.colorAccent)
-            searchAffordanceColor = ContextCompat.getColor(it, R.color.color_white)
-        }
     }
 
     var exitFocusView:View? = null
@@ -117,9 +109,6 @@ class PagePlayerList : PageBrowseSupportFragment(){
                     return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
                 }
             }
-
-
-
     }
 
     override fun onSuperBackPressAction() {
@@ -173,8 +162,13 @@ class PagePlayerList : PageBrowseSupportFragment(){
         }
         override fun getItemView(): ItemImageCardView{
             val item = ItemFlag(context!!)
+            var isInitFocus = true
             item.setOnFocusChangeListener { v, hasFocus ->
                 if(hasFocus)  {
+                    if(isInitFocus){
+                        isInitFocus = false
+                        return@setOnFocusChangeListener
+                    }
                     viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListView
                 }
             }
@@ -189,9 +183,14 @@ class PagePlayerList : PageBrowseSupportFragment(){
         }
         override fun getItemView(): ItemImageCardView {
             val item = ItemMultiView(context!!)
+            var isInitFocus = true
             item.movie = currentMovie
             item.setOnFocusChangeListener { v, hasFocus ->
                 if(hasFocus)  {
+                    if(isInitFocus){
+                        isInitFocus = false
+                        return@setOnFocusChangeListener
+                    }
                     viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListView
                 }
             }

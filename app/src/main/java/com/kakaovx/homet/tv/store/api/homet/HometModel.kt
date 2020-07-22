@@ -1,7 +1,8 @@
 package com.kakaovx.homet.tv.store.api.homet
 
+import android.content.Context
 import com.google.gson.annotations.SerializedName
-
+import com.kakaovx.homet.tv.R
 
 
 data class CategoryData(
@@ -23,7 +24,11 @@ data class ProgramData(
     @SerializedName("exerciseCount") var exerciseCount: String?,
     @SerializedName("isMultiView") var isMultiView: Boolean?,
     @SerializedName("viewStartTime") var viewStartTime: String?
-)
+){
+    fun getSubTitle(ctx:Context):String{
+        return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"
+    }
+}
 
 data class ProgramDetailData(
     @SerializedName("title") val title: String?,
@@ -42,14 +47,16 @@ data class ProgramDetailData(
     @SerializedName("movieType") val movieType: String?,
     @SerializedName("movieTypeName") val movieTypeName: String?
 ){
-    val subtitle :String
-        get() {
-            return "$purposeName . $difficultyName"
-        }
+
     val description :String
         get() {
             return "$exercisePlanCount / $averagePlayTime"
         }
+
+    fun getSubTitle(ctx:Context?):String{
+        ctx ?: return ""
+        return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"
+    }
 }
 
 
@@ -66,7 +73,12 @@ data class ExerciseData(
     @SerializedName("className") val programClassName: String?,
     @SerializedName("bodyPartsName") val bodyPartsName: String?,
     @SerializedName("isMultiView") val isMultiView: Boolean?
-)
+){
+    fun getSubTitle(ctx:Context?):String{
+        ctx ?: return ""
+        return "$bodyPartsName . $playTime${ctx.getString(R.string.unit_min)} . $calorie${ctx.getString(R.string.unit_kcal)}"
+    }
+}
 
 data class ExerciseDetailData(
     @SerializedName("exerciseId") val exerciseId: String?,
@@ -84,10 +96,14 @@ data class ExerciseDetailData(
     @SerializedName("movieType") val movieType: String?,
     @SerializedName("movieTypeName") val movieTypeName: String?
 ){
-    val subtitle :String
-        get() {
-            return "$exerciseToolsName . $bodyPartsName"
-        }
+    fun getTime(ctx:Context?):String{
+        ctx ?: return ""
+        return "$playTime${ctx.getString(R.string.unit_min)}"
+    }
+    fun getKal(ctx:Context?):String{
+        ctx ?: return ""
+        return "$calorie${ctx.getString(R.string.unit_kcal)}"
+    }
 }
 
 data class ExerciseMotionsData(

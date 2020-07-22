@@ -15,12 +15,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
-        <com.kakaovx.homet.tv.page.player.view.VideoProgress
-            android:id="@+id/videoProgress"
+        <FrameLayout
+            android:id="@+id/uiArea"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/page_player_ui_height"
+            android:layout_marginBottom="@dimen/page_player_ui_pos"
             android:layout_gravity="bottom"
-            />
+            android:background="@color/color_black"
+            android:orientation="vertical">
+            <FrameLayout
+                android:id="@+id/listArea"
+                android:layout_marginTop="-30dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <com.kakaovx.homet.tv.page.player.view.VideoProgress
+                android:id="@+id/videoProgress"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/page_player_videoprogress_height" />
+        </FrameLayout>
         <Button
             android:id="@+id/btnPlayStop"
             android:layout_height="wrap_content"
@@ -53,16 +65,15 @@
         android:id="@+id/breakTime"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <FrameLayout
-        android:id="@+id/listArea"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/page_player_list_start"
-        android:layout_gravity="bottom">
-    </FrameLayout>
+
     <com.kakaovx.homet.tv.page.player.view.ExerciseInfo
         android:id="@+id/exerciseInfo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
+    <com.skeleton.component.progressbar.MultiStrokeSpinner
+        android:id="@+id/loadingSpinner"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/page_player_loading_pos"
+        android:layout_gravity="center"/>
 </FrameLayout>

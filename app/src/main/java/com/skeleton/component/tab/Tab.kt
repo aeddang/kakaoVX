@@ -5,9 +5,10 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.CallSuper
 import com.lib.page.PageComponent
+import com.lib.page.PageComponentCoroutine
 
 
-abstract class Tab<T> : PageComponent {
+abstract class Tab<T> : PageComponentCoroutine {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context,attrs)
     private val appTag = javaClass.simpleName

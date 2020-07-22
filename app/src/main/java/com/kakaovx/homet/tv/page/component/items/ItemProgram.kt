@@ -12,17 +12,19 @@ class ItemProgram : ItemImageCardView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     init {
-        //cardType = CARD_TYPE_FLAG_TITLE
+
     }
 
     override fun onBind(data: Any?) {
         val program = data as ProgramData
         titleText = program.title
-        contentText = program.difficultyName
+        contentText = program.getSubTitle(context)
+
+
         Glide.with(context)
             .load(program.thumbnail)
             .centerCrop()
-            .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+            .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
             .into(mainImageView)
 
     }
@@ -33,7 +35,7 @@ class ItemProgram : ItemImageCardView {
     }
 
     override fun updateBackgroundColor(isSelected: Boolean) {
-        //setBackgroundColor(color)
-        //setInfoAreaBackgroundColor(color)
+        setBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
     }
 }

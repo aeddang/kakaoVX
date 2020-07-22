@@ -2,44 +2,73 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
 
     <dimen name="font_heavy">40dp</dimen>
-    <dimen name="font_black">36dp</dimen>
-    <dimen name="font_extra_bold">32dp</dimen>
+    <dimen name="font_black">35dp</dimen>
+    <dimen name="font_extra_bold">26dp</dimen>
     <dimen name="font_bold">24dp</dimen>
-    <dimen name="font_medium">18dp</dimen>
-    <dimen name="font_regular">16dp</dimen>
-    <dimen name="font_light">15dp</dimen>
-    <dimen name="font_extra_light">12dp</dimen>
-    <dimen name="font_thin">10dp</dimen>
+    <dimen name="font_medium">17dp</dimen>
+    <dimen name="font_regular">13dp</dimen>
+    <dimen name="font_light">12dp</dimen>
+    <dimen name="font_extra_light">11dp</dimen>
+    <dimen name="font_thin">9dp</dimen>
 
     <!-- margin -->
-    <dimen name="margin_heavy">32dp</dimen>
+    <dimen name="margin_heavy">48dp</dimen>
     <dimen name="margin_medium">24dp</dimen>
     <dimen name="margin_regular">20dp</dimen>
-    <dimen name="margin_light">16dp</dimen>
+    <dimen name="margin_light">18dp</dimen>
+    <dimen name="margin_extra_light">14dp</dimen>
     <dimen name="margin_thin">10dp</dimen>
     <dimen name="margin_extra_thin">5dp</dimen>
+    <dimen name="margin_min">2dp</dimen>
 
-    <dimen name="icon_heavy">32dp</dimen>
-    <dimen name="icon_regular">24dp</dimen>
+    <dimen name="icon_heavy">80dp</dimen>
+    <dimen name="icon_regular">20dp</dimen>
     <dimen name="icon_light">16dp</dimen>
 
-
-
     <!-- size -->
-    <dimen name="left_tab_width">50dp</dimen>
-    <dimen name="left_tab_height">60dp</dimen>
+    <dimen name="left_tab_width">114dp</dimen>
+    <dimen name="left_tab_width_active">210dp</dimen>
+    <dimen name="left_tab_item_height">60dp</dimen>
+    <dimen name="left_tab_margin_left">47dp</dimen>
 
-    <dimen name="program_list_width">160dp</dimen>
-    <dimen name="program_list_height">90dp</dimen>
+    <dimen name="program_list_width">240dp</dimen>
+    <dimen name="program_list_height">133dp</dimen>
 
-    <dimen name="flag_list_width">80dp</dimen>
-    <dimen name="flag_list_height">45dp</dimen>
+    <dimen name="guide_list_width">654dp</dimen>
+    <dimen name="guide_list_height">392dp</dimen>
 
-    <dimen name="page_player_list_start">-1024dp</dimen>
-    <dimen name="page_player_exercise_progress_height">10dp</dimen>
-    <dimen name="page_player_progress_height">30dp</dimen>
+    <dimen name="flag_list_width">166dp</dimen>
+    <dimen name="flag_list_height">93dp</dimen>
 
+
+    <dimen name="page_home_top_height">225dp</dimen>
+    <dimen name="page_home_list_top">180dp</dimen>
+
+    <dimen name="page_exercise_info_top">183dp</dimen>
+    <dimen name="page_exercise_info_bg_top">210dp</dimen>
+    <dimen name="page_exercise_thumb_width">160dp</dimen>
+    <dimen name="page_exercise_thumb_height">90dp</dimen>
+    <dimen name="page_exercise_line_height">43dp</dimen>
+    <dimen name="page_exercise_info_start">248dp</dimen>
+    <dimen name="page_exercise_list_top">420dp</dimen>
+    <dimen name="page_exercise_list_height">400dp</dimen>
+
+    <dimen name="page_guide_top_height">100dp</dimen>
+    <dimen name="page_guide_list_top">50dp</dimen>
+
+    <dimen name="page_player_break_margin">110dp</dimen>
+    <dimen name="page_player_exercise_progress_height">7dp</dimen>
+    <dimen name="page_player_progress_height">7dp</dimen>
+
+    <dimen name="page_player_loading_pos">120dp</dimen>
+    <dimen name="page_player_ui_pos">-200dp</dimen>
+    <dimen name="page_player_ui_height">287dp</dimen>
+    <dimen name="page_player_videoprogress_height">110dp</dimen>
     <!-- lb size -->
     <dimen name="lb_browse_headers_width">210dp</dimen><!--  Original: 270  -->
-    <dimen name="lb_browse_rows_margin_start">178dp</dimen><!--  Original: 238  -->
+    <dimen name="lb_browse_rows_margin_start">120dp</dimen><!--  Original: 238  -->
+
+    <dimen name="lb_browse_rows_margin_top">107dp</dimen>
+    <dimen name="lb_browse_padding_start">48dp</dimen>
+    <dimen name="lb_browse_title_text_size">24dp</dimen>
 </resources>

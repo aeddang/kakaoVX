@@ -2,8 +2,8 @@
 <selector  xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_focused="true"
-        android:drawable="@drawable/ic_launcher_background" />
+        android:drawable="@drawable/shape_circle_gray" />
     <item
         android:state_focused="false"
-        android:drawable="@drawable/ic_setting" />
+        android:drawable="@color/transparent" />
 </selector>

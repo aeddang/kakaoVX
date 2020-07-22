@@ -7,9 +7,11 @@
     <color name="colorAccent">#E87C0A</color>
 
     <color name="color_white">#fff</color>
-    <color name="color_gray">#959595</color>å
+    <color name="color_gray">#858585</color>
     <color name="color_gray_deep">#2d2b2c</color>
-    <color name="color_black">#000</color>
+    <color name="color_black_light">#1e1e1e</color>
+    <color name="color_black">#171717</color>
+    <color name="color_black_deep">#141415</color>
     <color name="color_yellow">#e7b689</color>
     <color name="color_orange">#f6861f</color>
     <color name="color_red">#bd141a</color>

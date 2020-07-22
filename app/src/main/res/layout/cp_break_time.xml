@@ -10,14 +10,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent_black80"
+        />
     <com.skeleton.component.graph.GraphRing
         android:id="@+id/graphCount"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_width="145dp"
+        android:layout_height="145dp"
         android:layout_gravity="center"/>
     <TextView
         android:id="@+id/textCount"
-        style="@style/font_regular"
+        style="@style/font_light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_regular"
@@ -29,42 +34,47 @@
         android:textSize="@dimen/font_extra_bold" />
     <TextView
         android:id="@+id/textTitle"
-        style="@style/font_regular"
+        style="@style/font_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_regular"
         android:textColor="@color/color_white"
         android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/page_player_break_margin"
+        android:layout_marginStart="@dimen/margin_heavy"
+        android:layout_marginEnd="@dimen/margin_heavy"
         tools:text= "@string/tool_title"
         android:text=""
-        android:textSize="@dimen/font_extra_bold" />
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="320dp"
-        android:layout_height="180dp"
-        android:layout_gravity="bottom|left"/>
-
+        android:textSize="@dimen/font_black" />
     <TextView
-        android:id="@+id/textNext"
-        style="@style/font_regular"
-        android:layout_width="wrap_content"
+        android:id="@+id/textSubTitle"
+        style="@style/font_light"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/color_white"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="120dp"
-        tools:text= "@string/tool_sub_title"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/page_player_break_margin"
+        android:layout_marginStart="@dimen/margin_heavy"
+        android:layout_marginEnd="@dimen/margin_heavy"
+        tools:text= "@string/tool_title"
         android:text=""
-        android:textSize="@dimen/font_extra_bold" />
-
+        android:textSize="@dimen/font_medium" />
     <Button
         android:id="@+id/btnSkip"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:text="SKIP"
+        style="@style/font_light"
+        android:layout_width="119dp"
+        android:layout_height="43dp"
+        android:textSize="@dimen/font_regular"
+        android:textColor="@color/color_white"
+        android:text="@string/page_player_btn_skip"
+        android:layout_marginBottom="@dimen/margin_heavy"
+        android:layout_marginEnd="@dimen/margin_heavy"
+        android:layout_gravity="end|bottom"
+        android:background="@drawable/focus_rect_black_white_border"
         android:nextFocusForward="@id/btnHidden"
         android:nextFocusUp="@id/btnSkip"
         android:nextFocusDown="@id/btnSkip"
         android:nextFocusLeft="@id/btnSkip"
-        android:nextFocusRight="@id/btnSkip"/>
+        android:nextFocusRight="@id/btnSkip" />
 </FrameLayout>

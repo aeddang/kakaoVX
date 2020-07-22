@@ -2,6 +2,7 @@ package com.kakaovx.homet.tv.page.player.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -13,7 +14,9 @@ import com.skeleton.component.item.ItemImageCardView
 class ItemMultiView : ItemImageCardView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
+    init {
+        cardType = CARD_TYPE_FLAG_IMAGE_ONLY
+    }
     private val activeObserver = Observer<Int>{idx->
         if(idx == movieIdx) active()
         else passive()
@@ -30,14 +33,20 @@ class ItemMultiView : ItemImageCardView {
 
     }
 
+    var textView:TextView? = null
     override fun onBind(data: Any?) {
         val movieUrlData = data as? MovieUrlData
+        if(textView == null) {
+            textView = TextView(context)
+            this.addView(textView)
+        }
 
         movieUrlData?.let {m->
-            Glide.with(context)
+            textView!!.text = m.idx.toString()
+                Glide.with(context)
                 .load(m.imgUrl)
                 .centerCrop()
-                .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+                .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
                 .into(mainImageView)
             movieIdx = m.idx
             if(movie?.multiViewIndex?.value == movieIdx) active()

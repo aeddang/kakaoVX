@@ -23,17 +23,72 @@
     </style>
 
     <style name="font_bold">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-black</item>
         <item name="android:textSize">@dimen/font_bold</item>
         <item name="android:textColor">@color/color_black</item>
     </style>
 
     <style name="font_black">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-black</item>
         <item name="android:textSize">@dimen/font_black</item>
         <item name="android:textColor">@color/color_black</item>
     </style>
 
+
+    <style name="font_tab_default">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/font_regular</item>
+        <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <style name="font_tab_select">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textSize">@dimen/font_regular</item>
+        <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <style name="TextAppearance.Leanback.Header" parent="TextAppearance.Leanback">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:textSize">@dimen/font_medium</item>
+    </style>
+
+    <style name="TextAppearance.Leanback.ImageCardView">
+    </style>
+    <style name="TextAppearance.Leanback.ImageCardView.Content">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:textSize">@dimen/font_light</item>
+    </style>
+    <style name="TextAppearance.Leanback.ImageCardView.Title">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:textSize">@dimen/font_regular</item>
+    </style>
+
+    <style name="Widget.Leanback.ImageCardView.InfoAreaStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="layout_viewType">info</item>
+        <item name="android:paddingBottom">@dimen/margin_extra_light</item>
+        <item name="android:paddingEnd">@dimen/margin_extra_light</item>
+        <item name="android:paddingStart">@dimen/margin_extra_light</item>
+        <item name="android:paddingTop">@dimen/margin_extra_light</item>
+        <item name="android:background">@color/lb_basic_card_info_bg_color</item>
+    </style>
+
+    <style name="Widget.Leanback.ImageCardView.TitleStyle">
+        <item name="android:id">@id/title_text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minLines">2</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:layout_marginBottom">@dimen/lb_basic_card_info_text_margin</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textAppearance">@style/TextAppearance.Leanback.ImageCardView.Title</item>
+    </style>
 
 
 </resources>

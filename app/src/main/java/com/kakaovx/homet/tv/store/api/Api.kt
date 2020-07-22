@@ -19,15 +19,7 @@ object ApiPath {
     private const val  GROUP_EXERCISE = "exercise"
     private const val  GROUP_MOVIES = "movies"
     private const val  GROUP_PROGRAMS = "programs"
-    private const val  GROUP_RECOMMENDS = "recommends"
-    private const val  GROUP_SEARCH = "search"
     private const val  GROUP_SYSTEM = "system"
-    private const val  GROUP_USERS = "users"
-    private const val  GROUP_JWT = "users/jwt"
-    private const val  GROUP_KAKAOAPP = "user/kakao"
-    private const val  GROUP_PLANNER = "planner"
-    private const val  GROUP_BOOKMARKS = "bookmarks"
-    private const val  GROUP_MENU = "menu"
 
     /**
      * API PATH
@@ -53,6 +45,8 @@ object ApiPath {
     const val HOMET_API_MOVIE_EXERCISE_EXEC = "$VERSION_V1/$GROUP_MOVIES/play/exercise/exec"
 
     const val WECANDEO_ADDRESS = "http://api.wecandeo.com/"
+
+    const val STORAGE_GUIDE = "tutorial/tv_guide.json"
 }
 
 data class ApiSuccess<T>(val type:T, var data:Any?, val id: String? = null)
@@ -128,37 +122,15 @@ object ApiCode{
 object ApiField{
     const val DEVICE_KEY = "deviceKey"
     const val PRE_JWT = "preJwt"
-
     const val PROGRAM_ID = "programId"
     const val EXERCISE_ID = "exerciseId"
     const val ROUND_ID = "roundId"
-    const val EXERCISE_IDS = "exerciseIds"
-    const val TRAINER_HOME_ID = "trainerHomeId"
-    const val SORT_TYPE = "sortType"
-    const val FILTER_EXERCISE_TYPE = "filterExerciseType"
-    const val FILTER_BODY_PARTS = "filterBodyParts"
-    const val FILTER_EXERCISE_MOVIE_TYPE = "filterExerciseMovieType"
     const val FILTER_PURPOSE = "filterPurpose"
-    const val FILTER_CLASS = "filterClass"
-    const val FILTER_PROGRAM_LABEL = "filterProgramLabel"
-    const val FILTER_DIFFICULTY = "filterDifficulty"
-    const val FILTER_PLAY_TIME = "filterPlayTime"
-    const val FILTER_COUNT = "filterCount"
     const val PAGE = "page"
     const val COUNT = "count"
-    const val TYPE = "type"
     const val MOVIE_TYPE = "movieType"
     const val PLAY_TYPE = "playType"
     const val MOTION_MOVIE_ROUND_ID = "motionMovieRoundId"
-    const val PLAN_ID = "planId"
-    const val SEARCH_DATA = "searchDate"
-    const val EXERCISE_START_DATE = "exerciseStartDate"
-    const val EXERCISE_WEEK = "exerciseWeek"
-    const val IS_ALARM = "isAlarm"
-    const val EXERCISE_ALARM_TIME = "exerciseAlarmTime"
-    const val ALARM_METHOD = "alarmMethod"
-    const val IS_RELAY_PLAY = "isRelayPlay"
-    const val RELAY_POINT = "relayPoint"
     const val PLAY_ID = "playId"
     const val MOVIE_ID = "movieId"
     const val MOTION_ID = "motionId"

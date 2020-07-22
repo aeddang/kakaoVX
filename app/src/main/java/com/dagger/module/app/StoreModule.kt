@@ -12,6 +12,8 @@ import com.kakaovx.homet.tv.store.api.account.AccountApi
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.api.homet.HometApi
 import com.kakaovx.homet.tv.store.api.homet.HometManager
+import com.kakaovx.homet.tv.store.api.storage.StorageApi
+import com.kakaovx.homet.tv.store.api.storage.StorageManager
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoApi
 import com.kakaovx.homet.tv.store.api.wecandeo.WecandeoManager
 import com.kakaovx.homet.tv.store.database.DataBaseManager
@@ -100,15 +102,23 @@ class StoreModule {
 
     @Provides
     @Singleton
+    fun provideStorageManager(@Named("appContext") ctx: Context,
+                               networkFactory: NetworkFactory
+    ): StorageManager= StorageManager(ctx,
+        networkFactory.getRetrofit(BuildConfig.APP_STORAGE_ADDRESS).create(StorageApi::class.java))
+
+    @Provides
+    @Singleton
     fun providePageRepository(@Named("appContext") ctx: Context,
                               settingPreference:SettingPreference,
                               dataBaseManager: DataBaseManager,
                               accountManager: AccountManager,
                               hometManager: HometManager,
                               wecandeoManager: WecandeoManager,
+                              storageManager: StorageManager,
                               pageModel: ActivityModel,
                               pageProvider: FragmentProvider,
                               pagePresenter: PagePresenter
     ): PageRepository = PageRepository(ctx, settingPreference, dataBaseManager,
-        accountManager, hometManager, wecandeoManager, pageModel, pageProvider, pagePresenter)
+        accountManager, hometManager, wecandeoManager, storageManager, pageModel, pageProvider, pagePresenter)
 }

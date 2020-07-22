@@ -1,6 +1,10 @@
 package com.kakaovx.homet.tv.page.player.view
 
 import android.content.Context
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.widget.SeekBar
@@ -10,10 +14,13 @@ import com.kakaovx.homet.tv.page.player.PagePlayerViewModel
 import com.kakaovx.homet.tv.page.player.model.Exercise
 import com.kakaovx.homet.tv.page.player.model.FlagType
 import com.kakaovx.homet.tv.page.player.model.PlayerUIEvent
+import com.kakaovx.homet.tv.util.millisecToTimeString
 import com.lib.page.PageComponentCoroutine
 import com.lib.util.Log
 import com.lib.util.animateAlpha
+import com.lib.util.animateFrame
 import kotlinx.android.synthetic.main.cp_video_progress.view.*
+import kotlin.math.roundToInt
 
 class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
     constructor(context: Context) : super(context)
@@ -29,8 +36,8 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
         super.onAttachedToWindow()
 
     }
-    private val moveTime = 1000L
-    private var startTime:Int = 0
+    private val moveTime = 5000L
+    private var startTime:Long = 0
     private var duration:Long = 0
     override fun onPlayerViewModel(playerViewModel:PagePlayerViewModel){
         progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -72,19 +79,6 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             else PlayerUIEvent.UIView
         }
 
-
-        lifecycleOwner?.let { owner->
-            playerViewModel.player.uiEvent.observe(owner, Observer {evt->
-                when(evt){
-                    PlayerUIEvent.ListView -> onHidden()
-                    PlayerUIEvent.ListHidden -> onView()
-                    PlayerUIEvent.UIUse -> onView()
-                    PlayerUIEvent.UIView -> onView()
-                    PlayerUIEvent.UIHidden -> onHidden()
-                    else -> {}
-                }
-            })
-        }
     }
 
 
@@ -94,12 +88,16 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
                 if(flag.type == FlagType.Break) return@Observer
                 duration = flag.duration
                 progressBar.max = flag.duration.toInt()
-                startTime = flag.movieStartTime.toInt()
-
-                textTitle.text = flag.getFlagTitle()
-                textStep.text = flag.getFlagStepSpan(exercise.totalStep)
+                startTime = flag.movieStartTime
+                textDuration.text = duration.millisecToTimeString()
+                textTime.text = 0L.millisecToTimeString()
+                val progress = "${flag.getFlagStep()}"
+                val total = "/${exercise.totalStep}"
+                val text =  SpannableString("$progress/${exercise.totalStep} ${flag.getFlagTitle()}")
+                text.setSpan(StyleSpan(Typeface.BOLD), progress.length, progress.length + total .length, 0)
+                textTitle.text = text
                 val res = when(flag.type){
-                    FlagType.Action -> R.drawable.shape_exercise_action_progress
+                    FlagType.Action -> R.drawable.shape_exercise_progress
                     FlagType.Motion -> R.drawable.shape_exercise_progress
                     else ->  R.drawable.shape_player_progress
                 }
@@ -107,22 +105,12 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             })
             exercise.movieObservable.observe(owner, Observer { movie->
                 movie.currentTime.observe(owner,Observer {
-                    progressBar.progress = it.toInt() - startTime
+                    val t = it - startTime
+                    textTime.text = t.millisecToTimeString()
+                    progressBar.progress = t.toInt()
                 })
             })
         }
     }
 
-    private var isView = true
-    private fun onHidden(){
-        if(!isView) return
-        isView = false
-        this.animateAlpha(0.0f, false)
-
-    }
-    private fun onView(){
-        if(isView) return
-        isView = true
-        this.animateAlpha(1.0f, false)
-    }
 }

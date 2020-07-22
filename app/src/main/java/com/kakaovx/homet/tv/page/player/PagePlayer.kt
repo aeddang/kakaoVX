@@ -7,6 +7,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.page.component.factory.TTSFactory
 import com.kakaovx.homet.tv.page.player.model.*
 import com.kakaovx.homet.tv.page.player.view.PlayerChildComponent
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -35,6 +36,10 @@ class PagePlayer : PageFragmentCoroutine(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     lateinit var viewModel: PagePlayerViewModel
+
+    @Inject
+    lateinit var ttsFactory: TTSFactory
+
     private var programID:String = ""
     private var exerciseData: ExerciseData? = null
 
@@ -111,7 +116,7 @@ class PagePlayer : PageFragmentCoroutine(){
     private fun onExerciseStart(exercise:Exercise){
         if(exercise.info.isRelayPlay){
             context ?: return
-            CustomDialog.makeDialog(context!!, null, R.string.page_player_completed)
+            CustomDialog.makeDialog(context!!, null, R.string.page_player_relay_confirm)
                 .setNegativeButton(R.string.page_player_btn_replay)
                 {  _,_ ->
                     exercise.start(false)
@@ -130,6 +135,7 @@ class PagePlayer : PageFragmentCoroutine(){
         super.onCoroutineScope()
         pageChileren.map { it as? PlayerChildComponent }.forEach {
             it?.onPlayerViewModel(viewModel)
+            it?.onTTSFactory(ttsFactory)
         }
 
         viewModel.exercise.observe(this, Observer { exercise ->
@@ -150,8 +156,9 @@ class PagePlayer : PageFragmentCoroutine(){
             exercise.changeFlagObservable.observe(this, Observer {
 
             })
-            exercise.changedFlagObservable.observe(this, Observer {
+            exercise.changedFlagObservable.observe(this, Observer {flag->
                 viewModel.player.uiEvent.value = PlayerUIEvent.ListHidden
+                flag.speech?.let { ttsFactory.effect(it) }
             })
 
             exercise.currentResultObservable.observe(this, Observer {
@@ -181,8 +188,8 @@ class PagePlayer : PageFragmentCoroutine(){
 
         viewModel.player.streamStatus.observe(this, Observer {evt->
             when(evt){
-                PlayerStreamStatus.Buffering -> viewModel.loading()
-                else -> viewModel.loaded()
+                PlayerStreamStatus.Buffering -> loading()
+                else -> loaded()
             }
         })
 
@@ -193,7 +200,7 @@ class PagePlayer : PageFragmentCoroutine(){
                 PlayerUIEvent.UIUse -> viewUI(false)
                 PlayerUIEvent.UIView -> viewUI()
                 PlayerUIEvent.UIHidden -> hideUI()
-                else -> viewModel.loaded()
+                else -> {}
             }
         })
 
@@ -230,12 +237,22 @@ class PagePlayer : PageFragmentCoroutine(){
                 it.movieType ?: ""
             )
         }
+
+        scope.launch() {
+            delay(Exercise.MIN_EXERCISE_TIME)
+            viewModel.putExerciseRecord()
+        }
     }
 
+
+
     private fun openList(){
+        context ?: return
         if( viewModel.player.playerListStatus == PlayerListStatus.ListSearch) return
         viewModel.player.playerListStatus = PlayerListStatus.ListSearch
-        listArea.animateY(0, true).apply {
+        viewModel.player.uiEvent.value = PlayerUIEvent.UIView
+        val pos =  0
+        uiArea.animateY(pos, true).apply {
             interpolator = DecelerateInterpolator()
             listArea.startAnimation(this)
         }
@@ -245,13 +262,15 @@ class PagePlayer : PageFragmentCoroutine(){
         Log.i(appTag, "openList ${viewModel.player.playerListStatus}")
         if( viewModel.player.playerListStatus == PlayerListStatus.Playing) return
         viewModel.player.playerListStatus = PlayerListStatus.Playing
+        viewModel.player.uiEvent.value = PlayerUIEvent.UIView
         context ?: return
         view ?: return
-        val pos = -view!!.height
-        listArea.animateY(pos, true).apply {
+        val pos = context!!.resources.getDimension(R.dimen.page_player_ui_pos).roundToInt()
+        uiArea.animateY(pos, true).apply {
             interpolator = DecelerateInterpolator()
             listArea.startAnimation(this)
         }
+        viewModel.player.uiEvent.value = PlayerUIEvent.UIView
     }
 
 
@@ -272,6 +291,7 @@ class PagePlayer : PageFragmentCoroutine(){
         arrayOf(btnPlayStop, btnPrev, btnNext).forEach {
             it.animateAlpha(1.0f, false)
         }
+        uiArea.animateAlpha(1.0f, false)
     }
 
     private fun hideUI(){
@@ -282,6 +302,16 @@ class PagePlayer : PageFragmentCoroutine(){
         arrayOf(btnPlayStop, btnPrev, btnNext).forEach {
             it.animateAlpha(0.0f,false)
         }
+        if( viewModel.player.playerListStatus != PlayerListStatus.ListSearch ){
+            uiArea.animateAlpha(0.0f, false)
+        }
+    }
+
+    private fun loading(){
+        loadingSpinner.isLoading = true
+    }
+    private fun loaded(){
+        loadingSpinner.isLoading = false
     }
 
     companion object {

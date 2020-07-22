@@ -84,7 +84,7 @@ class HometManager(
     fun loadProgramDetail(owner:LifecycleOwner, programID:String){
         val params = HashMap<String, String>()
         params[ApiField.PROGRAM_ID] = programID
-        val types = arrayOf(HometApiType.PROGRAM, HometApiType.PROGRAM_EXERCISE, HometApiType.PROGRAMS_RECENT)
+        val types = arrayOf(HometApiType.PROGRAM, HometApiType.PROGRAM_EXERCISE)
         loadApiGroup(owner, types, types.map { params }.toTypedArray(), HometApiType.PROGRAM_DETAIL)
     }
 
@@ -171,23 +171,27 @@ class HometManager(
             }
             restApi.getExerciseBreakTime( exerciseID , accountManager.deviceKey )
         }
-        HometApiType.EXERCISE, HometApiType.EXERCISE_MOTION, HometApiType.EXERCISE_PLAY, HometApiType.EXERCISE_START -> {
+        HometApiType.EXERCISE, HometApiType.EXERCISE_MOTION, HometApiType.EXERCISE_PLAY, HometApiType.EXERCISE_START, HometApiType.EXERCISE_RECORD-> {
             var programID = ""
             var exerciseID = ""
             var roundID = ""
+            var playID = ""
             var movieType = ""
             var playType = ""
             params?.let {
-                programID  = it[ ApiField.PROGRAM_ID ] as? String? ?: programID
-                exerciseID  = it[ ApiField.EXERCISE_ID ] as? String? ?: exerciseID
-                roundID  = it[ ApiField.ROUND_ID ] as? String? ?: roundID
+                programID = it[ ApiField.PROGRAM_ID ] as? String? ?: programID
+                exerciseID = it[ ApiField.EXERCISE_ID ] as? String? ?: exerciseID
+                roundID = it[ ApiField.ROUND_ID ] as? String? ?: roundID
+                playID = it[ ApiField.PLAY_ID ] as? String? ?: playID
                 movieType  = it[ ApiField.MOVIE_TYPE ] as? String? ?: movieType
                 playType  = it[ ApiField.PLAY_TYPE ] as? String? ?: playType
+
             }
             when(type){
                 HometApiType.EXERCISE_MOTION -> restApi.getExerciseMotion(exerciseID , accountManager.deviceKey, programID)
                 HometApiType.EXERCISE_PLAY -> restApi.getExercisePlay(exerciseID , accountManager.deviceKey, programID, roundID)
                 HometApiType.EXERCISE_START -> restApi.putExerciseStart(accountManager.deviceKey, exerciseID, programID, roundID, movieType, playType)
+                HometApiType.EXERCISE_RECORD -> restApi.putExerciseExec(accountManager.deviceKey, exerciseID, programID, roundID, playID)
                 else -> restApi.getExercise( exerciseID , accountManager.deviceKey, programID, roundID)
             }
         }

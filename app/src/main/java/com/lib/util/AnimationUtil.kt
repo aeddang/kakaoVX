@@ -139,8 +139,8 @@ fun ViewGroup.animateSize(targetValue:Size, duration:Long = AnimationDuration.DE
     val ani = ValueAnimator.ofFloat(0f, 1f)
     ani.addUpdateListener {
         val ratio = it.animatedValue as Float
-        layout.width = startW + ( ratio * deltaW ).roundToInt()
-        layout.height = startH + ( ratio * deltaH ).roundToInt()
+        if(targetValue.width != -1)  layout.width = startW + ( ratio * deltaW ).roundToInt()
+        if(targetValue.height != -1) layout.height = startH + ( ratio * deltaH ).roundToInt()
         this.layoutParams = layout
     }
     ani.duration = duration
@@ -175,8 +175,8 @@ fun ViewGroup.animateFrame(targetValue:Rect, isReverseX:Boolean = false, isRever
     val ani = ValueAnimator.ofFloat(0f, 1f)
     ani.addUpdateListener {
         val ratio = it.animatedValue as Float
-        layout.width = startW + (ratio * deltaW).roundToInt()
-        layout.height = startH + ( ratio * deltaH ).roundToInt()
+        if(targetValue.right != -1) layout.width = startW + (ratio * deltaW).roundToInt()
+        if(targetValue.bottom != -1) layout.height = startH + ( ratio * deltaH ).roundToInt()
         val posX = startX + ( ratio * deltaX ).roundToInt()
         val posY = startY + ( ratio * deltaY ).roundToInt()
         if( isReverseX) layout.rightMargin = posX

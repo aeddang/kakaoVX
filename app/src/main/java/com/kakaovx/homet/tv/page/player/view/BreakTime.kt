@@ -7,10 +7,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.page.component.factory.BgmResource
+import com.kakaovx.homet.tv.page.component.factory.StaticResource
+import com.kakaovx.homet.tv.page.component.factory.TTSFactory
 import com.kakaovx.homet.tv.page.player.PagePlayerViewModel
 import com.kakaovx.homet.tv.page.player.model.Exercise
 import com.kakaovx.homet.tv.page.player.model.FlagType
-import com.kakaovx.homet.tv.page.player.model.PlayerStatus
 import com.kakaovx.homet.tv.page.player.model.PlayerUIEvent
 import com.kakaovx.homet.tv.store.api.ApiField
 import com.kakaovx.homet.tv.store.api.HomeTResponse
@@ -33,6 +35,7 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
     private val appTag = javaClass.simpleName
     override fun getLayoutResID(): Int = R.layout.cp_break_time
     private var playerViewModel:PagePlayerViewModel? = null
+    private var ttsFactory:TTSFactory? = null
     private var exercise:Exercise? = null
     private var graph:GraphBuilder? = null
 
@@ -40,13 +43,13 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
         super.onAttachedToWindow()
         alpha = 0.0f
         visibility = View.GONE
-        textNext.visibility=View.GONE
-        graph = GraphBuilder(graphCount).setColor(R.color.color_white).setStroke(6.0f * context.resources.displayMetrics.density)
+        graph = GraphBuilder(graphCount).setColor(R.color.color_white).setStroke(7.0f * context.resources.displayMetrics.density)
     }
 
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        ttsFactory = null
         exercise = null
         playerViewModel = null
         exitFocusView = null
@@ -59,6 +62,11 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
         btnSkip.setOnClickListener {
             if(isActive) passive()
         }
+    }
+
+    override fun onTTSFactory(ttsFactory: TTSFactory) {
+        super.onTTSFactory(ttsFactory)
+        this.ttsFactory = ttsFactory
     }
 
     override fun onPlayerViewModel(playerViewModel:PagePlayerViewModel){
@@ -97,21 +105,24 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
                 graph?.setRange(totalCount.toDouble())
                 textCount.text = totalCount.toString()
                 active(exercise.id)
+                /*
                 textNext.visibility=View.GONE
                 exercise.nextFlag?.let {
                     textNext.visibility=View.VISIBLE
                     textNext.text = "${it.getFlagTitle()} ${it.getFlagStep()}/${exercise.totalStep}"
                 }
+                */
+
             })
         }
     }
     private fun startCount(breakData:BreakTimeData? = null){
         breakData?.let {
-            textTitle.text = breakData.title
+            textSubTitle.text = breakData.title
             Glide.with(context)
                 .load(it.imgUrl)
                 .centerCrop()
-                .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+                .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
                 .into(imageBg)
         }
 
@@ -123,22 +134,28 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
     override fun onPagePause() {
         super.onPagePause()
         countJob?.cancel()
+        ttsFactory?.onResume()
     }
 
     override fun onPageResume() {
         super.onPageResume()
         if(isActive) run()
+        ttsFactory?.onPause()
     }
 
     private fun run(){
         countJob?.cancel()
+
         countJob = scope.launch(){
             delay(1000)
             while (isActive ){
                 currentCount ++
-                textCount.text = (totalCount - currentCount).toString()
+                var r = totalCount - currentCount
+                if( r < 0 ) r = 0
+                textCount.text = (r).toString()
+                if(r == 3L) textTitle.text = context.getString(R.string.page_player_breaktime_end_info)
                 graph?.show(currentCount.toDouble())
-                if(currentCount == totalCount) passive()
+                if(currentCount == totalCount + 1) passive()
                 delay(1000)
             }
         }
@@ -150,12 +167,15 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
     private var currentCount = 0L
     private var isActive =  false
     private fun active(exerciseID:String){
+        ttsFactory?.effect(StaticResource.BREAK_TIME)
         playerViewModel?.apply {
             player.uiEvent.value = PlayerUIEvent.UIHidden
             player.uiEvent.value = PlayerUIEvent.ListHidden
         }
+        ttsFactory?.playBgm(BgmResource.BREAK_BGM)
         graph?.set(0.0)
         textCount.text = ""
+        textTitle.text = context.getString(R.string.page_player_breaktime_info)
         btnSkip.requestFocus()
         lifecycleOwner?.let {owner->
             val params = HashMap<String, String>()
@@ -170,6 +190,7 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
 
     var exitFocusView:View? = null
     private fun passive(){
+        ttsFactory?.stopBgm()
         isActive =  false
         playerViewModel?.let {vm->
             vm.player.uiEvent.value = PlayerUIEvent.UIView

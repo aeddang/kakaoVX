@@ -27,7 +27,7 @@ class ItemFlag : ItemImageCardView {
             Glide.with(context)
                 .load(f.thumbImg)
                 .centerCrop()
-                .error( ContextCompat.getDrawable(context, R.drawable.movie) )
+                .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
                 .into(mainImageView)
 
             f.lifecycleOwner?.let {
@@ -65,7 +65,7 @@ class ItemFlag : ItemImageCardView {
     }
 
     private fun passive(isEffectiveExercise:Boolean){
-        setBackgroundColor( context.getColor(R.color.transparent) )
+        setBackgroundColor( context.resources.getColor(R.color.transparent) )
         if(isEffectiveExercise) completed()
         else reStart()
     }

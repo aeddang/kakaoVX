@@ -97,7 +97,7 @@ public class OMAReceiver extends BroadcastReceiver {
         path += "/" + versionName;
         path += "/" + versionCode;
         path += "/" + context.getPackageName();
-        path += "/com.uplus.artvstb.model.receivers.OMAReceiver";
+        path += "/com.kakaovx.homet.tv.lgtv.OMAReceiver";
         LogUtil.i(LogUtil.DEBUG_LEVEL_2, "[OMA] Uri = " + path);
 
 
@@ -149,8 +149,8 @@ public class OMAReceiver extends BroadcastReceiver {
                     catch (PackageManager.NameNotFoundException e){
                         e.printStackTrace();
                     }
-
-                    SystemSetting.createTempFile("vrplayer_update", "");
+                    String tempFile = "smart_homet_update";
+                    SystemSetting.createTempFile(tempFile, "");
 
                     if (mIsUpdateChecklaunch) {
                         ToastUtil.makeToast(mContext, "업데이트 중입니다.");
@@ -168,9 +168,9 @@ public class OMAReceiver extends BroadcastReceiver {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            File file = new File(COMMON_PATH_TMP+"vrplayer_update");
-                            if(file != null && file.exists()) {
-                                SystemSetting.deleteTempFile("vrplayer_update");
+                            File file = new File(COMMON_PATH_TMP+tempFile);
+                            if(file.exists()) {
+                                SystemSetting.deleteTempFile(tempFile);
                                 LogUtil.e(3, "[kimsj26@] updateFile Deleted..");
                             }
                         }
@@ -202,7 +202,6 @@ public class OMAReceiver extends BroadcastReceiver {
         // DESC: kimsj26@ 2018. 8. 14.
         // 2. 콜드 부팅 후 업그레이드 가능한 앱이 없을 때 알람매니저 실행
         LogUtil.d(3, "[kimsj26@] Check Update Date");
-
         LogUtil.d(3, "[kimsj26@] 남은 시간 알람매니저 등록..");
         Intent intent = new Intent(mContext, OMAReceiver.class);
         intent.setAction("WAKE_UP_COMPLETED_ALARM");
@@ -251,7 +250,6 @@ public class OMAReceiver extends BroadcastReceiver {
         try {
             String pkgName = "com.lguplus.iptv3.updatecheck";
             String clsName = pkgName + ".UpdateService";
-
             String down = "ozstore://UPDATE/" + receivedPid;
 
             Intent tmpIntent = new Intent();

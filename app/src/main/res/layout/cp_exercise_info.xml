@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent_black70">
+    android:background="@color/transparent_black80">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_heavy"
+        android:layout_marginEnd="@dimen/margin_heavy"
         android:orientation="vertical"
         android:layout_gravity="center">
         <TextView
             android:id="@+id/textStep"
             style="@style/font_light"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_white"
@@ -22,8 +24,8 @@
             android:textSize="@dimen/font_regular" />
         <TextView
             android:id="@+id/textInfo"
-            style="@style/font_regular"
-            android:layout_width="wrap_content"
+            style="@style/font_black"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_white"

@@ -118,6 +118,7 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
         super.onDestroy()
         popups.clear()
         historys.clear()
+        activityModel.currentPageObject = null
         currentRequestPermissions.clear()
     }
 
@@ -278,7 +279,7 @@ abstract class PageActivity : FragmentActivity(), Page, PageRequestPermission, P
         val willChangePage = getWillChangePageFragment(pageObject, false)
         if(activityModel.isChangedCategory(currentPage, pageObject)) willChangePage.onCategoryChanged(currentPage)
         willChangePage.setOnPageDelegate( this )
-
+        getPageFragment(currentPage)?.onWillDestory(pageObject)
         try {
             val transaction = supportFragmentManager.beginTransaction()
             if (isStart) {

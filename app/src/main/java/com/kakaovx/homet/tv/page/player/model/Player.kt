@@ -10,7 +10,7 @@ enum class PlayerUiStatus(var value:Long = 0){
     Hidden, View, Use
 }
 enum class PlayerListStatus(var value:Long = 0){
-    Playing, ListSearch
+    Initate,Playing, ListSearch
 }
 
 enum class PlayerStreamEvent(val value:Int = 0){

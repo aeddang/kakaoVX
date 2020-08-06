@@ -20,6 +20,7 @@ import com.kakaovx.homet.tv.page.program.PageProgram
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.HomeTResponse
+import com.kakaovx.homet.tv.store.api.homet.GuideImage
 import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.kakaovx.homet.tv.store.api.homet.ProgramData
 import com.kakaovx.homet.tv.store.api.homet.ProgramList
@@ -104,11 +105,13 @@ class PageGuideList : PageBrowseSupportFragment(){
         viewModel.repo.loadGuides(this)
     }
 
-    private fun setupImageRow(imageList:ArrayList<String>) {
+    private fun setupImageRow(imageList:ArrayList<GuideImage>) {
         viewModel.presenter.loaded()
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val listRowAdapter = ArrayObjectAdapter(ImagePresenter())
-        imageList.forEach { listRowAdapter.add(it) }
+        imageList.forEach { img -> img.imgurl?.let{
+            listRowAdapter.add(it)
+        } }
         rowsAdapter.add(ListRow(null, listRowAdapter))
         adapter = rowsAdapter
     }

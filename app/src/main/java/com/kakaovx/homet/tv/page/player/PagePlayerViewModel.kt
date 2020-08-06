@@ -30,6 +30,13 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
     private val appTag = javaClass.simpleName
     val player = Player()
     val exercise = MutableLiveData<Exercise?>()
+    var isExitChecked = false ; private set
+
+    fun goBackImmediately() {
+        isExitChecked = true
+        goBack()
+    }
+
     override fun onCleared() {
         super.onCleared()
     }
@@ -42,7 +49,7 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
 
     override fun onCreateView(owner: LifecycleOwner, pageObject: PageObject?) {
         super.onCreateView(owner, pageObject)
-
+        isExitChecked = false
         var exercisePlayData: ExercisePlayData? = null
         var exerciseStartData: ExerciseStartData? = null
 
@@ -106,10 +113,10 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
             {
                 isPutResult = true
                 exerciseData.addAvg( avg )
-                CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
+                //CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
                 progressResult.reset()
             },{ _, _, _->
-                CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
+                //CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
                 progressResult.reset()
             }
         )
@@ -140,11 +147,11 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
                     isPutResult = true
                     exerciseData.addAvg( avg )
                     putExerciseCompletedResult(result)
-                    CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
+                    //CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
                     progressResult.reset()
                 },{ _, _, _->
 
-                    CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
+                   // CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
                     progressResult.reset()
                 }
             )
@@ -161,11 +168,11 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
         repo.hometManager.putExerciseEnd(exerciseID, programID, roundID,
             exerciseData.info.playId, isMultiView,totalAvg, result!!,
             {
-                CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
+                //CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_complete).show()
                 exerciseCompleted()
                 result.reset()
             },{ _, _, _->
-                CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
+               // CustomToast.makeToast(repo.ctx, R.string.page_player_exercise_result_error).show()
                 exerciseCompleted()
                 result.reset()
             }

@@ -45,9 +45,9 @@ class PageErrorSurport : PageFragmentCoroutine(){
         redirectPage = null
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.presenter.loaded()
         setErrorContent()
-
         btnConfirm.setOnClickListener{
             if( redirectPage != null) viewModel.pageChange( redirectPage!! )
             else {
@@ -103,12 +103,15 @@ class PageErrorSurport : PageFragmentCoroutine(){
         when(actionType){
             ErrorActionType.Retry -> {
                 btnRetry.visibility = View.VISIBLE
+                btnRetry.requestFocus()
             }
             ErrorActionType.Confirm -> {
                 btnConfirm.visibility = View.VISIBLE
+                btnConfirm.requestFocus()
             }
             ErrorActionType.Finish -> {
                 btnFinish.visibility = View.VISIBLE
+                btnFinish.requestFocus()
             }
         }
     }

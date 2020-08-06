@@ -381,7 +381,7 @@ data class Exercise(val id:String, var context: Context?){
     fun changeVideoTime(changeTime:Long){
         if(!isSynchronizedFlag) return
         currentFlag?.let{
-            progressTime.postValue(it.movieProgressTime + it.breakTimeOffset + changeTime )
+            progressTime.value = (it.movieProgressTime + it.breakTimeOffset + changeTime )
             val delta = changeTime - videoTime
             changeExerciseTime( delta )
         }

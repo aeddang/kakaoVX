@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.cp_left_tab_item.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -39,6 +40,7 @@ class LeftTab: Tab<PageID> {
         return getIDData().map {
             val tab = Item(context)
             body.addView(tab)
+            tab.id = UUID.randomUUID().hashCode()
             tab.setType(it)
             tab
         }.toTypedArray()
@@ -47,10 +49,9 @@ class LeftTab: Tab<PageID> {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         tab.first().requestFocus()
-
     }
 
-    private var isView = true
+    var isView = true; private set
     fun viewTab() {
         if (isView) return
         isView = true

@@ -1,8 +1,20 @@
+import org.ajoberstar.grgit.Grgit
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.ajoberstar.grgit'
+
+static def getPrefix() {
+    def git = Grgit.open()
+    def gitBranchName = git.branch.current.name.replaceAll(/(.*)\//, '')
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate + "_" + gitBranchName + "_" + "app"
+}
+
+project.archivesBaseName = getPrefix()
 
 android {
     compileSdkVersion 29
@@ -12,10 +24,11 @@ android {
         applicationId "com.kakaovx.homet.tv"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 2
-        versionName "1.00.01"
+        versionCode 3
+        versionName "1.00.02"
         multiDexEnabled true
         buildConfigField "String", "OS_TYPE", "\"tv\""
+        buildConfigField "String", "APP_BUILD_VERSION", "\"$project.archivesBaseName\""
     }
     dataBinding {
         enabled = false
@@ -32,7 +45,7 @@ android {
         }
 
         stage {
-            buildConfigField "String", "APP_REST_ADDRESS", "\"https://tv.kakaovx.co.kr:443/\""
+            buildConfigField "String", "APP_REST_ADDRESS", "\"https://stage2-tv.kakaoht.net/\""
             buildConfigField "String", "APP_STORAGE_ADDRESS", "\"http://htimg.kakaovx.com/homet_stage/\""
         }
 

@@ -19,13 +19,17 @@ class ItemProgram : ItemImageCardView {
         val program = data as ProgramData
         titleText = program.title
         contentText = program.getSubTitle(context)
+        if( program.programId == null ){
+            mainImageView.setImageResource(R.drawable.ic_recent)
+        }else{
+            Glide.with(context)
+                .load(program.thumbnail)
+                .centerCrop()
+                .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
+                .into(mainImageView)
+        }
 
 
-        Glide.with(context)
-            .load(program.thumbnail)
-            .centerCrop()
-            .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
-            .into(mainImageView)
 
     }
 

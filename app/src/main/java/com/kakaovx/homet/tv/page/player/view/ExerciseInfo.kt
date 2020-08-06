@@ -55,11 +55,13 @@ class ExerciseInfo : PageComponentCoroutine, PlayerChildComponent {
                 textInfo.text = flag.getFlagTitle()
                 textStep.text = flag.getFlagStepSpan(exercise.totalStep)
                 if(flag.type == FlagType.Action && !flag.hasMotion){
-
+                    active()
                 }else if(flag.type == FlagType.Motion){
-
+                    active()
+                }else if(flag.type == FlagType.Intro){
+                    active()
                 }
-                active()
+
             })
         }
     }
@@ -68,7 +70,7 @@ class ExerciseInfo : PageComponentCoroutine, PlayerChildComponent {
         playerViewModel?.apply {
             player.playerStatus = PlayerStatus.Stop
             player.uiEvent.value = PlayerUIEvent.Pause
-            player.uiEvent.value = PlayerUIEvent.UIHidden
+            //player.uiEvent.value = PlayerUIEvent.UIHidden
         }
         btnHidden.requestFocus()
         this.animateAlpha(1.0f)

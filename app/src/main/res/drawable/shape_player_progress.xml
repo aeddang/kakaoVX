@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:id="@android:id/background">
-        <shape>
-            <solid android:color="@color/transparent_white45" />
-        </shape>
-    </item>
-
     <item
-        android:id="@android:id/progress"
-        >
+        android:left="0dp"
+        android:right="0dp"
+        android:bottom="@dimen/progress_thumb_margin"
+        android:top="@dimen/progress_thumb_margin">
+        <!-- Insert your shape here: -->
         <scale android:scaleWidth="100%">
             <shape android:shape="rectangle">
-                <gradient
-                    android:angle="0"
-                    android:endColor="@color/color_white"
-                    android:startColor="@color/color_white"
-                    android:type="linear" />
+                <solid android:color="@color/transparent_white80"/>
             </shape>
         </scale>
     </item>

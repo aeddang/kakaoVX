@@ -156,6 +156,7 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
                 if(r == 3L) textTitle.text = context.getString(R.string.page_player_breaktime_end_info)
                 graph?.show(currentCount.toDouble())
                 if(currentCount == totalCount + 1) passive()
+                btnSkip.requestFocus()
                 delay(1000)
             }
         }
@@ -182,7 +183,6 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
             params[ApiField.EXERCISE_ID] = exerciseID
             playerViewModel?.repo?.hometManager?.loadApi(owner ,HometApiType.BREAT_TIME, params)
         }
-
         this.animateAlpha(1.0f)
         isActive =  true
 
@@ -194,6 +194,7 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
         isActive =  false
         playerViewModel?.let {vm->
             vm.player.uiEvent.value = PlayerUIEvent.UIView
+            vm.player.uiEvent.value = PlayerUIEvent.Resume
         }
         exitFocusView?.requestFocus()
         exercise?.changeVideoTime(duration)

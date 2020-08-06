@@ -121,19 +121,28 @@ class PageHomeList : PageBrowseSupportFragment(){
         val program = item as? ProgramData
         program?.let {
             Log.i(appTag, program.toString())
-            val param = HashMap<String, Any>()
-            param[PageProgram.PROGRAM] = program
-            viewModel.pageChange(PageID.PROGRAM, param)
-            viewModel.repo.pageModel.backGroundImage.value = it.thumbnail
+            if(it.programId == null){
+                viewModel.pageChange(PageID.PROGRAM_LIST)
+            }else{
+                val param = HashMap<String, Any>()
+                param[PageProgram.PROGRAM] = program
+                viewModel.pageChange(PageID.PROGRAM, param)
+                viewModel.repo.pageModel.backGroundImage.value = it.thumbnail
+            }
         }
-
     }
 
     private fun setupRecentProgramRow(programList:List<ProgramData>) {
         viewModel.presenter.loaded()
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val listRowAdapter = ArrayObjectAdapter(ProgramPresenter())
-        programList.forEach { listRowAdapter.add(it) }
+        if(programList.isEmpty()){
+            context?.let {
+                listRowAdapter.add(ProgramData().setNodata(it))
+            }
+        }else{
+            programList.forEach { listRowAdapter.add(it) }
+        }
         val header = HeaderItem(0, context!!.getString(R.string.list_recent_title))
         rowsAdapter.add(ListRow(header, listRowAdapter))
         adapter = rowsAdapter

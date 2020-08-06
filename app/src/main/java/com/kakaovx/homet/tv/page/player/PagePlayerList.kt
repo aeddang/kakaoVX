@@ -6,10 +6,7 @@ import androidx.leanback.widget.*
 import androidx.leanback.widget.BrowseFrameLayout.OnFocusSearchListener
 import androidx.lifecycle.Observer
 import com.kakaovx.homet.tv.R
-import com.kakaovx.homet.tv.page.player.model.Exercise
-import com.kakaovx.homet.tv.page.player.model.Flag
-import com.kakaovx.homet.tv.page.player.model.Movie
-import com.kakaovx.homet.tv.page.player.model.PlayerUIEvent
+import com.kakaovx.homet.tv.page.player.model.*
 import com.kakaovx.homet.tv.page.player.view.ItemFlag
 import com.kakaovx.homet.tv.page.player.view.ItemMultiView
 import com.kakaovx.homet.tv.store.api.homet.MovieUrlData
@@ -42,6 +39,7 @@ class PagePlayerList : PageBrowseSupportFragment(){
         currentMovie = null
         rowsAdapter= null
         multiViewRowAdapter= null
+        initContent = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +68,7 @@ class PagePlayerList : PageBrowseSupportFragment(){
         exercise.movieObservable.observe(this, Observer { movie->
             currentMovie = movie
             val num = movie.motionMovieUrls?.size ?: 0
-            //if (num <= 1) return@Observer
+            if (num <= 1) return@Observer
             val listRowAdapter = ArrayObjectAdapter(MoviePresenter())
             movie.motionMovieUrls!!.forEachIndexed{ idx,mv ->
                 mv.idx = idx
@@ -102,11 +100,15 @@ class PagePlayerList : PageBrowseSupportFragment(){
                    else -> Log.i(appTag, "FOCUS ${direction.toString()} ${focused.toString()}")
                 }
 
-                if (direction == View.FOCUS_UP ||  direction == View.FOCUS_BACKWARD || direction == View.FOCUS_LEFT) {
+                if (direction == View.FOCUS_UP || direction == View.FOCUS_BACKWARD) {
                     viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListHidden
                     return@OnFocusSearchListener exitFocusView
-                }else {
-                    return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
+                }
+                else if(direction == View.FOCUS_LEFT){
+                    return@OnFocusSearchListener initContent
+                }
+                else {
+                        return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
                 }
             }
     }
@@ -135,6 +137,9 @@ class PagePlayerList : PageBrowseSupportFragment(){
         movie?.let {
             currentMovie?.multiViewIndex?.value = it.idx
         }
+        viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListHidden
+        exitFocusView?.requestFocus()
+
     }
 
     private var rowsAdapter:ArrayObjectAdapter? = null
@@ -145,6 +150,7 @@ class PagePlayerList : PageBrowseSupportFragment(){
         value?.let { rowsAdapter?.add(it)}
     }
     private fun setupExerciseRow(list:List<Flag>) {
+        initContent = null
         rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val listRowAdapter = ArrayObjectAdapter(MotionPresenter())
         list.forEach {
@@ -153,8 +159,10 @@ class PagePlayerList : PageBrowseSupportFragment(){
         val header = HeaderItem(0, context!!.getString(R.string.page_player_list))
         rowsAdapter?.add(ListRow(header, listRowAdapter))
         adapter = rowsAdapter
+        exitFocusView?.requestFocus()
     }
 
+    private var initContent:ItemFlag? = null
     inner class MotionPresenter:ItemPresenter(){
         init {
             cardWidth = context?.resources?.getDimension(R.dimen.flag_list_width)?.toInt() ?: cardWidth
@@ -162,15 +170,14 @@ class PagePlayerList : PageBrowseSupportFragment(){
         }
         override fun getItemView(): ItemImageCardView{
             val item = ItemFlag(context!!)
-            var isInitFocus = true
+            if(initContent == null) initContent = item
             item.setOnFocusChangeListener { v, hasFocus ->
-                if(hasFocus)  {
-                    if(isInitFocus){
-                        isInitFocus = false
-                        return@setOnFocusChangeListener
+                viewModel?.player?.let{
+                    if(hasFocus)  {
+                        if( it.playerListStatus != PlayerListStatus.Initate) it.uiEvent.value = PlayerUIEvent.ListView
                     }
-                    viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListView
                 }
+
             }
             return item
         }
@@ -183,17 +190,16 @@ class PagePlayerList : PageBrowseSupportFragment(){
         }
         override fun getItemView(): ItemImageCardView {
             val item = ItemMultiView(context!!)
-            var isInitFocus = true
             item.movie = currentMovie
+
             item.setOnFocusChangeListener { v, hasFocus ->
-                if(hasFocus)  {
-                    if(isInitFocus){
-                        isInitFocus = false
-                        return@setOnFocusChangeListener
+                viewModel?.player?.let{
+                    if(hasFocus)  {
+                        if( it.playerListStatus != PlayerListStatus.Initate) it.uiEvent.value = PlayerUIEvent.ListView
                     }
-                    viewModel?.player?.uiEvent?.value = PlayerUIEvent.ListView
                 }
             }
+
             return item
         }
     }

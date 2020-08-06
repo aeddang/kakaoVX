@@ -10,5 +10,5 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/page_player_exercise_progress_height"
         android:layout_gravity="bottom"
-        android:progressDrawable="@drawable/shape_player_progress" />
+        android:progressDrawable="@drawable/selecter_player_progress" />
 </FrameLayout>

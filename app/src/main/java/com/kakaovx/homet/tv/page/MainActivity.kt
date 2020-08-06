@@ -96,6 +96,7 @@ class MainActivity : PageActivity() {
 
         leftTab.setOnSelectListener( object :Tab.SelectListener<PageID>{
             override fun onSelected(view: Tab<PageID>, id: PageID, idx: Int) {
+                if(!leftTab.isView) return
                 pageChange(pageProvider.getPageObject(id))
             }
         })

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.leanback.app.BrowseSupportFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -16,6 +17,7 @@ import com.kakaovx.homet.tv.store.api.ApiField
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.*
 import com.lib.page.PageFragmentCoroutine
+import com.lib.page.PageObject
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.page_exercise.*
@@ -44,6 +46,10 @@ class PageExercise : PageFragmentCoroutine(){
         exerciseData = null
     }
 
+    override fun onWillDestory(pageObject: PageObject?) {
+        super.onWillDestory(pageObject)
+        isInitFocus = true
+    }
     override fun onDestroy() {
         super.onDestroy()
         pageList = null
@@ -70,25 +76,28 @@ class PageExercise : PageFragmentCoroutine(){
 
             }
         }
+        isInitFocus = true
         super.onViewCreated(view, savedInstanceState)
         pageList?.programID = programID
         pageList?.exerciseData = exerciseData
         pageList?.exitFocusView = btnExercise
-
     }
 
+
+    private var isInitFocus = true //시작시 움직이는거 보기싫
     override fun onCoroutineScope() {
         super.onCoroutineScope()
         btnExercise.setOnClickListener{
+
             val param = HashMap<String, Any>()
             exerciseData?.let {  param[PagePlayer.EXERCISE] = it }
             param[PagePlayer.PROGRAM_ID] = programID
             viewModel.pageChange(PageID.PLAYER, param)
         }
 
-        var isInitFocus = true //시작시 움직이는거 보기싫
+
         btnExercise.setOnFocusChangeListener { _, hasFocus ->
-            if(isInitFocus && hasFocus){
+            if(isInitFocus){
                 isInitFocus = false
                 scroll.scrollTo(0,0)
                 return@setOnFocusChangeListener
@@ -126,6 +135,11 @@ class PageExercise : PageFragmentCoroutine(){
             param[PageErrorSurport.API_ERROR] = e
             param[PageErrorSurport.PAGE_EVENT_ID] = appTag
             viewModel.openPopup(PageID.ERROR_SURPORT, param)
+        })
+
+        viewModel.observable.event.observe(this, Observer { evt->
+            if( evt?.id != PageID.ERROR_SURPORT.value  && evt?.id != PageID.VIDEO_EXO.value) return@Observer
+            btnExercise.requestFocus()
         })
         loadData()
 

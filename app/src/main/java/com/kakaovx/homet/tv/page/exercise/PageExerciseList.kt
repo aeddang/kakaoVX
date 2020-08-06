@@ -29,7 +29,6 @@ import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
-
 class PageExerciseList : PageBrowseSupportFragment(){
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -131,14 +130,14 @@ class PageExerciseList : PageBrowseSupportFragment(){
             val param = HashMap<String, Any>()
             val videoData = VideoData("")
             videoData.title = motion.title
-            videoData.subtitle = motion.subtitle
+            videoData.subtitle = motion.getSubTitle(context)
             val playData = PlayData(it.movieUrl ?: "")
             playData.mediaAccessApiUrl = motionData?.mediaAccessApiUrl
             playData.mediaAccessApiKey = motionData?.mediaAccessApiKey
             playData.mediaAccesskey = it.mediaAccesskey
             param[Video.PLAY_DATA] = playData
             param[Video.VIDEO] = videoData
-            viewModel.openPopup(PageID.VIDEO_EXO, param)
+            viewModel.pageChange(PageID.VIDEO_EXO, param)
         }
     }
 

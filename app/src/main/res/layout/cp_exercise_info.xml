@@ -21,7 +21,7 @@
             android:textColor="@color/color_white"
             tools:text = "@string/tool_sub_title"
             android:text=""
-            android:textSize="@dimen/font_regular" />
+            android:textSize="@dimen/font_bold" />
         <TextView
             android:id="@+id/textInfo"
             style="@style/font_black"
@@ -29,9 +29,10 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_white"
+            android:layout_marginTop="@dimen/font_regular"
             tools:text ="@string/tool_title"
             android:text=""
-            android:textSize="@dimen/font_extra_bold" />
+            android:textSize="@dimen/font_black" />
     </LinearLayout>
 
     <Button

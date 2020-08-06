@@ -25,6 +25,9 @@
     <dimen name="icon_regular">20dp</dimen>
     <dimen name="icon_light">16dp</dimen>
 
+    <dimen name="btn_regular_width">119dp</dimen>
+    <dimen name="btn_regular_height">43dp</dimen>
+
     <!-- size -->
     <dimen name="left_tab_width">114dp</dimen>
     <dimen name="left_tab_width_active">210dp</dimen>
@@ -40,6 +43,8 @@
     <dimen name="flag_list_width">166dp</dimen>
     <dimen name="flag_list_height">93dp</dimen>
 
+    <dimen name="progress_thumb_margin">5dp</dimen>
+    <dimen name="progress_thumb_size">90dp</dimen>
 
     <dimen name="page_home_top_height">225dp</dimen>
     <dimen name="page_home_list_top">180dp</dimen>
@@ -62,8 +67,15 @@
 
     <dimen name="page_player_loading_pos">120dp</dimen>
     <dimen name="page_player_ui_pos">-200dp</dimen>
-    <dimen name="page_player_ui_height">287dp</dimen>
+    <dimen name="page_player_ui_hidden_pos">-275dp</dimen>
+    <dimen name="page_player_list_pos">-25dp</dimen>
+    <dimen name="page_player_ui_height">323dp</dimen>
     <dimen name="page_player_videoprogress_height">110dp</dimen>
+    <dimen name="page_player_videoprogress_margin">48dp</dimen>
+    <dimen name="page_player_videoprogress_bg_height">18dp</dimen>
+    <dimen name="page_player_videoprogress_bg_margin">36dp</dimen>
+    <dimen name="page_player_videoprogress_text_margin">54dp</dimen>
+    <dimen name="page_player_btn_size">120dp</dimen>
     <!-- lb size -->
     <dimen name="lb_browse_headers_width">210dp</dimen><!--  Original: 270  -->
     <dimen name="lb_browse_rows_margin_start">120dp</dimen><!--  Original: 238  -->

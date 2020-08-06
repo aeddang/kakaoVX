@@ -44,9 +44,11 @@ object ApiPath {
     const val HOMET_API_MOVIE_EXERCISE_END = "$VERSION_V1/$GROUP_MOVIES/play/exercise/end"
     const val HOMET_API_MOVIE_EXERCISE_EXEC = "$VERSION_V1/$GROUP_MOVIES/play/exercise/exec"
 
+    const val HOMET_API_SYSTEM_GUIDE = "$VERSION_V1/$GROUP_SYSTEM/guide"
+
     const val WECANDEO_ADDRESS = "http://api.wecandeo.com/"
 
-    const val STORAGE_GUIDE = "tutorial/tv_guide.json"
+
 }
 
 data class ApiSuccess<T>(val type:T, var data:Any?, val id: String? = null)
@@ -64,7 +66,7 @@ data class ApiGroup<T>(val type:T, var group: ArrayList<ApiSuccess<T>>, var comp
 object ApiValue{
 
     const val  OS_TYPE = BuildConfig.OS_TYPE
-    const val  PAGE_COUNT = "20"
+    const val  PAGE_COUNT = "10"
     const val  PAGE_START = "1"
 
     enum class FilterPurpose(val value: String) {

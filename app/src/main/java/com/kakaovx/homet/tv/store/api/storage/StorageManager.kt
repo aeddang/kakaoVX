@@ -21,7 +21,7 @@ class StorageManager(
     override fun disposeLifecycleOwner(owner: LifecycleOwner){
         success.removeObservers( owner )
     }
-
+    /*
     fun loadGuideImages(owner:LifecycleOwner ){
         val type = StorageApiType.GUIDE_IMAGES
         StorageAdapter {
@@ -39,7 +39,7 @@ class StorageManager(
                 { _, code, id -> onError( type , code ,null ,id ) }
         )
     }
-
+    */
     fun clearEvent(){
         error.value = null
         success.value = null

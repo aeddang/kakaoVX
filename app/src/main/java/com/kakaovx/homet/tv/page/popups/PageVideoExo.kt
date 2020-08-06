@@ -77,7 +77,7 @@ class PageVideoExo : PageFragmentCoroutine(){
             type ?: return@Observer
             when(type){
                 PageErrorSurport.ErrorActionType.Retry -> loadData()
-                PageErrorSurport.ErrorActionType.Confirm -> pageObject?.let{ viewModel.presenter.closePopup(it)}
+                PageErrorSurport.ErrorActionType.Confirm -> pageObject?.let{ viewModel.presenter.goBack()}
                 else ->{}
             }
         })

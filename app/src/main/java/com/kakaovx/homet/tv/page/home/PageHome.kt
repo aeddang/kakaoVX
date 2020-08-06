@@ -9,7 +9,6 @@ import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.HometApiType
-import com.kakaovx.homet.tv.store.api.homet.ProgramList
 import com.lib.page.PageFragmentCoroutine
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -68,6 +67,7 @@ class PageHome : PageFragmentCoroutine(){
             viewModel.pageChange(PageID.GUIDE)
         }
 
+
         viewModel.repo.hometManager.success.observe(this,Observer { e ->
             e ?: return@Observer
             val type = e.type as? HometApiType
@@ -85,8 +85,7 @@ class PageHome : PageFragmentCoroutine(){
         super.onTransactionCompleted()
         viewModel.getLeftFocusTab(PageID.HOME)?.let{
             btnGuide.nextFocusLeftId = it.id
-            btnGuide.nextFocusForwardId = it.id
-            btnGuide.nextFocusRightId = it.id
+            btnGuide.nextFocusUpId = it.id
         }
     }
 }

@@ -2,14 +2,17 @@ package com.kakaovx.homet.tv.page.player.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.TextView
+import androidx.annotation.CallSuper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.player.model.Movie
 import com.kakaovx.homet.tv.store.api.homet.MovieUrlData
+import com.lib.page.PageComponent
 import com.skeleton.component.item.ItemImageCardView
+import kotlinx.android.synthetic.main.cp_text.view.*
+
 
 class ItemMultiView : ItemImageCardView {
     constructor(context: Context) : super(context)
@@ -33,16 +36,16 @@ class ItemMultiView : ItemImageCardView {
 
     }
 
-    var textView:TextView? = null
+    var textView:Text? = null
     override fun onBind(data: Any?) {
         val movieUrlData = data as? MovieUrlData
         if(textView == null) {
-            textView = TextView(context)
+            textView = Text(context)
             this.addView(textView)
         }
 
         movieUrlData?.let {m->
-            textView!!.text = m.idx.toString()
+            textView!!.title.text = m.getIdxTitle(context)
                 Glide.with(context)
                 .load(m.imgUrl)
                 .centerCrop()
@@ -67,11 +70,28 @@ class ItemMultiView : ItemImageCardView {
     }
 
     private fun active(){
-        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+        setBackgroundColor(context.resources.getColor(R.color.color_gray))
     }
 
     private fun passive(){
-        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray))
+        setBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+    }
+
+    inner class Text : PageComponent{
+        constructor(context: Context) : super(context)
+        constructor(context: Context, attrs: AttributeSet) : super(context,attrs)
+        private val appTag = javaClass.simpleName
+
+
+        @CallSuper
+        override fun init(context: Context) {
+            super.init(context)
+        }
+
+
+        override fun getLayoutResID(): Int = R.layout.cp_text
+
+
     }
 
 

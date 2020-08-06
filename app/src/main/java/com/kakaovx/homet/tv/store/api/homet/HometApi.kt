@@ -18,11 +18,17 @@ enum class HometApiType{
     EXERCISE_DETAIL,
     EXERCISE_PLAYER,EXERCISE_PLAY,EXERCISE_START,EXERCISE_RECORD,
     BREAT_TIME,
-    GROUP
+    GROUP,
+    GUIDE_IMAGES
 }
 
 
 interface HometApi{
+
+    @GET(ApiPath.HOMET_API_SYSTEM_GUIDE)
+    suspend fun getGuide(
+        @Query(ApiField.DEVICE_KEY) deviceKey: String?
+    ): HomeTResponse<GuideImageData>
 
     @GET(ApiPath.HOMET_API_CATEGORY)
     suspend fun getCategory(

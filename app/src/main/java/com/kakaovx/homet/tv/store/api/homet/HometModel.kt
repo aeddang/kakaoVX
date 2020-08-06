@@ -3,7 +3,18 @@ package com.kakaovx.homet.tv.store.api.homet
 import android.content.Context
 import com.google.gson.annotations.SerializedName
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.util.millisecToTimeString
+import com.kakaovx.homet.tv.util.secToTimeString
 
+data class GuideImageData(
+    @SerializedName("images") val images: ArrayList<GuideImage>?
+)
+
+data class GuideImage(
+    @SerializedName("imageId") val imageId: String?,
+    @SerializedName("title") val title: String?,
+    @SerializedName("imgurl") val imgurl: String?
+)
 
 data class CategoryData(
     @SerializedName("codeId") var codeId: String?,
@@ -16,18 +27,27 @@ data class ProgramList(
 )
 
 data class ProgramData(
-    @SerializedName("programId") var programId: String?,
-    @SerializedName("thumbnail") var thumbnail: String?,
-    @SerializedName("title") var title: String?,
-    @SerializedName("difficulty") var difficulty: String?,
-    @SerializedName("difficultyName") var difficultyName: String?,
-    @SerializedName("exerciseCount") var exerciseCount: String?,
-    @SerializedName("isMultiView") var isMultiView: Boolean?,
-    @SerializedName("viewStartTime") var viewStartTime: String?
+    @SerializedName("programId") var programId: String? = null,
+    @SerializedName("thumbnail") var thumbnail: String? = null,
+    @SerializedName("title") var title: String? = null,
+    @SerializedName("difficulty") var difficulty: String? = null,
+    @SerializedName("difficultyName") var difficultyName: String? = null,
+    @SerializedName("exerciseCount") var exerciseCount: String? = null,
+    @SerializedName("isMultiView") var isMultiView: Boolean? = null,
+    @SerializedName("viewStartTime") var viewStartTime: String? = null
 ){
+    fun setNodata(ctx:Context):ProgramData{
+        title = ctx.getString(R.string.list_recent_nodata)
+        return this
+    }
+
     fun getSubTitle(ctx:Context):String{
+        if(programId == null) return ""
         return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"
     }
+
+    var isLast = false
+    var key = ""
 }
 
 data class ProgramDetailData(
@@ -138,10 +158,13 @@ data class MotionData(
     @SerializedName("motionType") val motionType: String?,
     @SerializedName("isArType") val isArType: Boolean?
 ){
-    val subtitle :String
-        get() {
-            return "$playTime . $count"
-        }
+    fun getSubTitle(ctx:Context?):String{
+        ctx ?: return ""
+        val viewCount = count?.toInt() ?: 0
+        val viewDuration = playTime?.secToTimeString() ?: "0"
+        return if(viewCount == 0) viewDuration
+        else "$viewDuration | ${viewCount}${ctx.getString(R.string.unit_count)}"
+    }
 }
 
 data class ExercisePlayData(
@@ -187,6 +210,14 @@ data class MovieUrlData(
     @SerializedName("mediaAccesskey") val mediaAccesskey: String?
 ){
     var idx:Int = 0
+    fun getIdxTitle(ctx:Context?):String{
+        ctx ?: return ""
+        if(idx ==0){
+            return ctx.getString(R.string.page_player_multiview_representation)
+        }else{
+            return (idx+1).toString()
+        }
+    }
 }
 
 data class ExerciseFlagData(

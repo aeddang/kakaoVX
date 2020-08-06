@@ -16,6 +16,8 @@ import com.kakaovx.homet.tv.page.component.items.ItemProgram
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.store.api.ApiField
+import com.kakaovx.homet.tv.store.api.ApiValue
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.CategoryData
 import com.kakaovx.homet.tv.store.api.homet.HometApiType
@@ -142,9 +144,11 @@ class PageProgramList : PageBrowseSupportFragment(){
         program ?: return
         Log.i(appTag, program.toString())
         viewModel.repo.pageModel.backGroundImage.value = program.thumbnail
+        if(program.isLast) {
+            program.isLast = false
+            loadProgramList(program.key)
+        }
     }
-
-
 
     private fun setupUIElements() {
         val text =  SpannableString(getString(R.string.page_program_title))
@@ -159,7 +163,11 @@ class PageProgramList : PageBrowseSupportFragment(){
         }
     }
 
+    enum class PageProgressType{
+        Completed, Progress, Loading
+    }
 
+    private var categoryPages = HashMap<String, Pair<PageProgressType, Int> >()
     private var categoryAdapters = HashMap<String, ArrayObjectAdapter>()
     private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
     private fun loadedCateGory(cate: List<CategoryData>) {
@@ -172,19 +180,42 @@ class PageProgramList : PageBrowseSupportFragment(){
             val key = categoryData.codeId
             key?.let {
                 categoryAdapters[it] = listRowAdapter
-                viewModel.repo.loadPrograms(this, it , 1)
+                categoryPages[key] = Pair(PageProgressType.Progress, 0)
+                loadProgramList(key)
             }
         }
     }
 
+    private fun loadProgramList(key:String) {
+        val page = categoryPages[key]
+        page ?: return
+        if(page.first != PageProgressType.Progress) return
+        val pageIdx = page.second + 1
+        categoryPages[key] = Pair(PageProgressType.Loading, pageIdx)
+        viewModel.repo.loadPrograms(this, key , pageIdx)
+    }
+
     private fun loadedProgramList(programList: ProgramList, key:String) {
         viewModel.presenter.loaded()
+        val page = categoryPages[key]
+        page ?: return
         val list = programList.programs
         list ?: return
+        if(list.size == ApiValue.PAGE_COUNT.toInt()){
+            categoryPages[key] = Pair(PageProgressType.Progress, page.second)
+            list.last().apply {
+                isLast = true
+                this.key = key
+            }
+        }else{
+            categoryPages[key] = Pair(PageProgressType.Completed, page.second)
+
+        }
+
         list.forEach {
             categoryAdapters[key]?.add(it)
         }
-        adapter = rowsAdapter
+        if(adapter == null) adapter = rowsAdapter
     }
 
     inner class ProgramPresenter:ItemPresenter(){

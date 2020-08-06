@@ -9,19 +9,18 @@ interface StorageApi {
 
     /**
      * Recommend CMD
-     */
+
     @GET(ApiPath.STORAGE_GUIDE)
     suspend  fun getGuideData(
     ): GuideImageData
+     */
 }
 
 enum class StorageApiType{
     GUIDE_IMAGES
 }
 
-data class GuideImageData(
-    @SerializedName("images") val images: ArrayList<String>?
-)
+
 
 class StorageAdapter(getData: ()-> Any? ) : NetworkAdapter<Any>(null, getData) {
 

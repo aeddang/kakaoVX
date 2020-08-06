@@ -16,7 +16,7 @@ class ItemMotion : ItemImageCardView {
     override fun onBind(data: Any?) {
         val motion = data as MotionData
         titleText = motion.title
-        contentText = motion.motionDescription
+        contentText = motion.getSubTitle(context)
         Glide.with(context)
             .load(motion.thumbnail)
             .centerCrop()

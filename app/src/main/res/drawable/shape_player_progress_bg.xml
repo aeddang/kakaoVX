@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:left="0dp"
+        android:right="0dp"
+        android:bottom="@dimen/progress_thumb_margin"
+        android:top="@dimen/progress_thumb_margin">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent_white30"/>
+        </shape>
+    </item>
+</layer-list>

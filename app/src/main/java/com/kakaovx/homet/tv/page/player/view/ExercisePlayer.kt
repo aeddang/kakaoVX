@@ -62,9 +62,8 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
                 type ?: return@Observer
                 when (type) {
                     PageErrorSurport.ErrorActionType.Retry -> loadData()
-                    PageErrorSurport.ErrorActionType.Confirm -> playerViewModel.goBack()
-                    else -> {
-                    }
+                    PageErrorSurport.ErrorActionType.Confirm -> playerViewModel.goBackImmediately()
+                    else -> { }
                 }
             })
 
@@ -84,11 +83,12 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
         this.exercise = exercise
         lifecycleOwner?.let { owner->
             exercise.movieObservable.observe(owner, Observer { onMovie(it)})
-            exercise.changedFlagObservable.observe(owner, Observer {onFlag(it)})
+            exercise.changeFlagObservable.observe(owner, Observer {onFlag(it)})
         }
 
     }
 
+    private var isMovieReset = false
     private fun onMovie(movie:Movie){
         exercise ?: return
         lifecycleOwner?.let { owner ->
@@ -97,6 +97,7 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
                 if (currentMovieNum > currentIdx) currentIdx else movie.multiViewIndex.value ?: 0
             movie.multiViewIndex.value = currentIdx
             pause()
+            isMovieReset = true
             movie.multiViewIndex.observe(owner, Observer { idx ->
                 currentIdx = idx
                 exercise ?: return@Observer
@@ -111,16 +112,19 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
     }
     private fun onFlag(flag:Flag){
         exercise ?: return
+        Log.d(appTag, "onFlag")
+        playerViewModel?.player?.playerStatus = PlayerStatus.Stop
         if(flag.type == FlagType.Break) {
-            playerViewModel?.let {vm->
-                vm.player.playerStatus = PlayerStatus.Stop
-                pause()
-            }
+            pause()
             return
         }
         lifecycleOwner?.let {
             Log.d(appTag, "flag.isMovieChange ${flag.isMovieChange} ${flag.getFlagActionTitle()} ")
             if(flag.isMovieChange || exercise!!.needSeek(flag.progressTime)) seek(flag.movieStartTime)
+            else {
+                playerViewModel?.player?.playerStatus = PlayerStatus.Resume
+                Log.d(appTag, "onFlag completed")
+            }
         }
     }
 
@@ -171,7 +175,9 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
     override fun onSeekProcessed() {
         super.onSeekProcessed()
         playerViewModel?.apply{
+            player.playerStatus = PlayerStatus.Resume
             player.streamEvent.value = PlayerStreamEvent.Seeked
+            Log.d(appTag, "onFlag seeked completed")
         }
     }
 
@@ -209,7 +215,6 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
         playerViewModel ?: return
         lifecycleOwner ?: return
         playerViewModel?.apply{
-            player.playerStatus = PlayerStatus.Stop
             player.streamEvent.value = PlayerStreamEvent.Load
         }
         if(playData != null) playerViewModel!!.repo.wecandeoManager.loadPlayData(lifecycleOwner!!, playData!!)
@@ -217,7 +222,9 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
     }
 
     private fun loadVideo(){
-        load(videoPath, currentPlayer?.currentPosition  ?: 0)
+        val t = if( isMovieReset ) 0L else currentPlayer?.currentPosition ?: 0
+        isMovieReset = false
+        load(videoPath, t)
         resume()
     }
 

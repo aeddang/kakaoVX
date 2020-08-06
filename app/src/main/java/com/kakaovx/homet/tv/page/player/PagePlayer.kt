@@ -3,7 +3,9 @@ package com.kakaovx.homet.tv.page.player
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
@@ -22,7 +24,10 @@ import com.skeleton.component.player.PlayBack
 import com.skeleton.component.player.PlayBackTimeDelegate
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.page_exercise.*
+import kotlinx.android.synthetic.main.page_exercise.view.*
 import kotlinx.android.synthetic.main.page_player.*
+import kotlinx.android.synthetic.main.page_player.listArea
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -68,6 +73,23 @@ class PagePlayer : PageFragmentCoroutine(){
     }
 
 
+    override val hasBackPressAction: Boolean
+        get(){
+             if(!viewModel.isExitChecked) {
+                 context ?: return false
+                 CustomDialog.makeDialog(context!!, null, R.string.page_player_exit)
+                     .setNegativeButton(R.string.btn_action_cancel)
+                     {  _,_ -> }
+                     .setPositiveButton(R.string.btn_action_confirm)
+                     {  _,_ ->
+                         viewModel.goBackImmediately()
+                     }
+                     .show()
+                 return true
+             }
+             return super.hasBackPressAction
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         pageChileren.add(player)
         pageChileren.add(videoProgress)
@@ -90,10 +112,10 @@ class PagePlayer : PageFragmentCoroutine(){
         }
 
         super.onViewCreated(view, savedInstanceState)
-
         breakTime.exitFocusView = btnPlayStop
         exerciseInfo.exitFocusView = btnPlayStop
         pageList?.exitFocusView = btnPlayStop
+        viewModel.player.playerListStatus = PlayerListStatus.Initate
         btnPlayStop.requestFocus()
     }
 
@@ -142,7 +164,7 @@ class PagePlayer : PageFragmentCoroutine(){
             exercise ?: return@Observer
             pageChileren.map { it as? PlayerChildComponent }.forEach { it?.onExercise(exercise) }
             pageList?.onExercise(exercise)
-
+            viewModel.player.playerListStatus = PlayerListStatus.Playing
             player.setOnPlayTimeListener(object : PlayBackTimeDelegate {
                 override fun onTimeChanged(player: PlayBack, t: Long) {
                     exercise.changeVideoTime(t)
@@ -157,7 +179,7 @@ class PagePlayer : PageFragmentCoroutine(){
 
             })
             exercise.changedFlagObservable.observe(this, Observer {flag->
-                viewModel.player.uiEvent.value = PlayerUIEvent.ListHidden
+                //viewModel.player.uiEvent.value = PlayerUIEvent.ListHidden
                 flag.speech?.let { ttsFactory.effect(it) }
             })
 
@@ -180,8 +202,8 @@ class PagePlayer : PageFragmentCoroutine(){
 
         viewModel.player.streamEvent.observe(this, Observer {evt->
             when(evt){
-                PlayerStreamEvent.Resumed ->{ btnPlayStop.text = "STOP" }
-                PlayerStreamEvent.Paused ->{ btnPlayStop.text = "PLAY" }
+                PlayerStreamEvent.Resumed ->{ btnPlayStop.setImageResource(R.drawable.ic_pause) }
+                PlayerStreamEvent.Paused ->{ btnPlayStop.setImageResource(R.drawable.ic_resume) }
                 else -> {}
             }
         })
@@ -192,6 +214,7 @@ class PagePlayer : PageFragmentCoroutine(){
                 else -> loaded()
             }
         })
+
 
         viewModel.player.uiEvent.observe(this, Observer {evt->
             when(evt){
@@ -244,18 +267,11 @@ class PagePlayer : PageFragmentCoroutine(){
         }
     }
 
-
-
     private fun openList(){
         context ?: return
         if( viewModel.player.playerListStatus == PlayerListStatus.ListSearch) return
         viewModel.player.playerListStatus = PlayerListStatus.ListSearch
-        viewModel.player.uiEvent.value = PlayerUIEvent.UIView
-        val pos =  0
-        uiArea.animateY(pos, true).apply {
-            interpolator = DecelerateInterpolator()
-            listArea.startAnimation(this)
-        }
+        viewModel.player.uiEvent.value = PlayerUIEvent.UIUse
     }
 
     private fun hideList(){
@@ -263,14 +279,7 @@ class PagePlayer : PageFragmentCoroutine(){
         if( viewModel.player.playerListStatus == PlayerListStatus.Playing) return
         viewModel.player.playerListStatus = PlayerListStatus.Playing
         viewModel.player.uiEvent.value = PlayerUIEvent.UIView
-        context ?: return
-        view ?: return
-        val pos = context!!.resources.getDimension(R.dimen.page_player_ui_pos).roundToInt()
-        uiArea.animateY(pos, true).apply {
-            interpolator = DecelerateInterpolator()
-            listArea.startAnimation(this)
-        }
-        viewModel.player.uiEvent.value = PlayerUIEvent.UIView
+
     }
 
 
@@ -285,13 +294,23 @@ class PagePlayer : PageFragmentCoroutine(){
                 viewModel.player.uiEvent.value = PlayerUIEvent.UIHidden
             }
         }
+
         val willStatus = if(isAutoHidden) PlayerUiStatus.View else PlayerUiStatus.Use
         if( viewModel.player.playerUIStatus == willStatus) return
         viewModel.player.playerUIStatus = willStatus
-        arrayOf(btnPlayStop, btnPrev, btnNext).forEach {
-            it.animateAlpha(1.0f, false)
+
+        var pos = context!!.resources.getDimension(R.dimen.page_player_ui_pos).roundToInt()
+        var opc = 1.0f
+
+        if( viewModel.player.playerListStatus == PlayerListStatus.ListSearch){
+            pos = 0
+            opc = 0.0f
         }
-        uiArea.animateAlpha(1.0f, false)
+        btnArea.animateAlpha(opc, false)
+        uiArea.animateY(pos, true).apply {
+            interpolator = AccelerateInterpolator()
+            uiArea.startAnimation(this)
+        }
     }
 
     private fun hideUI(){
@@ -299,11 +318,11 @@ class PagePlayer : PageFragmentCoroutine(){
         autoHiddenJob?.cancel()
         if( viewModel.player.playerUIStatus == PlayerUiStatus.Hidden) return
         viewModel.player.playerUIStatus = PlayerUiStatus.Hidden
-        arrayOf(btnPlayStop, btnPrev, btnNext).forEach {
-            it.animateAlpha(0.0f,false)
-        }
-        if( viewModel.player.playerListStatus != PlayerListStatus.ListSearch ){
-            uiArea.animateAlpha(0.0f, false)
+        btnArea.animateAlpha(0.0f, false)
+        val pos = context!!.resources.getDimension(R.dimen.page_player_ui_hidden_pos).roundToInt()
+        uiArea.animateY(pos, true).apply {
+            interpolator = AccelerateInterpolator()
+            uiArea.startAnimation(this)
         }
     }
 

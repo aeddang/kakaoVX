@@ -101,6 +101,8 @@ interface PageViewFragment : PageView{
     val pageFragment:Fragment
     var pageObject:PageObject?
     var pageViewModel:PageViewModel?
+
+    fun onWillDestory(pageObject:PageObject?){}
 }
 
 interface PageViewModel {

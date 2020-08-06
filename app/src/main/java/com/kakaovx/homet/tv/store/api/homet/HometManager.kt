@@ -136,6 +136,7 @@ class HometManager(
 
     private fun getApi(type:HometApiType, params:Map<String, Any?>? = null)= runBlocking {
     when ( type ){
+        HometApiType.GUIDE_IMAGES -> restApi.getGuide( accountManager.deviceKey )
         HometApiType.CATEGORY -> restApi.getCategory( accountManager.deviceKey )
         HometApiType.PROGRAMS -> {
             var filterPurpose = "01"

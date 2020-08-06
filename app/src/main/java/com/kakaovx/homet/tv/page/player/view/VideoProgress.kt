@@ -1,7 +1,7 @@
 package com.kakaovx.homet.tv.page.player.view
 
 import android.content.Context
-import android.graphics.Rect
+
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.style.StyleSpan
@@ -17,10 +17,8 @@ import com.kakaovx.homet.tv.page.player.model.PlayerUIEvent
 import com.kakaovx.homet.tv.util.millisecToTimeString
 import com.lib.page.PageComponentCoroutine
 import com.lib.util.Log
-import com.lib.util.animateAlpha
-import com.lib.util.animateFrame
 import kotlinx.android.synthetic.main.cp_video_progress.view.*
-import kotlin.math.roundToInt
+
 
 class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
     constructor(context: Context) : super(context)
@@ -36,7 +34,7 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
         super.onAttachedToWindow()
 
     }
-    private val moveTime = 5000L
+    private val moveTime = 1000L
     private var startTime:Long = 0
     private var duration:Long = 0
     override fun onPlayerViewModel(playerViewModel:PagePlayerViewModel){
@@ -73,8 +71,11 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             }
         }
         progressBar.setOnFocusChangeListener { v, hasFocus ->
-            val next  = v.findFocus()
-            Log.i(appTag, "next ${next}")
+            if( hasFocus ){
+                progressBar.thumb = context.getDrawable( R.drawable.shape_player_thumb_on )
+            }else{
+                progressBar.thumb = context.getDrawable( R.drawable.shape_player_thumb )
+            }
             playerViewModel.player.uiEvent.value = if(hasFocus)  PlayerUIEvent.UIUse
             else PlayerUIEvent.UIView
         }
@@ -89,21 +90,22 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
                 duration = flag.duration
                 progressBar.max = flag.duration.toInt()
                 startTime = flag.movieStartTime
+                Log.i(appTag, "startTime $startTime")
                 textDuration.text = duration.millisecToTimeString()
                 textTime.text = 0L.millisecToTimeString()
-                val progress = "${flag.getFlagStep()}"
-                val total = "/${exercise.totalStep}"
-                val text =  SpannableString("$progress/${exercise.totalStep} ${flag.getFlagTitle()}")
-                text.setSpan(StyleSpan(Typeface.BOLD), progress.length, progress.length + total .length, 0)
-                textTitle.text = text
+                textProgress.text = flag.getFlagStepSpan(exercise.totalStep)
+                textTitle.text = flag.getFlagTitle()
                 val res = when(flag.type){
-                    FlagType.Action -> R.drawable.shape_exercise_progress
-                    FlagType.Motion -> R.drawable.shape_exercise_progress
+                    FlagType.Action -> R.drawable.shape_player_progress
+                    FlagType.Motion -> R.drawable.shape_player_progress
                     else ->  R.drawable.shape_player_progress
                 }
                 progressBar.progressDrawable = context.getDrawable(res)
             })
+
+
             exercise.movieObservable.observe(owner, Observer { movie->
+                Log.i(appTag, "movieObservable  : startTime $startTime")
                 movie.currentTime.observe(owner,Observer {
                     val t = it - startTime
                     textTime.text = t.millisecToTimeString()

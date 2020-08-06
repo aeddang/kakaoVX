@@ -54,7 +54,7 @@
                             android:nextFocusLeft="@id/btnExercise"
                             android:nextFocusRight="@id/btnExercise"
                             android:nextFocusUp="@id/btnExercise"
-                            android:background="@drawable/focus_rect_black_white_border"
+                            android:background="@drawable/selecter_rect_black_white_border"
                             />
                     </FrameLayout>
                     <LinearLayout

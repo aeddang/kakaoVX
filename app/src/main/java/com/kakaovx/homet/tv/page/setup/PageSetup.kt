@@ -43,6 +43,8 @@ class PageSetup : PageFragmentCoroutine(){
 
         viewModel.getLeftFocusTab(PageID.SETUP)?.let{
             btnUpdate.nextFocusLeftId = it.id
+            btnUpdate.nextFocusUpId = it.id
+            btnUpdate.nextFocusDownId = it.id
         }
         btnUpdate.requestFocus()
         context?.let { ctx->

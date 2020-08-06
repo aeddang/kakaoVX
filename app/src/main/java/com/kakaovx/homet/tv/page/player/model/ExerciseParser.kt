@@ -41,7 +41,7 @@ object ExerciseParser{
         flags.clear()
     }
     fun addTypeAllOutro(){
-        if(currentMovie != null && prevFlag != null && currentMovie?.type == Type.All.value){
+        if(currentMovie != null && prevFlag != null && currentMovie!!.type.length > 5){
             val duration = currentMovie!!.duration
             val diff = duration - movieParseTime
             if(diff > 100L) {

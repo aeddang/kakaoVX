@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/shape_shadow_reverse"
-    >
+    android:layout_height="match_parent">
     <SeekBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/page_player_progress_height"
-        android:layout_gravity="bottom"
-        android:thumb="@drawable/selecter_thumb"
+        android:layout_height="@dimen/progress_thumb_size"
+        android:thumb="@drawable/shape_player_thumb"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
-        android:progressDrawable="@drawable/shape_player_progress" />
+        android:progressDrawable="@drawable/selecter_player_seek_bar" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:layout_marginTop="@dimen/page_player_videoprogress_text_margin">
         <TextView
             android:id="@+id/textTime"
             style="@style/font_regular"
@@ -48,18 +44,33 @@
             android:layout_marginTop="@dimen/margin_thin"
             android:layout_marginEnd="@dimen/margin_heavy"
             android:layout_gravity="right"/>
-        <TextView
-            android:id="@+id/textTitle"
-            style="@style/font_bold"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/color_white"
-            tools:text ="@string/tool_title"
-            android:text=""
-            android:layout_marginTop="@dimen/margin_thin"
-            android:textSize="@dimen/font_medium"
-            android:layout_gravity="center"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_light"
+            android:layout_gravity="top|center_horizontal">
+            <TextView
+                android:id="@+id/textProgress"
+                style="@style/font_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_white"
+                tools:text ="@string/tool_title"
+                android:text=""
+                android:textSize="@dimen/font_medium" />
+            <TextView
+                android:id="@+id/textTitle"
+                style="@style/font_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_white"
+                tools:text ="@string/tool_title"
+                android:text=""
+                android:layout_marginStart="@dimen/margin_extra_thin"
+                android:textSize="@dimen/font_medium" />
+        </LinearLayout>
+
     </FrameLayout>
 
-</LinearLayout>
+</FrameLayout>

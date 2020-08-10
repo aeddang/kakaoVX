@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
+
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
@@ -24,10 +23,9 @@ import com.skeleton.component.player.PlayBack
 import com.skeleton.component.player.PlayBackTimeDelegate
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.page_exercise.*
-import kotlinx.android.synthetic.main.page_exercise.view.*
+
 import kotlinx.android.synthetic.main.page_player.*
-import kotlinx.android.synthetic.main.page_player.listArea
+
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,6 +62,16 @@ class PagePlayer : PageFragmentCoroutine(){
     override fun onDestroy() {
         super.onDestroy()
         pageList = null
+    }
+
+    override fun onResume() {
+        super.onPause()
+        player.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player.onPause()
     }
 
     override fun onPageParams(params: Map<String, Any?>) {

@@ -65,14 +65,9 @@ data class ProgramDetailData(
     @SerializedName("averagePlayTime") val averagePlayTime: String?,
     @SerializedName("isMultiView") val isMultiView: Boolean?,
     @SerializedName("movieType") val movieType: String?,
-    @SerializedName("movieTypeName") val movieTypeName: String?
+    @SerializedName("movieTypeName") val movieTypeName: String?,
+    @SerializedName("description") val description: String?
 ){
-
-    val description :String
-        get() {
-            return "$exercisePlanCount / $averagePlayTime"
-        }
-
     fun getSubTitle(ctx:Context?):String{
         ctx ?: return ""
         return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"

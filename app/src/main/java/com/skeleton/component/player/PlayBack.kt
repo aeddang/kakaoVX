@@ -21,7 +21,7 @@ interface PlayBack{
 }
 
 interface PlayBackDelegate{
-    fun onChangedPlayer(mediaType:MediaType)
+    fun onChangedPlayer(mediaType:MediaType){}
     fun onLoad(player: PlayBack, duration:Long ){}
     fun onPlay(player: PlayBack){}
     fun onStop(player: PlayBack ){}

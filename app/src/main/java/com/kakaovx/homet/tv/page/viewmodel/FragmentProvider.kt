@@ -1,5 +1,6 @@
 package com.kakaovx.homet.tv.page.viewmodel
 
+import com.kakaovx.homet.tv.page.PageIntro
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.exercise.PageExercise
 import com.kakaovx.homet.tv.page.exercise.PageExerciseList
@@ -24,6 +25,7 @@ class FragmentProvider : PageProvider{
     fun getPageObject(pageID: PageID) = PageObject(pageID.value, pageID.position)
     override fun getPageView(pageObject: PageObject): PageViewFragment {
         return when(pageObject.pageID){
+            PageID.INTRO.value -> PageIntro()
             PageID.HOME.value -> PageHome()
             PageID.HOME_LIST.value -> PageHomeList()
             PageID.PROGRAM_LIST.value -> PageProgramList()
@@ -47,6 +49,7 @@ class FragmentProvider : PageProvider{
 }
 
 enum class PageID(val value: String, val position: Int = 9999){
+    INTRO("intro", 1),
     HOME("home", 100),
     HOME_LIST("homeList", 101),
     PROGRAM_LIST("programList", 200),

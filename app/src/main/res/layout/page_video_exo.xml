@@ -1,13 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.kakaovx.homet.tv.page.component.player.ExoPlayerUI
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:use_controller="true"
+        app:use_controller="false"
         />
-
+    <LinearLayout
+        android:id="@+id/infoBox"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top|start"
+        android:background="@color/transparent_black70">
+        <TextView
+            android:id="@+id/textProgress"
+            style="@style/font_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/margin_heavy"
+            android:textColor="@color/color_white"
+            tools:text ="@string/tool_title"
+            android:text=""
+            android:textSize="@dimen/font_medium" />
+        <TextView
+            android:id="@+id/textTitle"
+            style="@style/font_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:textColor="@color/color_white"
+            tools:text ="@string/tool_title"
+            android:text=""
+            android:layout_marginStart="@dimen/margin_extra_thin"
+            android:textSize="@dimen/font_medium" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <TextView
+            style="@style/font_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/color_white"
+            android:text="@string/page_video_preview"
+            android:layout_marginEnd="@dimen/margin_heavy"
+            android:textSize="@dimen/font_light" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/btnArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnPrev"
+            android:layout_height="@dimen/page_player_btn_size"
+            android:layout_width="@dimen/page_player_btn_size"
+            android:background="@drawable/selecter_oval_white"
+            android:nextFocusLeft="@id/btnNext"
+            android:nextFocusUp="@id/btnPrev"
+            android:nextFocusDown="@id/btnPrev"
+            android:src="@drawable/ic_prev"
+            android:padding="36dp"
+            android:layout_marginEnd="@dimen/margin_thin"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            />
+        <ImageButton
+            android:id="@+id/btnPlayStop"
+            android:layout_height="@dimen/page_player_btn_size"
+            android:layout_width="@dimen/page_player_btn_size"
+            android:nextFocusUp="@id/btnPlayStop"
+            android:nextFocusDown="@id/btnPlayStop"
+            android:background="@drawable/selecter_oval_white"
+            android:src="@drawable/ic_resume"
+            android:padding="32dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            />
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_height="@dimen/page_player_btn_size"
+            android:layout_width="@dimen/page_player_btn_size"
+            android:background="@drawable/selecter_oval_white"
+            android:nextFocusRight="@id/btnPrev"
+            android:nextFocusUp="@id/btnNext"
+            android:nextFocusDown="@id/btnNext"
+            android:src="@drawable/ic_next"
+            android:padding="36dp"
+            android:layout_marginStart="@dimen/margin_thin"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            />
+    </LinearLayout>
+    <com.skeleton.component.progressbar.MultiStrokeSpinner
+        android:id="@+id/loadingSpinner"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/page_player_loading_pos"
+        android:layout_gravity="center"/>
 </FrameLayout>

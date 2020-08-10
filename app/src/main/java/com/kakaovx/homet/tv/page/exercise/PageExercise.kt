@@ -102,11 +102,10 @@ class PageExercise : PageFragmentCoroutine(){
                 scroll.scrollTo(0,0)
                 return@setOnFocusChangeListener
             }
-            val pos = if(hasFocus) 0
-            else scroll.maxScrollAmount
+            if(!hasFocus) return@setOnFocusChangeListener
             val handler = Handler()
             handler.postDelayed(
-                { scroll.smoothScrollTo(0, pos) }, 100
+                { scroll.smoothScrollTo(0, 0) }, 100
             )
         }
 

@@ -34,6 +34,7 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
         super.onAttachedToWindow()
 
     }
+    private val seekTime = 5000L
     private val moveTime = 1000L
     private var startTime:Long = 0
     private var duration:Long = 0
@@ -48,28 +49,72 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             }
         })
 
-        progressBar.setOnKeyListener { v, keyCode, event ->
-            if(event.action != KeyEvent.ACTION_UP) return@setOnKeyListener false
-            when(keyCode){
-                KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if(progressBar.progress < moveTime) return@setOnKeyListener false
-                    val seek = PlayerUIEvent.SeekMove
-                    seek.value = -moveTime
-                    playerViewModel.player.uiEvent.value = seek
-                    true
-                }
-                KeyEvent.KEYCODE_DPAD_RIGHT ->{
-                    val willTime = progressBar.progress + moveTime
-                    if(progressBar.max < willTime) return@setOnKeyListener false
-                    val seek = PlayerUIEvent.SeekMove
-                    seek.value = moveTime
-                    playerViewModel.player.uiEvent.value = seek
-                    true
-                }
 
-                else -> false
+        var isLongPress = false
+        var longPressCount = 0
+        progressBar.setOnKeyListener { v, keyCode, event ->
+
+            if( event.isLongPress) {
+                isLongPress = true
+                longPressCount = 0
+                Log.d(appTag, "FLAG_LONG_PRESS")
+                return@setOnKeyListener true
             }
+
+            if( event.action == KeyEvent.ACTION_UP ) {
+                if( isLongPress ) {
+                   // playerViewModel.player.uiEvent.value = PlayerUIEvent.Resume
+                    isLongPress = false
+                    Log.d(appTag, "FLAG_CANCELED_LONG_PRESS")
+                    return@setOnKeyListener true
+                }
+                Log.d(appTag, "ACTION_UP")
+                when(keyCode){
+                    KeyEvent.KEYCODE_DPAD_LEFT -> {
+                        if(progressBar.progress < moveTime) return@setOnKeyListener false
+                        val seek = PlayerUIEvent.SeekMove
+                        seek.value = -seekTime
+                        playerViewModel.player.uiEvent.value = seek
+                        true
+                    }
+                    KeyEvent.KEYCODE_DPAD_RIGHT ->{
+                        val willTime = progressBar.progress + moveTime
+                        if(progressBar.max < willTime) return@setOnKeyListener false
+                        val seek = PlayerUIEvent.SeekMove
+                        seek.value = seekTime
+                        playerViewModel.player.uiEvent.value = seek
+                        true
+                    }
+
+                    else -> false
+                }
+            }else if( event.action == KeyEvent.ACTION_DOWN && isLongPress) {
+                longPressCount++
+                if( longPressCount % 10 != 1) return@setOnKeyListener true
+                Log.d(appTag, "ACTION_DOWN")
+                when(keyCode){
+                    KeyEvent.KEYCODE_DPAD_LEFT -> {
+                        if(progressBar.progress < moveTime) return@setOnKeyListener false
+                        val seek = PlayerUIEvent.SeekMove
+                        seek.value = -moveTime
+                        playerViewModel.player.uiEvent.value = seek
+                        true
+                    }
+                    KeyEvent.KEYCODE_DPAD_RIGHT ->{
+                        val willTime = progressBar.progress + moveTime
+                        if(progressBar.max < willTime) return@setOnKeyListener false
+                        val seek = PlayerUIEvent.SeekMove
+                        seek.value = moveTime
+                        playerViewModel.player.uiEvent.value = seek
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            else { false }
         }
+
         progressBar.setOnFocusChangeListener { v, hasFocus ->
             if( hasFocus ){
                 progressBar.thumb = context.getDrawable( R.drawable.shape_player_thumb_on )
@@ -79,7 +124,6 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             playerViewModel.player.uiEvent.value = if(hasFocus)  PlayerUIEvent.UIUse
             else PlayerUIEvent.UIView
         }
-
     }
 
 
@@ -95,12 +139,14 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
                 textTime.text = 0L.millisecToTimeString()
                 textProgress.text = flag.getFlagStepSpan(exercise.totalStep)
                 textTitle.text = flag.getFlagTitle()
+                /*
                 val res = when(flag.type){
                     FlagType.Action -> R.drawable.shape_player_progress
                     FlagType.Motion -> R.drawable.shape_player_progress
                     else ->  R.drawable.shape_player_progress
                 }
                 progressBar.progressDrawable = context.getDrawable(res)
+                */
             })
 
 

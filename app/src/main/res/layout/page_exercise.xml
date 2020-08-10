@@ -205,14 +205,15 @@
                             app:layout_constraintTop_toBottomOf="@id/btnUpdate" />
 
                     </LinearLayout>
+                    <FrameLayout
+                        android:id="@+id/listArea"
+                        android:layout_marginBottom="@dimen/margin_heavy"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/page_exercise_list_height">
+                    </FrameLayout>
                 </LinearLayout>
 
-                <FrameLayout
-                    android:id="@+id/listArea"
-                    android:layout_marginTop="@dimen/page_exercise_list_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/page_exercise_list_height">
-                </FrameLayout>
+
 
             </FrameLayout>
     </ScrollView>

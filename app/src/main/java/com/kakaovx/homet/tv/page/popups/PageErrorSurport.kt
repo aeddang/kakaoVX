@@ -128,7 +128,7 @@ class PageErrorSurport : PageFragmentCoroutine(){
         const val PAGE_ERROR = "pageError"
         const val PAGE_EVENT_ID = "pageEventID"
         const val REDIRECT_PAGE = "redirectPage"
-
+        const val UNDEFINDED_CODE = "000"
         fun getErrorMessage(
             type: Any?,
             code: String?,
@@ -144,11 +144,11 @@ class PageErrorSurport : PageFragmentCoroutine(){
                 )
             else when (type) {
                 VideoError.HOST -> Pair(
-                    context.getString(R.string.error_host) + "-" + code,
+                    context.getString(R.string.error_host) + "-" + (code ?: UNDEFINDED_CODE),
                     ErrorActionType.Confirm
                 )
                 VideoError.PLAY_BACK -> Pair(
-                    context.getString(R.string.error_play_back) + "-" + code,
+                    context.getString(R.string.error_play_back) + "-" + (code ?: UNDEFINDED_CODE),
                     ErrorActionType.Confirm
                 )
                 else -> Pair(
@@ -179,7 +179,7 @@ class PageErrorSurport : PageFragmentCoroutine(){
                 ApiCode.ERROR_SERVER,
                 ApiCode.ERROR_UNDEFINED -> {
                     return Pair(
-                        context.getString(R.string.error_api) + "-" + code,
+                        context.getString(R.string.error_api) + "-" + (code ?: UNDEFINDED_CODE),
                         ErrorActionType.Confirm
                     )
                 }

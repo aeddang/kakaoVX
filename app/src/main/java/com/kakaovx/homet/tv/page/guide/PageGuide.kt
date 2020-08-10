@@ -53,9 +53,7 @@ class PageGuide : PageFragmentCoroutine(){
 
             }
         }
-
         super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onCoroutineScope() {

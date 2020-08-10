@@ -2,12 +2,9 @@ package com.kakaovx.homet.tv.page.guide
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
 import android.text.SpannableString
 import android.text.style.StyleSpan
-
 import android.view.View
-
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
 import androidx.leanback.widget.BrowseFrameLayout.OnFocusSearchListener
@@ -15,23 +12,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemImage
-import com.kakaovx.homet.tv.page.component.items.ItemProgram
-import com.kakaovx.homet.tv.page.program.PageProgram
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
-import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.GuideImage
-import com.kakaovx.homet.tv.store.api.homet.HometApiType
-import com.kakaovx.homet.tv.store.api.homet.ProgramData
-import com.kakaovx.homet.tv.store.api.homet.ProgramList
 import com.lib.util.Log
 import com.skeleton.component.item.ItemImageCardView
 import com.skeleton.component.item.ItemPresenter
 import com.skeleton.module.ViewModelFactory
 import com.skeleton.page.PageBrowseSupportFragment
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 
 class PageGuideList : PageBrowseSupportFragment(){
@@ -51,6 +46,8 @@ class PageGuideList : PageBrowseSupportFragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         exitFocusView = null
+        autoRollingJob = null
+        items.clear()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,6 +96,37 @@ class PageGuideList : PageBrowseSupportFragment(){
             e.images?.let { setupImageRow(it) }
         })
         loadData()
+        onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ -> onItemSelected(item) }
+    }
+
+    private fun onItemSelected(item:Any?){
+        val set = item as? Pair<String, Int>
+        set?.let{
+            currentPos = it.second
+            Log.d(appTag, "onItemSelected $currentPos")
+        }
+        autoRolling()
+    }
+
+    private var total = 0
+    private var autoRollingJob:Job? = null
+    private var items = ArrayList<ItemImage>()
+    private var currentPos = 0
+    private fun autoRolling(){
+        autoRollingJob?.cancel()
+        autoRollingJob = scope.launch {
+            delay(5000)
+            val pos = if(currentPos >= (total-1)) 0
+            else currentPos + 1
+            Log.d(appTag, "autoRolling $pos")
+            val find = items.find { it.index == pos}
+            find?.let{
+                it.requestFocus()
+                currentPos = pos
+                autoRolling()
+            }
+
+        }
     }
 
     fun loadData(){
@@ -109,19 +137,27 @@ class PageGuideList : PageBrowseSupportFragment(){
         viewModel.presenter.loaded()
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val listRowAdapter = ArrayObjectAdapter(ImagePresenter())
-        imageList.forEach { img -> img.imgurl?.let{
-            listRowAdapter.add(it)
+        total = 0
+        imageList.forEachIndexed { idx, img -> img.imgurl?.let{
+            listRowAdapter.add(Pair(it, idx))
+            total ++
         } }
         rowsAdapter.add(ListRow(null, listRowAdapter))
         adapter = rowsAdapter
     }
+
+
 
     inner class ImagePresenter:ItemPresenter(){
         init {
             cardWidth = context?.resources?.getDimension(R.dimen.guide_list_width)?.toInt() ?: cardWidth
             cardHeight = context?.resources?.getDimension(R.dimen.guide_list_height)?.toInt() ?: cardHeight
         }
-        override fun getItemView(): ItemImageCardView = ItemImage(context!!)
+        override fun getItemView(): ItemImageCardView {
+            val item = ItemImage(context!!)
+            items.add(item)
+            return item
+        }
     }
 
 

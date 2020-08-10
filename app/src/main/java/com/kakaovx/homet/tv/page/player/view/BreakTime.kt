@@ -153,7 +153,10 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
                 var r = totalCount - currentCount
                 if( r < 0 ) r = 0
                 textCount.text = (r).toString()
-                if(r == 3L) textTitle.text = context.getString(R.string.page_player_breaktime_end_info)
+                if(r == 5L) {
+                    textTitle.text = context.getString(R.string.page_player_breaktime_end_info)
+                    ttsFactory?.effect(StaticResource.EXERCISE_TIME)
+                }
                 graph?.show(currentCount.toDouble())
                 if(currentCount == totalCount + 1) passive()
                 btnSkip.requestFocus()

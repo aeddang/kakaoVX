@@ -5,6 +5,7 @@ import com.dagger.module.view.ActivityModule
 import com.dagger.module.view.PageActivityModule
 import com.dagger.module.view.FragmentModule
 import com.kakaovx.homet.tv.page.MainActivity
+import com.kakaovx.homet.tv.page.PageIntro
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.exercise.PageExercise
 import com.kakaovx.homet.tv.page.exercise.PageExerciseList
@@ -31,6 +32,10 @@ internal abstract class AndroidBindingModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [PageActivityModule::class, ActivityModule::class])
     internal abstract fun bindMainActivity(): MainActivity
+
+    @PageScope
+    @ContributesAndroidInjector(modules = [FragmentModule::class])
+    internal abstract fun bindPageIntro(): PageIntro
 
     @PageScope
     @ContributesAndroidInjector(modules = [FragmentModule::class])

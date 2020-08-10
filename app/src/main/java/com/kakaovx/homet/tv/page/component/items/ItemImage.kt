@@ -14,14 +14,18 @@ class ItemImage : ItemImageCardView {
     init {
         cardType = CARD_TYPE_FLAG_IMAGE_ONLY
     }
-
+    var index:Int = -1; private set
     override fun onBind(data: Any?) {
-        val path = data as String?
-        Glide.with(context)
-            .load(path)
-            .centerCrop()
-            .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
-            .into(mainImageView)
+        val set = data as Pair<String, Int>?
+        set?.let {
+            this.index = it.second
+            Glide.with(context)
+                .load(it.first)
+                .centerCrop()
+                .error( ContextCompat.getDrawable(context, R.drawable.ic_content_no_image) )
+                .into(mainImageView)
+        }
+
     }
 
     override fun onUnbind() {

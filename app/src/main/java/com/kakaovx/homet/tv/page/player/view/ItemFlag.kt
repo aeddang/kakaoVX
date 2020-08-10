@@ -57,11 +57,11 @@ class ItemFlag : ItemImageCardView {
     }
 
     private fun completed(){
-        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_black))
+        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
     }
 
     private fun active(){
-        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_gray_deep))
+        setInfoAreaBackgroundColor(context.resources.getColor(R.color.color_black))
     }
 
     private fun passive(isEffectiveExercise:Boolean){

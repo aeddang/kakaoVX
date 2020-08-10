@@ -20,6 +20,7 @@ import com.kakaovx.homet.tv.store.api.ApiField
 import com.kakaovx.homet.tv.store.api.HomeTResponse
 import com.kakaovx.homet.tv.store.api.homet.*
 import com.kakaovx.homet.tv.store.api.wecandeo.PlayData
+import com.kakaovx.homet.tv.util.secToLong
 import com.lib.util.Log
 import com.skeleton.component.item.ItemImageCardView
 import com.skeleton.component.item.ItemPresenter
@@ -49,6 +50,7 @@ class PageExerciseList : PageBrowseSupportFragment(){
         super.onDestroyView()
         exitFocusView = null
         motionData = null
+        motionDatas = null
         exerciseData = null
     }
 
@@ -121,6 +123,7 @@ class PageExerciseList : PageBrowseSupportFragment(){
         viewModel.repo.hometManager.loadApi(this, HometApiType.EXERCISE_MOTION , params)
     }
 
+    private var motionDatas:List<MotionData>? = null
     private fun onItemClicked(item:Any?){
 
         motionData ?: return
@@ -131,11 +134,17 @@ class PageExerciseList : PageBrowseSupportFragment(){
             val videoData = VideoData("")
             videoData.title = motion.title
             videoData.subtitle = motion.getSubTitle(context)
+            videoData.startTime = motion.timerStart?.secToLong() ?: 0
+            videoData.endTime = motion.timerEnd?.secToLong() ?: 0
             val playData = PlayData(it.movieUrl ?: "")
             playData.mediaAccessApiUrl = motionData?.mediaAccessApiUrl
             playData.mediaAccessApiKey = motionData?.mediaAccessApiKey
             playData.mediaAccesskey = it.mediaAccesskey
             param[Video.PLAY_DATA] = playData
+            motionDatas?.let{ list ->
+                param[Video.PLAY_DATAS] = list
+                param[Video.PLAY_DATA_INDEX] = list.indexOf(it)
+            }
             param[Video.VIDEO] = videoData
             viewModel.pageChange(PageID.VIDEO_EXO, param)
         }
@@ -143,6 +152,7 @@ class PageExerciseList : PageBrowseSupportFragment(){
 
     private fun setupMotionRow(motionList:List<MotionData>?) {
         motionList ?: return
+        motionDatas = motionList
         val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
         val listRowAdapter = ArrayObjectAdapter(MotionPresenter())
         motionList.forEach { listRowAdapter.add(it) }

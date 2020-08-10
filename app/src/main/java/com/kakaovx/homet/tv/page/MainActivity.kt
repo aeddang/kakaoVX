@@ -86,13 +86,12 @@ class MainActivity : PageActivity() {
                 else ->{}
             }
         })
+        if( pagePresenter.hasPermissions(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE))?.first == true ){
+            pageStart(pageProvider.getPageObject(PageID.HOME))
+        }else{
+            pageStart(pageProvider.getPageObject(PageID.INTRO))
+        }
 
-        pagePresenter.requestPermission(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            object : PageRequestPermission {
-                override fun onRequestPermissionResult(resultAll: Boolean, permissions: List<Boolean>?) {
-                    pageStart(pageProvider.getPageObject(PageID.HOME))
-                }
-            })
 
         leftTab.setOnSelectListener( object :Tab.SelectListener<PageID>{
             override fun onSelected(view: Tab<PageID>, id: PageID, idx: Int) {

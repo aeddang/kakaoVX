@@ -14,6 +14,8 @@ import com.lib.util.Log
 import com.skeleton.component.item.ItemImageCardView
 import com.skeleton.component.item.ItemPresenter
 import com.skeleton.page.PageBrowseSupportFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PagePlayerList : PageBrowseSupportFragment(){
 
@@ -126,7 +128,6 @@ class PagePlayerList : PageBrowseSupportFragment(){
     private fun onItemSelected(item:Any?){
         val flag = item as? Flag
         flag ?: return
-
     }
     private fun onItemClicked(item:Any?){
         val flag = item as? Flag
@@ -161,6 +162,8 @@ class PagePlayerList : PageBrowseSupportFragment(){
         adapter = rowsAdapter
         exitFocusView?.requestFocus()
     }
+
+
 
     private var initContent:ItemFlag? = null
     inner class MotionPresenter:ItemPresenter(){

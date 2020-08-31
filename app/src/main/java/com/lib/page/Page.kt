@@ -82,7 +82,7 @@ interface PageLifecycleUser{
 
 interface PageView{
     var lifecycleOwner: LifecycleOwner?
-    val transactionTime: Long get() = 2000L
+    val transactionTime: Long get() = 500L
     val pageChileren:ArrayList<PageView>? get() = null
     val hasBackPressAction: Boolean get() = false
     fun setOnPageDelegate(delegate: PageDelegate){}

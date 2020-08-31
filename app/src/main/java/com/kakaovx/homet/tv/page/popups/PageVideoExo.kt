@@ -171,7 +171,7 @@ class PageVideoExo : PageFragmentCoroutine(){
     private fun prev(){
         context ?: return
         if(currentIdx == 0){
-            CustomToast.makeToast(context!!, R.string.page_player_first).show()
+            CustomToast.makeToast(context!!, R.string.page_video_preview_first).show()
             return
         }
         currentIdx --
@@ -181,7 +181,7 @@ class PageVideoExo : PageFragmentCoroutine(){
         context ?: return
         motionDatas ?: return
         if(currentIdx >= motionDatas!!.size-1){
-            CustomToast.makeToast(context!!, R.string.page_player_last).show()
+            CustomToast.makeToast(context!!, R.string.page_video_preview_last).show()
             return
         }
         currentIdx ++
@@ -246,7 +246,14 @@ class PageVideoExo : PageFragmentCoroutine(){
             textTitle.text = it.title
         }
 
-        if(playData != null) viewModel.repo.wecandeoManager.loadPlayData(this, playData!!)
+        if(playData != null) {
+            if( playData?.mediaAccesskey == null || playData?.mediaAccesskey == ""){
+                videoData?.path  = playData?.playUrl ?: ""
+                loadVideo()
+            }else{
+                viewModel.repo.wecandeoManager.loadPlayData(this, playData!!)
+            }
+        }
         else loadVideo()
     }
 

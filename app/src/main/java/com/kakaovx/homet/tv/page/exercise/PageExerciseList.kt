@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemMotion
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.page.viewmodel.Video
@@ -110,7 +111,9 @@ class PageExerciseList : PageBrowseSupportFragment(){
                 else -> {}
             }
         })
+
         onItemViewClickedListener = OnItemViewClickedListener { _ , item, _, _ -> onItemClicked(item) }
+        onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ -> onItemSelected(item) }
         loadData()
 
     }
@@ -121,6 +124,10 @@ class PageExerciseList : PageBrowseSupportFragment(){
         params[ApiField.EXERCISE_ID] = exerciseData?.exerciseId ?: ""
         params[ApiField.ROUND_ID] = exerciseData?.roundId ?: ""
         viewModel.repo.hometManager.loadApi(this, HometApiType.EXERCISE_MOTION , params)
+    }
+
+    private fun onItemSelected(item:Any?){
+       //PageExercise.isBackFocus = false
     }
 
     private var motionDatas:List<MotionData>? = null
@@ -159,7 +166,6 @@ class PageExerciseList : PageBrowseSupportFragment(){
         val header = HeaderItem(0, context!!.getString(R.string.page_exercise_motion_title, motionList.size.toString()))
         rowsAdapter.add(ListRow(header, listRowAdapter))
         adapter = rowsAdapter
-
     }
 
     inner class MotionPresenter:ItemPresenter(){

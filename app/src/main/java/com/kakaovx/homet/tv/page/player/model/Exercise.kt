@@ -177,7 +177,7 @@ data class Exercise(val id:String, var context: Context?){
                     if (movieIndex != it.movieIndex || movieIndex == -1) {
                         movieIndex = it.movieIndex
                         isSynchronizedFlag = false
-                        nextFlag = null
+                       // nextFlag = null
                         Log.d(appTag, "currentFlag movie change ${it.movieIndex }" )
                         return
                     }

@@ -19,6 +19,10 @@ import com.kakaovx.homet.tv.lgtv.utils.LogUtil;
 import com.kakaovx.homet.tv.lgtv.utils.SharedPrefUtil;
 import com.kakaovx.homet.tv.lgtv.utils.SystemSetting;
 import com.kakaovx.homet.tv.lgtv.utils.ToastUtil;
+import com.kakaovx.homet.tv.page.MainActivity;
+import com.lib.page.PageActivity;
+import com.lib.page.PageActivityPresenter;
+import com.lib.page.PagePresenter;
 
 
 import java.io.File;
@@ -32,7 +36,6 @@ public class OMAReceiver extends BroadcastReceiver {
 
     // 7일주기 업데이트로 수정함
     public final long updatePeriod = 1000 * 60 * 60 * 24 * 7;
-
 
     private Context mContext;
     private boolean isSuccess = false;
@@ -76,9 +79,14 @@ public class OMAReceiver extends BroadcastReceiver {
         }
     }
 
+    private static PageActivity pageActivity = null;
+    public static void sendAppVersionCheck(Context context, PageActivity activity) {
+        pageActivity = activity;
+        sendAppVersionCheck(context, true);
+    }
     public static void sendAppVersionCheck(Context context, boolean isLauncher) {
         mIsUpdateChecklaunch = isLauncher;
-
+        LogUtil.i(LogUtil.DEBUG_LEVEL_2, "[OMA] COMMON_PATH_TMP = " + OMAReceiver.COMMON_PATH_TMP);
         String versionName = "00.00.00";
         int versionCode = 00000;
 
@@ -110,7 +118,7 @@ public class OMAReceiver extends BroadcastReceiver {
             tmpIntent.setAction("ozstore.external.linked");
             tmpIntent.setComponent(new ComponentName(pkgName, clsName));
             tmpIntent.setData(Uri.parse(path));
-
+            LogUtil.d(3, "[kimsj26@] LIVEUPDATE_startService Success : "+path);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(tmpIntent);
             }else{
@@ -119,6 +127,8 @@ public class OMAReceiver extends BroadcastReceiver {
 
 
         } catch (Exception e) {
+            LogUtil.i(2, "[OMA] sendAppVersionCheck err");
+            LogUtil.e(LogUtil.DEBUG_LEVEL_2, e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -137,24 +147,32 @@ public class OMAReceiver extends BroadcastReceiver {
 
                 boolean isUpdate = extras.getBoolean("IS_UPDATE");
                 int newVersionCode = extras.getInt("UPDATE_VERSION_CODE");
-
+                LogUtil.i(2, "[OMAReceiver] IS_SUCCESS :" + isSuccess);
+                LogUtil.i(2, "[OMAReceiver] UPDATE_VERSION_NAME : " + extras.getInt("UPDATE_VERSION_NAME"));
+                LogUtil.i(2, "[OMAReceiver] UPDATE_VERSION_CODE :" + extras.getInt("UPDATE_VERSION_CODE"));
 
                 if (isUpdate){
                     PackageInfo pi = null;
 
                     try{
                         pi = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
-
+                        LogUtil.i(LogUtil.DEBUG_LEVEL_2, "[OMAReceiver] serverVersion: " + newVersionCode + ", appVersion: " + pi.versionCode);
                     }
                     catch (PackageManager.NameNotFoundException e){
                         e.printStackTrace();
                     }
-                    String tempFile = "smart_homet_update";
-                    SystemSetting.createTempFile(tempFile, "");
+
 
                     if (mIsUpdateChecklaunch) {
                         ToastUtil.makeToast(mContext, "업데이트 중입니다.");
+                        if (pageActivity != null) {
+                            pageActivity.finish();
+                            pageActivity = null;
+                        }
                     }
+
+                    String tempFile = "vrplayer_update";
+                    SystemSetting.createTempFile(tempFile, "");
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -174,7 +192,7 @@ public class OMAReceiver extends BroadcastReceiver {
                                 LogUtil.e(3, "[kimsj26@] updateFile Deleted..");
                             }
                         }
-                    }, 30*1000);
+                    }, 180*1000);
                 }
                 else {
                     LogUtil.i(LogUtil.DEBUG_LEVEL_3, "[kimsj26@] ");

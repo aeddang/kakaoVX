@@ -32,6 +32,8 @@ import com.kakaovx.homet.tv.page.viewmodel.ActivityModel
 import com.kakaovx.homet.tv.page.viewmodel.FragmentProvider
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.PageRepository
+import com.kakaovx.homet.tv.store.api.ApiField
+import com.kakaovx.homet.tv.store.api.ApiValue
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.lib.page.*
 import com.lib.util.Log
@@ -43,8 +45,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.HashMap
 import javax.inject.Inject
-
-
 class MainActivity : PageActivity() {
     @Inject lateinit var repository: PageRepository
     @Inject lateinit var pageProvider: FragmentProvider
@@ -61,19 +61,23 @@ class MainActivity : PageActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+        OMAReceiver.sendAppVersionCheck(this,   this)
+
     }
 
     override fun onCreatedView() {
         super.onCreatedView()
         scope.createJob()
         prepareBackgroundManager()
-        OMAReceiver.sendAppVersionCheck(this, true)
 
         pageModel.leftTab = leftTab
 
         repository.setDefaultLifecycleOwner(this)
         repository.accountManager.event.observe(this, Observer{
             when(it){
+                AccountManager.AccountEvent.onJWT ->{
+                    repository.hometManager.wakeUp(ApiValue.StayType.Init)
+                }
                 AccountManager.AccountEvent.onJwtError ->{
                     repository.accountManager.error?.let { e->
                         val param = HashMap<String, Any>()
@@ -86,12 +90,15 @@ class MainActivity : PageActivity() {
                 else ->{}
             }
         })
-        if( pagePresenter.hasPermissions(arrayOf(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE))?.first == true ){
+        if( pagePresenter.hasPermissions(arrayOf(
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE))?.first == true )
+        {
             pageStart(pageProvider.getPageObject(PageID.HOME))
         }else{
             pageStart(pageProvider.getPageObject(PageID.INTRO))
         }
-
 
         leftTab.setOnSelectListener( object :Tab.SelectListener<PageID>{
             override fun onSelected(view: Tab<PageID>, id: PageID, idx: Int) {
@@ -99,6 +106,7 @@ class MainActivity : PageActivity() {
                 pageChange(pageProvider.getPageObject(id))
             }
         })
+        //repository.hometManager.wakeUp(ApiValue.StayType.Init)
     }
 
     override fun onWillChangePage(prevPage: PageObject?, nextPage: PageObject?) {
@@ -109,6 +117,19 @@ class MainActivity : PageActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        repository.hometManager.wakeUp(ApiValue.StayType.Stay)
+        backgroundPath?.let{
+            updateBackground(it)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        repository.hometManager.wakeUp(ApiValue.StayType.Stay)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         backgroundUpdateJob = null
@@ -116,7 +137,7 @@ class MainActivity : PageActivity() {
         repository.disposeDefaultLifecycleOwner(this)
         repository.disposeLifecycleOwner(this)
         backgroundManager.release()
-
+        repository.hometManager.wakeUp(ApiValue.StayType.Finish)
     }
 
     override fun loading(isRock: Boolean) {
@@ -128,7 +149,6 @@ class MainActivity : PageActivity() {
         super.loaded()
         loadingSpinner.isLoading = false
     }
-
 
     private lateinit var backgroundManager:BackgroundManager
     private lateinit var backgroundMetrics: DisplayMetrics
@@ -150,7 +170,9 @@ class MainActivity : PageActivity() {
         })
     }
 
+    private var backgroundPath:String? = null
     private fun updateBackground(uri: String?) {
+        backgroundPath = uri
         val width = backgroundMetrics.widthPixels
         val height = backgroundMetrics.heightPixels
         Glide.with(this).asBitmap()

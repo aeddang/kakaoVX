@@ -1,6 +1,5 @@
 package com.kakaovx.homet.tv
 
-import androidx.fragment.app.Fragment
 import com.dagger.DaggerAppComponent
 import com.facebook.stetho.Stetho
 import com.kakaovx.homet.tv.util.AppUtil

@@ -65,7 +65,7 @@ class PagePlayer : PageFragmentCoroutine(){
     }
 
     override fun onResume() {
-        super.onPause()
+        super.onResume()
         player.onResume()
     }
 
@@ -83,11 +83,20 @@ class PagePlayer : PageFragmentCoroutine(){
 
     override val hasBackPressAction: Boolean
         get(){
+            if(viewModel.player.playerListStatus == PlayerListStatus.ListSearch){
+                viewModel.player.uiEvent.value = PlayerUIEvent.ListHidden
+                btnPlayStop.requestFocus()
+                return true
+            }
+             if(viewModel.isCompleted) return super.hasBackPressAction
              if(!viewModel.isExitChecked) {
                  context ?: return false
+                 viewModel.player.uiEvent.value = PlayerUIEvent.Pause
                  CustomDialog.makeDialog(context!!, null, R.string.page_player_exit)
                      .setNegativeButton(R.string.btn_action_cancel)
-                     {  _,_ -> }
+                     {  _,_ ->
+                         viewModel.player.uiEvent.value = PlayerUIEvent.Resume
+                     }
                      .setPositiveButton(R.string.btn_action_confirm)
                      {  _,_ ->
                          viewModel.goBackImmediately()

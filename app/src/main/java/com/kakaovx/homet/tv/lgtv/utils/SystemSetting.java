@@ -1,6 +1,9 @@
 package com.kakaovx.homet.tv.lgtv.utils;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
+
+import com.kakaovx.homet.tv.lgtv.OMAReceiver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +17,6 @@ public class SystemSetting {
 	 * /tmp 폴더 사용 권한문제로 /data/lgu_app/tmp 폴더를 사용하기로 함
 	 *
 	 */
-	public static final String COMMON_PATH_TMP = "/data/lgu_app/tmp/";
 
 	/**
 	 * 모델명을 추출하는 Method
@@ -25,6 +27,7 @@ public class SystemSetting {
 		return Build.MODEL;
 	}
 
+	@SuppressLint("SetWorldWritable")
 	public static int createTempFile(String filename, String value) {
 
 		// /tmp 폴더 경로 변경으로 로직수정 2018.03.09 modify by kook
@@ -32,11 +35,11 @@ public class SystemSetting {
 		if(filename == null)
 			return -1;
 
-		String path = COMMON_PATH_TMP + filename;
+		String path = OMAReceiver.COMMON_PATH_TMP + filename;
 		File file = new File(path);
-
 		try{
-
+			//LogUtil.d(LogUtil.DEBUG_LEVEL_3,"file " + file.exists());
+			//LogUtil.d(LogUtil.DEBUG_LEVEL_3,"file " + file.getAbsolutePath());
 			FileOutputStream fos = new FileOutputStream(file);
 
 			if(value != null){
@@ -64,7 +67,7 @@ public class SystemSetting {
 
 		String result = "";
 		try {
-			File tempFile = new File(COMMON_PATH_TMP + filename);
+			File tempFile = new File(OMAReceiver.COMMON_PATH_TMP + filename);
 			if(tempFile != null) {
 				BufferedReader in = new BufferedReader(new FileReader(tempFile));
 				String out;
@@ -83,7 +86,7 @@ public class SystemSetting {
 
 	public static boolean existTempFile(String filename){
 		boolean rVal = false;
-		File tempFile = new File(COMMON_PATH_TMP + filename);
+		File tempFile = new File(OMAReceiver.COMMON_PATH_TMP + filename);
 		if (tempFile.exists()) {
 			LogUtil.d(LogUtil.DEBUG_LEVEL_2, filename +" is exists()");
 			rVal = true;
@@ -97,13 +100,13 @@ public class SystemSetting {
 
 		if(filename != null){
 
-			File file = new File(COMMON_PATH_TMP + filename);
+			File file = new File(OMAReceiver.COMMON_PATH_TMP + filename);
 
 			if(file != null && file.exists()){
 				file.delete();
 				return 0;
 			}else{
-				LogUtil.e(3, "file not found : " + COMMON_PATH_TMP + filename);
+				LogUtil.e(3, "file not found : " + OMAReceiver.COMMON_PATH_TMP + filename);
 			}
 
 		}

@@ -45,6 +45,7 @@ object ApiPath {
     const val HOMET_API_MOVIE_EXERCISE_EXEC = "$VERSION_V1/$GROUP_MOVIES/play/exercise/exec"
 
     const val HOMET_API_SYSTEM_GUIDE = "$VERSION_V1/$GROUP_SYSTEM/guide"
+    const val HOMET_API_WAKEUP = "$VERSION_V1/$GROUP_SYSTEM/wakeup"
 
     const val WECANDEO_ADDRESS = "http://api.wecandeo.com/"
 
@@ -100,6 +101,12 @@ object ApiValue{
         Url("1"),
         CustomHtml("2")
     }
+
+    enum class StayType(val value: String) {
+        Init("0"),
+        Stay("1"),
+        Finish("2")
+    }
 }
 object ApiCode{
     const val  SUCCESS = "E000" //성공
@@ -123,6 +130,10 @@ object ApiCode{
 
 object ApiField{
     const val DEVICE_KEY = "deviceKey"
+    const val OS_TYPE = "osType"
+    const val APP_VERSION = "appVersion"
+    const val WAKEUP_IDX = "wakeupIdx"
+    const val STAY_TYPE = "stayType"
     const val PRE_JWT = "preJwt"
     const val PROGRAM_ID = "programId"
     const val EXERCISE_ID = "exerciseId"

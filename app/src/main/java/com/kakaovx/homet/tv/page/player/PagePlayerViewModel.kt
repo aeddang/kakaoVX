@@ -8,6 +8,7 @@ import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.player.model.Exercise
 import com.kakaovx.homet.tv.page.player.model.ExerciseResult
 import com.kakaovx.homet.tv.page.player.model.Player
+import com.kakaovx.homet.tv.page.player.model.PlayerUIEvent
 import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -27,11 +28,11 @@ import java.util.HashMap
 
 
 class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
-    private val appTag = javaClass.simpleName
+    val appTag = javaClass.simpleName
     val player = Player()
     val exercise = MutableLiveData<Exercise?>()
     var isExitChecked = false ; private set
-
+    var isCompleted = false ; private set
     fun goBackImmediately() {
         isExitChecked = true
         goBack()
@@ -50,6 +51,7 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
     override fun onCreateView(owner: LifecycleOwner, pageObject: PageObject?) {
         super.onCreateView(owner, pageObject)
         isExitChecked = false
+        isCompleted = false
         var exercisePlayData: ExercisePlayData? = null
         var exerciseStartData: ExerciseStartData? = null
 
@@ -83,6 +85,7 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
             isError = true
             val param = HashMap<String, Any>()
             param[PageErrorSurport.API_ERROR] = e
+            param[PageErrorSurport.PAGE_EVENT_ID] = appTag
             openPopup(PageID.ERROR_SURPORT, param)
         })
 
@@ -180,11 +183,16 @@ class PagePlayerViewModel(repo: PageRepository) : BasePageViewModel( repo ) {
     }
 
     private fun exerciseCompleted() {
+        isCompleted = true
         presenter.loaded()
+        player.uiEvent.value = PlayerUIEvent.Pause
         CustomDialog.makeDialog(presenter.activity, null, R.string.page_player_completed)
+            .setCancelable(false)
             .setNegativeButton(R.string.btn_action_confirm)
             {  _,_ ->
-                pageChange(PageID.PROGRAM_LIST)
+
+                goBack()
+               // pageChange(PageID.PROGRAM_LIST)
             }
             .show()
     }

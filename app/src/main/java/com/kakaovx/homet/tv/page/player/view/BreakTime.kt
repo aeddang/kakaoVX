@@ -49,6 +49,7 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        passive()
         ttsFactory = null
         exercise = null
         playerViewModel = null
@@ -134,13 +135,17 @@ class BreakTime : PageComponentCoroutine, PlayerChildComponent {
     override fun onPagePause() {
         super.onPagePause()
         countJob?.cancel()
-        ttsFactory?.onResume()
+        ttsFactory?.onPause()
+
     }
 
     override fun onPageResume() {
         super.onPageResume()
-        if(isActive) run()
-        ttsFactory?.onPause()
+        if(isActive) {
+            run()
+            ttsFactory?.onResume()
+        }
+
     }
 
     private fun run(){

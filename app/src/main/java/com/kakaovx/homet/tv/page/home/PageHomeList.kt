@@ -12,6 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemProgram
+import com.kakaovx.homet.tv.page.exercise.PageExercise
+import com.kakaovx.homet.tv.page.player.view.ItemFlag
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.program.PageProgram
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
@@ -69,7 +72,6 @@ class PageHomeList : PageBrowseSupportFragment(){
             val origin = browseFrameLayout.onFocusSearchListener
             browseFrameLayout.onFocusSearchListener =
                 OnFocusSearchListener { focused: View?, direction: Int ->
-
                     if (direction == View.FOCUS_UP ) {
                         return@OnFocusSearchListener exitFocusView
                     }
@@ -107,7 +109,17 @@ class PageHomeList : PageBrowseSupportFragment(){
                 else -> {}
             }
         })
-        onItemViewClickedListener = OnItemViewClickedListener { _ , item, _, _ -> onItemClicked(item) }
+
+        viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
+            e ?: return@Observer
+            if( e.type != HometApiType.PROGRAMS_RECENT ) return@Observer
+            viewModel.presenter.loaded()
+            setupRecentProgramRow(arrayListOf())
+        })
+
+
+        onItemViewClickedListener = OnItemViewClickedListener { v , item, _, _ -> onItemClicked(item) }
+        onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, row -> onItemSelected(item, row) }
         loadData()
 
     }
@@ -115,6 +127,9 @@ class PageHomeList : PageBrowseSupportFragment(){
     fun loadData(){
         viewModel.presenter.loading()
         viewModel.repo.hometManager.loadApi(this, HometApiType.PROGRAMS_RECENT)
+    }
+    private fun onItemSelected(item:Any?, row:Row){
+
     }
 
     private fun onItemClicked(item:Any?){
@@ -148,12 +163,16 @@ class PageHomeList : PageBrowseSupportFragment(){
         adapter = rowsAdapter
     }
 
+
     inner class ProgramPresenter:ItemPresenter(){
         init {
             cardWidth = context?.resources?.getDimension(R.dimen.program_list_width)?.toInt() ?: cardWidth
             cardHeight = context?.resources?.getDimension(R.dimen.program_list_height)?.toInt() ?: cardHeight
         }
-        override fun getItemView(): ItemImageCardView = ItemProgram(context!!)
+        override fun getItemView(): ItemImageCardView {
+            val item = ItemProgram(context!!)
+            return item
+        }
     }
 
 

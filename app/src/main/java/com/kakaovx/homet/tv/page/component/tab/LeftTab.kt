@@ -48,7 +48,6 @@ class LeftTab: Tab<PageID> {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        tab.first().requestFocus()
     }
 
     var isView = true; private set

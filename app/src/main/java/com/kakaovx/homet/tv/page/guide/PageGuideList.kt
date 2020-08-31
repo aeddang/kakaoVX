@@ -12,9 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.component.items.ItemImage
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
 import com.kakaovx.homet.tv.store.api.homet.GuideImage
+import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.lib.util.Log
 import com.skeleton.component.item.ItemImageCardView
 import com.skeleton.component.item.ItemPresenter
@@ -74,9 +76,15 @@ class PageGuideList : PageBrowseSupportFragment(){
             browseFrameLayout.onFocusSearchListener =
                 OnFocusSearchListener { focused: View?, direction: Int ->
                     if (direction == View.FOCUS_UP ) {
-                        return@OnFocusSearchListener exitFocusView
+                        autoRollingJob?.cancel()
+                        return@OnFocusSearchListener viewModel.getLeftFocusTab(PageID.GUIDE)
+                    }
+                    if (direction == View.FOCUS_DOWN ) {
+                        autoRollingJob?.cancel()
+                        return@OnFocusSearchListener viewModel.getLeftFocusTab(PageID.SETUP)
                     }
                     if (direction == View.FOCUS_LEFT ) {
+                        autoRollingJob?.cancel()
                         return@OnFocusSearchListener viewModel.getLeftFocusTab(PageID.GUIDE)
                     } else {
                         return@OnFocusSearchListener  origin.onFocusSearch(focused, direction)
@@ -95,6 +103,17 @@ class PageGuideList : PageBrowseSupportFragment(){
             e ?: return@Observer
             e.images?.let { setupImageRow(it) }
         })
+
+        viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
+            e ?: return@Observer
+            if( e.type != HometApiType.GUIDE_IMAGES ) return@Observer
+            viewModel.presenter.loaded()
+            val param = HashMap<String, Any>()
+            param[PageErrorSurport.API_ERROR] = e
+            param[PageErrorSurport.PAGE_EVENT_ID] = appTag
+            viewModel.openPopup(PageID.ERROR_SURPORT, param)
+        })
+
         loadData()
         onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ -> onItemSelected(item) }
     }
@@ -113,6 +132,7 @@ class PageGuideList : PageBrowseSupportFragment(){
     private var items = ArrayList<ItemImage>()
     private var currentPos = 0
     private fun autoRolling(){
+        /*
         autoRollingJob?.cancel()
         autoRollingJob = scope.launch {
             delay(5000)
@@ -127,6 +147,7 @@ class PageGuideList : PageBrowseSupportFragment(){
             }
 
         }
+         */
     }
 
     fun loadData(){

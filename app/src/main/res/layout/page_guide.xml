@@ -8,7 +8,41 @@
             android:id="@+id/listArea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="-20dp"
             >
         </FrameLayout>
+        <LinearLayout
+            android:id="@+id/listError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+                <ImageView
+                    android:layout_width="187dp"
+                    android:layout_height="171dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_icon_error"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_regular"
+                    android:layout_gravity="center"
+                    android:textColor="@color/color_white"
+                    android:textSize="@dimen/font_heavy"
+                    android:text="@string/error_back_ground"
+                    android:layout_marginTop="@dimen/margin_heavy"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_light"
+                    android:layout_gravity="center"
+                    android:textColor="@color/color_white"
+                    android:textSize="@dimen/font_black"
+                    android:text="@string/error_back_ground_title"
+                    android:layout_marginTop="@dimen/margin_thin"
+                    />
+        </LinearLayout>
+
 
 </FrameLayout>

@@ -12,7 +12,6 @@ import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.lib.page.PageFragmentCoroutine
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.page_home.*
 import javax.inject.Inject
 
 
@@ -39,6 +38,7 @@ class PageHome : PageFragmentCoroutine(){
     override fun onDestroy() {
         super.onDestroy()
         pageList = null
+        focusHandler.removeCallbacks(focusRunable)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,17 +56,11 @@ class PageHome : PageFragmentCoroutine(){
 
             }
         }
-
         super.onViewCreated(view, savedInstanceState)
-        pageList?.exitFocusView = btnGuide
     }
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
-        btnGuide.setOnClickListener{
-            viewModel.pageChange(PageID.GUIDE)
-        }
-
 
         viewModel.repo.hometManager.success.observe(this,Observer { e ->
             e ?: return@Observer
@@ -75,17 +69,34 @@ class PageHome : PageFragmentCoroutine(){
             response ?: return@Observer
             type ?: return@Observer
             when(type){
-                HometApiType.PROGRAMS_RECENT -> btnGuide.requestFocus()
+                HometApiType.PROGRAMS_RECENT -> {}
                 else -> {}
             }
         })
     }
 
+    private var focusHandler = Handler()
+    private var focusRunable = Runnable {
+        viewModel.getLeftFocusTab(PageID.HOME)?.let{
+            it.requestFocus()
+        }
+    }
+
+    companion  object {
+        var isInit = false
+    }
+
     override fun onTransactionCompleted() {
         super.onTransactionCompleted()
+
         viewModel.getLeftFocusTab(PageID.HOME)?.let{
-            btnGuide.nextFocusLeftId = it.id
-            btnGuide.nextFocusUpId = it.id
+            pageList?.exitFocusView = it
+            if(!isInit){
+                isInit = true
+                focusHandler.postDelayed(focusRunable, 300)
+            }
+           // btnGuide.nextFocusLeftId = it.id
+            //btnGuide.nextFocusUpId = it.id
         }
     }
 }

@@ -119,6 +119,6 @@ class AccountManager  (
         tempJWT = jwt
         interceptor.jwtToken = tempJWT
         status = AccountStatus.ready
-        event.postValue(AccountEvent.onJWT)
+        event.value = AccountEvent.onJWT
     }
 }

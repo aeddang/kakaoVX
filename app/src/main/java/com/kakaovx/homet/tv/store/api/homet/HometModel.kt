@@ -4,7 +4,12 @@ import android.content.Context
 import com.google.gson.annotations.SerializedName
 import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.util.millisecToTimeString
+import com.kakaovx.homet.tv.util.secToMinTimeString
 import com.kakaovx.homet.tv.util.secToTimeString
+
+data class WakeupData(
+    @SerializedName("wakeupIdx") val wakeupIdx: String?
+)
 
 data class GuideImageData(
     @SerializedName("images") val images: ArrayList<GuideImage>?
@@ -43,7 +48,7 @@ data class ProgramData(
 
     fun getSubTitle(ctx:Context):String{
         if(programId == null) return ""
-        return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"
+        return "$difficultyName · $exerciseCount${ctx.getString(R.string.unit_count)}"
     }
 
     var isLast = false
@@ -70,7 +75,7 @@ data class ProgramDetailData(
 ){
     fun getSubTitle(ctx:Context?):String{
         ctx ?: return ""
-        return "$difficultyName . $exerciseCount${ctx.getString(R.string.unit_count)}"
+        return "$difficultyName · $exerciseCount${ctx.getString(R.string.unit_count)}"
     }
 }
 
@@ -91,7 +96,8 @@ data class ExerciseData(
 ){
     fun getSubTitle(ctx:Context?):String{
         ctx ?: return ""
-        return "$bodyPartsName . $playTime${ctx.getString(R.string.unit_min)} . $calorie${ctx.getString(R.string.unit_kcal)}"
+        val t = playTime ?: "0"
+        return "$bodyPartsName · ${t.secToMinTimeString()}${ctx.getString(R.string.unit_min)} · $calorie${ctx.getString(R.string.unit_kcal)}"
     }
 }
 
@@ -113,7 +119,8 @@ data class ExerciseDetailData(
 ){
     fun getTime(ctx:Context?):String{
         ctx ?: return ""
-        return "$playTime${ctx.getString(R.string.unit_min)}"
+        playTime ?: return ""
+        return "${playTime!!.secToMinTimeString()}${ctx.getString(R.string.unit_min)}"
     }
     fun getKal(ctx:Context?):String{
         ctx ?: return ""
@@ -158,7 +165,7 @@ data class MotionData(
         val viewCount = count?.toInt() ?: 0
         val viewDuration = playTime?.secToTimeString() ?: "0"
         return if(viewCount == 0) viewDuration
-        else "$viewDuration | ${viewCount}${ctx.getString(R.string.unit_count)}"
+        else "$viewDuration · ${viewCount}${ctx.getString(R.string.unit_count)}"
     }
 }
 

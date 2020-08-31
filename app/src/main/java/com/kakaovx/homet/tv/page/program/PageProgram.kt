@@ -16,7 +16,15 @@ import com.kakaovx.homet.tv.store.api.homet.ProgramDetailData
 import com.lib.page.PageFragmentCoroutine
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.page_exercise.*
 import kotlinx.android.synthetic.main.page_program.*
+import kotlinx.android.synthetic.main.page_program.scroll
+import kotlinx.android.synthetic.main.page_program.textInfo
+import kotlinx.android.synthetic.main.page_program.textInfo1
+import kotlinx.android.synthetic.main.page_program.textInfo2
+import kotlinx.android.synthetic.main.page_program.textInfo3
+import kotlinx.android.synthetic.main.page_program.textInfo4
+import kotlinx.android.synthetic.main.page_program.title
 
 import java.util.HashMap
 import javax.inject.Inject
@@ -70,7 +78,9 @@ class PageProgram : PageFragmentCoroutine(){
         super.onViewCreated(view, savedInstanceState)
         pageList?.programId = programData?.programId ?: ""
         pageList?.exitFocusView = title
+
     }
+
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
@@ -93,6 +103,7 @@ class PageProgram : PageFragmentCoroutine(){
         viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
             e ?: return@Observer
             if( e.type != HometApiType.PROGRAM ) return@Observer
+            viewModel.presenter.loaded()
             val param = HashMap<String, Any>()
             param[PageErrorSurport.API_ERROR] = e
             param[PageErrorSurport.PAGE_EVENT_ID] = appTag
@@ -108,6 +119,11 @@ class PageProgram : PageFragmentCoroutine(){
             }
         }
 
+    }
+
+    override fun onTransactionCompleted() {
+        super.onTransactionCompleted()
+        scroll.scrollTo(0,0)
     }
 
     private fun setupData(data:ProgramDetailData){

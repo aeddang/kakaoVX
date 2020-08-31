@@ -40,13 +40,6 @@ class PageSetup : PageFragmentCoroutine(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.getLeftFocusTab(PageID.SETUP)?.let{
-            btnUpdate.nextFocusLeftId = it.id
-            btnUpdate.nextFocusUpId = it.id
-            btnUpdate.nextFocusDownId = it.id
-        }
-        btnUpdate.requestFocus()
         context?.let { ctx->
             textVersion.text =
                 ctx.getString(R.string.page_setup_version, AppUtil.getAppVersion(ctx))
@@ -55,9 +48,7 @@ class PageSetup : PageFragmentCoroutine(){
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
-        btnUpdate.setOnClickListener{
-            OMAReceiver.sendAppVersionCheck(context, true)
-        }
+
     }
 
     override fun onTransactionCompleted() {

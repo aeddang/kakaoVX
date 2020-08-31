@@ -4,7 +4,7 @@
     <string name="page_home_title">스마트홈트</string>
     <string name="page_home_sub_title1">AI코치의 트레이닝으로 </string>
     <string name="page_home_sub_title2">홈트를 더욱더 스마트하게!</string>
-    <string name="page_home_sub_title3">모바일 스마트홈트로 똑똑하게 홈트 하세요!</string>
+    <string name="page_home_sub_title3">모바일 스마트홈트로 집에서 똑똑하게 홈트 하세요!</string>
     <string name="page_home_download">APP 다운로드</string>
     <string name="page_home_btn_guide">서비스 안내</string>
 
@@ -42,7 +42,7 @@
     <string name="page_setup_guide5">ht.help@kakakoht.com</string>
 
     <string name="page_player_relay_confirm">오늘의  운동 기록이 있습니다.\n이어서 진행 하시겠습니까?</string>
-    <string name="page_player_first">첫번째 동작입니다.</string>
+    <string name="page_player_first">이전 동작이 없습니다.</string>
     <string name="page_player_last">마지막 동작입니다.</string>
     <string name="page_player_list">운동목록</string>
     <string name="page_player_multiview_list">화면 전환</string>
@@ -63,7 +63,8 @@
 
     <string name="page_error_title">스마트홈트</string>
     <string name="page_video_preview">동작 미리보기 중입니다</string>
-
+    <string name="page_video_preview_first">이전 동작이 없습니다.</string>
+    <string name="page_video_preview_last">마지막 동작입니다.</string>
 
 
     <string name="left_tab_home">홈</string>
@@ -111,7 +112,7 @@
     <string name="error_no_lgu">스마트홈트는 LGU+ 전용 서비스 입니다. 추후 발전 된 서비스를 더 많은 고객님께 제공 할 수 있도록 최선을 다하겠습니다.</string>
     <string name="error_deny_device">접속하신 기기는 스마트홈트 서비스 이용이 불가한 기기입니다. 추후 발전 된 서비스를 더 많은 고객님께 제공 할 수 있도록 최선을 다하겠습니다.</string>
     <string name="error_string">사용할 수 없는 단어가 포함되어 있습니다.</string>
-    <string name="error_check_service">이용에 불편을 드려 죄송합니다. 현재 서버 점검중 입니다. 보다 안정적인 서비스 환경을 만들기 위해 최선을 다하겠습니다.</string>
+    <string name="error_check_service">이용에 불편을 드려 죄송합니다.\n현재 서버 점검중 입니다.\n보다 안정적인 서비스 환경을 만들기 위해 최선을 다하겠습니다.</string>
     <string name="error_data_saver">데이터 절약 모드 사용으로 영상 스트리밍, 다운로드 시 품질문제가 발생할 수 있습니다. 스마트홈트 앱을 데이터 제한 없이 사용하도록 허용해야 이용할 수 있습니다.</string>
     <string name="error_mcc_mnc">스마트홈트 앱은 로밍 중에 사용하실 수 없습니다.</string>
     <string name="error_request_text">내용을 입력해 주세요.</string>
@@ -125,6 +126,9 @@
     <string name="error_api">콘텐츠 로드하는 중에 오류가 발생했습니다. 계속 동일한 문제 발생 시 고객센터 ht.help@kakaoht.com으로 문의해주세요.</string>
     <string name="error_play_back">영상 재생 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
     <string name="error_host">영상 로드하는 중에 오류가 발생했습니다. 다시 시도해주세요.</string>
+
+    <string name="error_back_ground">서비스 이용에 불편을 드려 죄송합니다.</string>
+    <string name="error_back_ground_title">고객센터 ht.help@kakakoht.com</string>
 
 
     <string name="tool_title">TITLE</string>

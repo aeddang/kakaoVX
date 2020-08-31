@@ -43,6 +43,7 @@ class PageExercise : PageFragmentCoroutine(){
     private var exerciseData:ExerciseData? = null
     override fun onDestroyView() {
         super.onDestroyView()
+        scrollHandler.removeCallbacks(scrollRunable)
         exerciseData = null
     }
 
@@ -81,9 +82,11 @@ class PageExercise : PageFragmentCoroutine(){
         pageList?.programID = programID
         pageList?.exerciseData = exerciseData
         pageList?.exitFocusView = btnExercise
+
     }
 
-
+    private var scrollHandler = Handler()
+    private var scrollRunable = Runnable { scroll.smoothScrollTo(0, 0) }
     private var isInitFocus = true //시작시 움직이는거 보기싫
     override fun onCoroutineScope() {
         super.onCoroutineScope()
@@ -103,10 +106,7 @@ class PageExercise : PageFragmentCoroutine(){
                 return@setOnFocusChangeListener
             }
             if(!hasFocus) return@setOnFocusChangeListener
-            val handler = Handler()
-            handler.postDelayed(
-                { scroll.smoothScrollTo(0, 0) }, 100
-            )
+            scrollHandler.postDelayed(scrollRunable, 100)
         }
 
 
@@ -130,6 +130,7 @@ class PageExercise : PageFragmentCoroutine(){
         viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
             e ?: return@Observer
             if( e.type != HometApiType.EXERCISE ) return@Observer
+            viewModel.presenter.loaded()
             val param = HashMap<String, Any>()
             param[PageErrorSurport.API_ERROR] = e
             param[PageErrorSurport.PAGE_EVENT_ID] = appTag
@@ -171,6 +172,7 @@ class PageExercise : PageFragmentCoroutine(){
 
     override fun onTransactionCompleted() {
         super.onTransactionCompleted()
+        btnExercise.requestFocus()
     }
 
 

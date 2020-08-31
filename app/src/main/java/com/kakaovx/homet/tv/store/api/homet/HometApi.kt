@@ -170,4 +170,15 @@ interface HometApi{
         @Field(ApiField.ROUND_ID) roundId: String?,
         @Field(ApiField.PLAY_ID) playId: String?
     ): HomeTResponse<Any?>?
+
+    @FormUrlEncoded
+    @POST(ApiPath.HOMET_API_WAKEUP)
+    suspend fun postWakeup(
+        @Field(ApiField.DEVICE_KEY) deviceKey: String?,
+        @Field(ApiField.OS_TYPE) osType: String?,
+        @Field(ApiField.APP_VERSION) appVersion: String?,
+        @Field(ApiField.WAKEUP_IDX) wakeupIdx: String?,
+        @Field(ApiField.STAY_TYPE) stayType: String?
+    ): HomeTResponse<WakeupData?>?
 }
+

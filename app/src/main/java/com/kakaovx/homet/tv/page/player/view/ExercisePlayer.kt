@@ -1,6 +1,7 @@
 package com.kakaovx.homet.tv.page.player.view
 
 import android.content.Context
+import android.os.Handler
 import android.util.AttributeSet
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.ui.PlayerView
@@ -34,6 +35,7 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
         exercise = null
     }
 
+
     override fun onPlayerViewModel(playerViewModel:PagePlayerViewModel){
         this.playerViewModel = playerViewModel
         lifecycleOwner?.let { owner ->
@@ -57,7 +59,7 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
 
             playerViewModel.observable.event.observe(owner, Observer { evt ->
                 if (evt?.id != PageID.ERROR_SURPORT.value) return@Observer
-                if( evt.type.id != appTag) return@Observer
+                if( evt.type.id != appTag &&  evt.type.id != playerViewModel.appTag) return@Observer
                 val type = evt.data as? PageErrorSurport.ErrorActionType?
                 type ?: return@Observer
                 when (type) {
@@ -217,7 +219,15 @@ class ExercisePlayer : ExoVideoPlayer, PlayerChildComponent {
         playerViewModel?.apply{
             player.streamEvent.value = PlayerStreamEvent.Load
         }
-        if(playData != null) playerViewModel!!.repo.wecandeoManager.loadPlayData(lifecycleOwner!!, playData!!)
+        if(playData != null) {
+            if( playData?.mediaAccesskey == null || playData?.mediaAccesskey == ""){
+                videoPath = playData?.playUrl ?: ""
+                loadVideo()
+            }else{
+                playerViewModel!!.repo.wecandeoManager.loadPlayData(lifecycleOwner!!, playData!!)
+            }
+
+        }
         else loadVideo()
     }
 

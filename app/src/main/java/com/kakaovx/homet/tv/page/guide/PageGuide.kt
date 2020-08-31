@@ -1,14 +1,18 @@
 package com.kakaovx.homet.tv.page.guide
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kakaovx.homet.tv.R
+import com.kakaovx.homet.tv.page.popups.PageErrorSurport
 import com.kakaovx.homet.tv.page.viewmodel.BasePageViewModel
 import com.kakaovx.homet.tv.page.viewmodel.PageID
+import com.kakaovx.homet.tv.store.api.homet.HometApiType
 import com.lib.page.PageFragmentCoroutine
 import com.skeleton.module.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.page_guide.*
+import java.util.HashMap
 import javax.inject.Inject
 
 
@@ -39,6 +43,7 @@ class PageGuide : PageFragmentCoroutine(){
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        listError.visibility = View.GONE
         if( pageList == null){
             try {
                 val supportFragmentManager = childFragmentManager
@@ -58,7 +63,11 @@ class PageGuide : PageFragmentCoroutine(){
 
     override fun onCoroutineScope() {
         super.onCoroutineScope()
-
+        viewModel.repo.hometManager.error.observe(viewLifecycleOwner ,Observer { e ->
+            e ?: return@Observer
+            if( e.type != HometApiType.GUIDE_IMAGES ) return@Observer
+            listError.visibility = View.VISIBLE
+        })
     }
 
     override fun onTransactionCompleted() {

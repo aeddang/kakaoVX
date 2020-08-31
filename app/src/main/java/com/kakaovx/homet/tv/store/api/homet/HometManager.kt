@@ -5,10 +5,12 @@ import android.os.Build
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.kakaovx.homet.tv.R
 import com.kakaovx.homet.tv.page.player.model.ExerciseResult
 import com.kakaovx.homet.tv.store.api.*
 import com.kakaovx.homet.tv.store.api.account.AccountManager
 import com.kakaovx.homet.tv.store.preference.SettingPreference
+import com.kakaovx.homet.tv.util.AppUtil
 import com.kakaovx.homet.tv.util.millisecToSec
 import com.kakaovx.homet.tv.util.toPercent
 import com.lib.page.PageLifecycleUser
@@ -37,6 +39,9 @@ class HometManager(
     val success = MutableLiveData<ApiSuccess<HometApiType>?>()
     val error = MutableLiveData<ApiError<HometApiType>?>()
 
+    private val osType = "tv"
+    private var wakeIdx = "0"
+    private val appVs =  AppUtil.getAppVersion(context)
     private var apiQ : ArrayList<HometApiData>  = ArrayList()
 
     override fun setDefaultLifecycleOwner(owner: LifecycleOwner) {
@@ -110,6 +115,25 @@ class HometManager(
         loadApiGroup(owner, types, types.map { params }.toTypedArray(), HometApiType.EXERCISE_PLAYER, true)
     }
 
+    fun wakeUp(type:ApiValue.StayType){
+        if( accountManager.tempJWT == "") return
+        HomeTAdapter {
+            runBlocking {
+                restApi.postWakeup(
+                    accountManager.deviceKey,
+                    osType,
+                    appVs,
+                    wakeIdx,
+                    type.value
+                )
+            }
+        }.onSuccess(
+            { data ->
+                data ?: return@onSuccess
+                val wd = data.data as? WakeupData
+                wd?.let { wakeIdx = wd.wakeupIdx ?: "0"}
+            }, { _, _, _  ->})
+    }
 
 
     private val apiGroup = HashMap<String, ApiGroup<HometApiType> >()

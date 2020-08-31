@@ -126,7 +126,7 @@ data class Flag(val type:FlagType, val parseType:ExerciseParser.Type) {
         val viewCount = getFlagCount()
         val viewDuration = getFlagDuration()
         return if(viewCount == 0) viewDuration.millisecToTimeString()
-        else "${viewDuration.millisecToTimeString()} | ${viewCount}${context.getString(R.string.unit_count)}"
+        else "${viewDuration.millisecToTimeString()} · ${viewCount}${context.getString(R.string.unit_count)}"
     }
 
     fun getFlagDuration():Long{

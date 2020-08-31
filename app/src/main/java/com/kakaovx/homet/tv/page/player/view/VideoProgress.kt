@@ -153,7 +153,8 @@ class VideoProgress : PageComponentCoroutine, PlayerChildComponent {
             exercise.movieObservable.observe(owner, Observer { movie->
                 Log.i(appTag, "movieObservable  : startTime $startTime")
                 movie.currentTime.observe(owner,Observer {
-                    val t = it - startTime
+                    var t = it - startTime
+                    if( t > duration ) t = duration
                     textTime.text = t.millisecToTimeString()
                     progressBar.progress = t.toInt()
                 })

@@ -16,6 +16,8 @@
                 android:src="@drawable/logo"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!--
             <ImageView
                 android:id="@+id/qr"
                 android:layout_width="@dimen/icon_heavy"
@@ -46,6 +48,7 @@
                 android:layout_marginStart="@dimen/margin_extra_thin"
                 app:layout_constraintStart_toEndOf="@id/google"
                 app:layout_constraintTop_toTopOf="@id/google" />
+            -->
             <TextView
                 android:id="@+id/title1"
                 style="@style/font_black"

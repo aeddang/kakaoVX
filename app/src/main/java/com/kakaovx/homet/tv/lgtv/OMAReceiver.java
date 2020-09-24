@@ -197,7 +197,7 @@ public class OMAReceiver extends BroadcastReceiver {
                 else {
                     LogUtil.i(LogUtil.DEBUG_LEVEL_3, "[kimsj26@] ");
                     if(mIsUpdateChecklaunch) {
-                        ToastUtil.makeToast(mContext, "서비스 준비중입니다.");
+                        //ToastUtil.makeToast(mContext, "서비스 준비중입니다.");
                     }
                     alarmSetting();
                 }
@@ -205,7 +205,7 @@ public class OMAReceiver extends BroadcastReceiver {
             else {
                 LogUtil.i(LogUtil.DEBUG_LEVEL_3, "[kimsj26@] ");
                 if (mIsUpdateChecklaunch) {
-                    ToastUtil.makeToast(mContext, "서비스 준비중입니다.");
+                    //ToastUtil.makeToast(mContext, "서비스 준비중입니다.");
                 }
                 alarmSetting();
             }

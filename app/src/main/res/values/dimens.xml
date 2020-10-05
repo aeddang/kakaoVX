@@ -3,6 +3,7 @@
 
     <dimen name="font_heavy">40dp</dimen>
     <dimen name="font_black">35dp</dimen>
+    <dimen name="font_extra_black">30dp</dimen>
     <dimen name="font_extra_bold">26dp</dimen>
     <dimen name="font_bold">24dp</dimen>
     <dimen name="font_medium">17dp</dimen>

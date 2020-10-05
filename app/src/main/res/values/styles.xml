@@ -4,6 +4,11 @@
     <style name="AppTheme" parent="@style/Theme.Leanback" />
 
     <!-- font style-->
+    <style name="font_extra_light">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/font_extra_light</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
     <style name="font_light">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">@dimen/font_light</item>

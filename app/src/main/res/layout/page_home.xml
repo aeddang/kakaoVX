@@ -51,40 +51,30 @@
             -->
             <TextView
                 android:id="@+id/title1"
-                style="@style/font_black"
+                style="@style/font_extra_light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_thin"
+                android:layout_marginTop="55dp"
                 android:gravity="left"
                 android:text="@string/page_home_sub_title1"
-                android:textColor="@color/color_white"
-                android:textSize="@dimen/font_bold"
+                android:textColor="@color/color_white_deep"
+                android:textSize="@dimen/font_extra_black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo" />
 
             <TextView
                 android:id="@+id/title2"
-                style="@style/font_light"
+                style="@style/font_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:layout_marginTop="@dimen/margin_extra_thin"
                 android:text="@string/page_home_sub_title2"
-                android:textColor="@color/color_white"
-                android:textSize="@dimen/font_bold"
+                android:textColor="@color/color_white_deep"
+                android:textSize="@dimen/font_extra_black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title1" />
-            <TextView
-                android:id="@+id/title3"
-                style="@style/font_bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:textColor="@color/color_white"
-                android:text="@string/page_home_sub_title3"
-                android:textSize="@dimen/font_light"
-                android:layout_marginTop="@dimen/margin_thin"
-                app:layout_constraintTop_toBottomOf="@id/title2"
-                app:layout_constraintStart_toStartOf="parent"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <FrameLayout

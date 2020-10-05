@@ -2,11 +2,12 @@
     <string name="app_name">스마트홈트</string>
     <string name="notice_app_exit">한번 더 누르면 종료됩니다</string>
     <string name="page_home_title">스마트홈트</string>
-    <string name="page_home_sub_title1">AI코치의 트레이닝으로 </string>
-    <string name="page_home_sub_title2">홈트를 더욱더 스마트하게!</string>
-    <string name="page_home_sub_title3">모바일 스마트홈트로 집에서 똑똑하게 홈트 하세요!</string>
+    <string name="page_home_sub_title1">AI코치에게 트레이닝 받는 스마트홈트의 </string>
+    <string name="page_home_sub_title2">300여 콘텐츠를 U+tv로 더 크고 쉽게!</string>
+
     <string name="page_home_download">APP 다운로드</string>
     <string name="page_home_btn_guide">서비스 안내</string>
+
 
 
 
